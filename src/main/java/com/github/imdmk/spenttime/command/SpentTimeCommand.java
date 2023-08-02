@@ -99,10 +99,13 @@ public class SpentTimeCommand {
     @Async
     @Execute(route = "reset-time", required = 1)
     void resetTime(CommandSender sender, @Arg @Name("target") Player player) {
-        User user = this.userManager.getOrCreateUser(player.getUniqueId(), player.getName());
+        this.userManager.getOrFindUser(player.getUniqueId()).ifPresent(user -> {
+            user.setSpentTime(0L);
+            this.userRepository.save(user);
+        });
 
-        user.setSpentTime(0L);
         player.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
+        player.saveData();
 
         Notification notification = Notification.builder()
                 .fromNotification(this.messageConfiguration.targetResetTimeNotification)

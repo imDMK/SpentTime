@@ -25,30 +25,45 @@ public class UserManager {
         this.userRepository = userRepository;
     }
 
-    public User createUser(UUID uuid, String name) {
-        Optional<User> userOptional = this.getUser(uuid).or(() -> this.getUser(name));
-        if (userOptional.isPresent()) {
-            return userOptional.get();
-        }
+    public void addUser(User user) {
+        this.uuidUserCache.put(user.getUuid(), user);
+        this.nameUserCache.put(user.getName(), user);
+    }
 
+    public User createUser(UUID uuid, String name) {
         User user = new User(uuid, name, 0L);
 
-        this.uuidUserCache.put(uuid, user);
-        this.nameUserCache.put(name, user);
-
+        this.addUser(user);
         this.userRepository.save(user);
 
         return user;
     }
 
-    public User getOrCreateUser(UUID uuid, String name) {
+    public User findOrCreateUser(UUID uuid, String name) {
+        Optional<User> userOptional = this.getUser(uuid);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }
+
+        Optional<User> foundedUserOptional = this.userRepository.findByUUID(uuid);
+        if (foundedUserOptional.isPresent()) {
+            User foundedUser = foundedUserOptional.get();
+
+            this.addUser(foundedUser);
+            return foundedUser;
+        }
+
+        return this.createUser(uuid, name);
+    }
+
+    public Optional<User> getOrFindUser(UUID uuid) {
         return this.getUser(uuid)
-                .or(() -> this.getUser(name))
-                .orElseGet(() -> this.createUser(uuid, name));
+                .or(() -> this.userRepository.findByUUID(uuid));
     }
 
     public Optional<User> getOrFindUser(String name) {
-        return this.getUser(name).or(() -> this.userRepository.findByName(name));
+        return this.getUser(name)
+                .or(() -> this.userRepository.findByName(name));
     }
 
     public Optional<User> getUser(UUID uuid) {

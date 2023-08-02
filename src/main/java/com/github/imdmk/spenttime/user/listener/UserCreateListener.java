@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime.user.listener;
 
+import com.github.imdmk.spenttime.task.TaskScheduler;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import org.bukkit.entity.Player;
@@ -12,9 +13,11 @@ import java.util.UUID;
 public class UserCreateListener implements Listener {
 
     private final UserManager userManager;
+    private final TaskScheduler taskScheduler;
 
-    public UserCreateListener(UserManager userManager) {
+    public UserCreateListener(UserManager userManager, TaskScheduler taskScheduler) {
         this.userManager = userManager;
+        this.taskScheduler = taskScheduler;
     }
 
     @EventHandler
@@ -24,11 +27,13 @@ public class UserCreateListener implements Listener {
         UUID playerUniqueId = player.getUniqueId();
         String playerName = player.getName();
 
-        User user = this.userManager.createUser(playerUniqueId, playerName);
+        this.taskScheduler.runAsync(() -> {
+            User user = this.userManager.findOrCreateUser(playerUniqueId, playerName);
 
-        if (!this.isUserHasValidName(user.getName(), playerName)) { //Used when player change nickname
-            user.setName(playerName);
-        }
+            if (!this.isUserHasValidName(user.getName(), playerName)) {
+                user.setName(playerName);
+            }
+        });
     }
 
     private boolean isUserHasValidName(String userName, String playerName) {
