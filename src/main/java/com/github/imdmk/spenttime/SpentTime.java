@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime;
 
+import com.eternalcode.gitcheck.git.GitException;
 import com.github.imdmk.spenttime.command.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.argument.PlayerArgument;
 import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
@@ -14,12 +15,14 @@ import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.task.TaskScheduler;
 import com.github.imdmk.spenttime.task.TaskSchedulerImpl;
+import com.github.imdmk.spenttime.update.UpdateService;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.listener.UserCreateListener;
 import com.github.imdmk.spenttime.user.listener.UserSaveListener;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.user.repository.impl.UserEmptyRepositoryImpl;
 import com.github.imdmk.spenttime.user.repository.impl.UserRepositoryImpl;
+import com.github.imdmk.spenttime.util.AnsiColor;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
@@ -28,10 +31,12 @@ import eu.okaeri.configs.serdes.commons.SerdesCommons;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -43,6 +48,7 @@ import java.util.stream.Stream;
 
 public class SpentTime {
 
+    private final Logger logger;
     private final Server server;
 
     private final PluginConfiguration pluginConfiguration;
@@ -63,25 +69,25 @@ public class SpentTime {
     public SpentTime(Plugin plugin) {
         Instant start = Instant.now();
         File dataFolder = plugin.getDataFolder();
-        Logger logger = plugin.getLogger();
 
+        this.logger = plugin.getLogger();
         this.server = plugin.getServer();
 
         /* Configuration */
         this.pluginConfiguration = this.createConfiguration(dataFolder);
 
         /* Database */
-        this.databaseManager = new DatabaseManager(logger, dataFolder, this.pluginConfiguration.databaseConfiguration);
+        this.databaseManager = new DatabaseManager(this.logger, dataFolder, this.pluginConfiguration.databaseConfiguration);
 
         try {
             this.databaseManager.connect();
 
-            this.userRepository = new UserRepositoryImpl(logger, this.databaseManager.getConnectionSource());
+            this.userRepository = new UserRepositoryImpl(this.logger, this.databaseManager.getConnectionSource());
         }
         catch (SQLException sqlException) {
             this.userRepository = new UserEmptyRepositoryImpl();
 
-            logger.log(Level.SEVERE, "An error occurred while trying to initialize database. The plugin will run, but the functions will not work as expected. ", sqlException);
+            this.logger.log(Level.SEVERE, "An error occurred while trying to initialize database. The plugin will run, but the functions will not work as expected. ", sqlException);
         }
 
         this.userManager = new UserManager(this.userRepository);
@@ -105,8 +111,23 @@ public class SpentTime {
         /* Commands */
         this.liteCommands = this.registerLiteCommands();
 
+        /* Update check */
+        if (this.pluginConfiguration.checkForUpdate) {
+            String version = plugin.getDescription().getVersion();
+
+            try {
+                new UpdateService(version, this.logger).check();
+            }
+            catch (GitException gitException) {
+                this.logger.info(AnsiColor.RED + "An error occurred while checking for update: " + gitException.getMessage() + AnsiColor.RESET);
+            }
+        }
+
+        /* Metrics */
+        new Metrics((JavaPlugin) plugin, 19362);
+
         Duration timeElapsed = Duration.between(start, Instant.now());
-        logger.info("Enabled plugin in " + timeElapsed.toMillis() + "ms.");
+        this.logger.info("Enabled plugin in " + timeElapsed.toMillis() + "ms.");
     }
 
     public void onDisable() {
@@ -121,6 +142,8 @@ public class SpentTime {
         if (this.liteCommands != null) {
             this.liteCommands.getPlatform().unregisterAll();
         }
+
+        this.logger.info("GoodBye...");
     }
 
     private PluginConfiguration createConfiguration(File dataFolder) {
