@@ -78,23 +78,22 @@ public class SpentTimeCommand {
             return;
         }
 
-        if (!this.pluginConfiguration.spentTimeGuiEnabled) {
-            this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeListFirstNotification);
-
-            for (User user : topSpentTimeUsers) {
-                Notification notification = Notification.builder()
-                        .fromNotification(this.messageConfiguration.topSpentTimeListNotification)
-                        .placeholder("{PLAYER}", user.getName())
-                        .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getDurationSpentTime()))
-                        .build();
-
-                this.notificationSender.sendMessage(player, notification);
-            }
-
+        if (this.pluginConfiguration.spentTimeGuiEnabled) {
+            this.topSpentTimeGui.open(player, topSpentTimeUsers, true);
             return;
         }
 
-        this.topSpentTimeGui.open(player, topSpentTimeUsers, true);
+        this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeListFirstNotification);
+
+        for (User user : topSpentTimeUsers) {
+            Notification notification = Notification.builder()
+                    .fromNotification(this.messageConfiguration.topSpentTimeListNotification)
+                    .placeholder("{PLAYER}", user.getName())
+                    .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
+                    .build();
+
+            this.notificationSender.sendMessage(player, notification);
+        }
     }
 
     @Async

@@ -40,7 +40,7 @@ public class TopSpentTimeGui {
         }
 
         for (User user : topUsers) {
-            Duration userTimeSpent = user.getDurationSpentTime();
+            Duration userTimeSpent = user.getSpentTimeDuration();
 
             OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(user.getUuid());
 

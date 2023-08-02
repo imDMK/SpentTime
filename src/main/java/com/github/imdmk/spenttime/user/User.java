@@ -44,7 +44,7 @@ public class User {
         return this.spentTime;
     }
 
-    public Duration getDurationSpentTime() {
+    public Duration getSpentTimeDuration() {
         return Duration.ofMillis(this.spentTime);
     }
 

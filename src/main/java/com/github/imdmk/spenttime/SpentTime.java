@@ -2,8 +2,6 @@ package com.github.imdmk.spenttime;
 
 import com.github.imdmk.spenttime.command.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.argument.PlayerArgument;
-import com.github.imdmk.spenttime.command.argument.UserArgument;
-import com.github.imdmk.spenttime.command.bind.UserContextual;
 import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
@@ -16,7 +14,6 @@ import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.task.TaskScheduler;
 import com.github.imdmk.spenttime.task.TaskSchedulerImpl;
-import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.listener.UserCreateListener;
 import com.github.imdmk.spenttime.user.listener.UserSaveListener;
@@ -137,12 +134,10 @@ public class SpentTime {
     }
 
     private LiteCommands<CommandSender> registerLiteCommands() {
-        return LiteBukkitAdventurePlatformFactory.builder(this.server, "DoubleJump", false, this.bukkitAudiences, true)
+        return LiteBukkitAdventurePlatformFactory.builder(this.server, "SpentTime", false, this.bukkitAudiences, true)
                 .argument(Player.class, new PlayerArgument(this.server, this.pluginConfiguration.messageConfiguration))
-                .argument(User.class, new UserArgument(this.userManager, this.pluginConfiguration.messageConfiguration))
 
                 .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("Only player can use this command."))
-                .contextualBind(User.class, new UserContextual(this.userManager))
 
                 .permissionHandler(new MissingPermissionHandler(this.pluginConfiguration.messageConfiguration, this.notificationSender))
                 .resultHandler(Notification.class, new NotificationHandler(this.notificationSender))
