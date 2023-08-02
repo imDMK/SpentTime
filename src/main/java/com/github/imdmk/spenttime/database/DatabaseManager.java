@@ -51,7 +51,7 @@ public class DatabaseManager {
 
             case MARIADB -> {
                 this.dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
-                this.dataSource.setJdbcUrl("jdbc:mysql://" + this.databaseConfiguration.hostname + ":" + this.databaseConfiguration.port + "/" + this.databaseConfiguration.database);
+                this.dataSource.setJdbcUrl("jdbc:mariadb://" + this.databaseConfiguration.hostname + ":" + this.databaseConfiguration.port + "/" + this.databaseConfiguration.database);
             }
 
             default -> throw new IllegalStateException("Unknown database mode: " + databaseMode);
