@@ -1,8 +1,9 @@
 package com.github.imdmk.spenttime.command;
 
+import com.github.imdmk.spenttime.configuration.GuiConfiguration;
 import com.github.imdmk.spenttime.configuration.MessageConfiguration;
-import com.github.imdmk.spenttime.configuration.PluginConfiguration;
 import com.github.imdmk.spenttime.gui.TopSpentTimeGui;
+import com.github.imdmk.spenttime.gui.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.user.User;
@@ -21,24 +22,27 @@ import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Route(name = "spent-time")
 public class SpentTimeCommand {
 
-    private final PluginConfiguration pluginConfiguration;
+    private final GuiConfiguration guiConfiguration;
     private final MessageConfiguration messageConfiguration;
     private final UserRepository userRepository;
     private final UserManager userManager;
     private final NotificationSender notificationSender;
     private final TopSpentTimeGui topSpentTimeGui;
+    private final TopSpentTimePaginatedGui topSpentTimePaginatedGui;
 
-    public SpentTimeCommand(PluginConfiguration pluginConfiguration, MessageConfiguration messageConfiguration, UserRepository userRepository, UserManager userManager, NotificationSender notificationSender, TopSpentTimeGui topSpentTimeGui) {
-        this.pluginConfiguration = pluginConfiguration;
+    public SpentTimeCommand(GuiConfiguration guiConfiguration, MessageConfiguration messageConfiguration, UserRepository userRepository, UserManager userManager, NotificationSender notificationSender, TopSpentTimeGui topSpentTimeGui, TopSpentTimePaginatedGui topSpentTimePaginatedGui) {
+        this.guiConfiguration = guiConfiguration;
         this.messageConfiguration = messageConfiguration;
         this.userRepository = userRepository;
         this.userManager = userManager;
         this.notificationSender = notificationSender;
         this.topSpentTimeGui = topSpentTimeGui;
+        this.topSpentTimePaginatedGui = topSpentTimePaginatedGui;
     }
 
     @Async
@@ -71,23 +75,30 @@ public class SpentTimeCommand {
     @Async
     @Execute(route = "top", required = 0)
     void showTopSpentTime(Player player) {
-        List<User> topSpentTimeUsers = this.userRepository.findUsersByOrderSpentTime(10L);
+        List<User> topUsers = this.userRepository.findUsersByOrderSpentTime(this.guiConfiguration.querySize);
 
-        if (topSpentTimeUsers.isEmpty()) {
+        if (topUsers.isEmpty()) {
             this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeIsEmpty);
             return;
         }
 
-        if (this.pluginConfiguration.spentTimeGuiEnabled) {
-            this.topSpentTimeGui.open(player, topSpentTimeUsers, true);
+        if (this.guiConfiguration.enabled) {
+            switch (this.guiConfiguration.guiType) {
+                case BASIC -> this.topSpentTimeGui.open(player, topUsers, true);
+                case PAGINATED -> this.topSpentTimePaginatedGui.open(player, topUsers, true);
+                default -> throw new IllegalStateException("Unexpected gui type value: " + this.guiConfiguration.guiType);
+            }
             return;
         }
 
         this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeListFirstNotification);
 
-        for (User user : topSpentTimeUsers) {
+        AtomicInteger position = new AtomicInteger(1);
+
+        for (User user : topUsers) {
             Notification notification = Notification.builder()
                     .fromNotification(this.messageConfiguration.topSpentTimeListNotification)
+                    .placeholder("{POSITION}", position.getAndIncrement())
                     .placeholder("{PLAYER}", user.getName())
                     .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
                     .build();

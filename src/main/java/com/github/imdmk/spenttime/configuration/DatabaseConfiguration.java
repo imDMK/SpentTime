@@ -2,9 +2,11 @@ package com.github.imdmk.spenttime.configuration;
 
 import com.github.imdmk.spenttime.database.DatabaseMode;
 import eu.okaeri.configs.OkaeriConfig;
+import eu.okaeri.configs.annotation.Comment;
 
 public class DatabaseConfiguration extends OkaeriConfig {
 
+    @Comment("# Database modes: SQLITE, MYSQL, MARIADB")
     public DatabaseMode databaseMode = DatabaseMode.SQLITE;
 
     public String hostname = "localhost";

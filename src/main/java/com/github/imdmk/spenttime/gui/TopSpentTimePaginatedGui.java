@@ -7,6 +7,7 @@ import com.github.imdmk.spenttime.util.DurationUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -16,20 +17,20 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TopSpentTimeGui {
+public class TopSpentTimePaginatedGui {
 
     private final Server server;
     private final GuiConfiguration guiConfiguration;
     private final TaskScheduler taskScheduler;
 
-    public TopSpentTimeGui(Server server, GuiConfiguration guiConfiguration, TaskScheduler taskScheduler) {
+    public TopSpentTimePaginatedGui(Server server, GuiConfiguration guiConfiguration, TaskScheduler taskScheduler) {
         this.server = server;
         this.guiConfiguration = guiConfiguration;
         this.taskScheduler = taskScheduler;
     }
 
     public void open(Player player, List<User> topUsers, boolean async) {
-        Gui gui = Gui.gui()
+        PaginatedGui paginatedGui = Gui.paginated()
                 .title(this.guiConfiguration.title)
                 .rows(6)
                 .disableAllInteractions()
@@ -38,13 +39,18 @@ public class TopSpentTimeGui {
         if (this.guiConfiguration.borderItemEnabled) {
             GuiItem sideGuiItem = ItemBuilder.from(this.guiConfiguration.borderItem).asGuiItem();
 
-            gui.getFiller().fillBorder(sideGuiItem);
+            paginatedGui.getFiller().fillBorder(sideGuiItem);
         }
 
         GuiItem exitGuiItem = ItemBuilder.from(this.guiConfiguration.exitItem)
-                .asGuiItem(event -> gui.close(player));
+                .asGuiItem(event -> paginatedGui.close(player));
 
-        gui.setItem(this.guiConfiguration.exitItemSlot, exitGuiItem);
+        GuiItem nextPageItem = this.createNextPageItem(paginatedGui);
+        GuiItem previousPageItem = this.createPreviousPageItem(paginatedGui);
+
+        paginatedGui.setItem(this.guiConfiguration.exitItemSlot, exitGuiItem);
+        paginatedGui.setItem(this.guiConfiguration.nextPageItemSlot, nextPageItem);
+        paginatedGui.setItem(this.guiConfiguration.previousPageItemSlot, previousPageItem);
 
         AtomicInteger position = new AtomicInteger(1);
 
@@ -76,14 +82,32 @@ public class TopSpentTimeGui {
                     .lore(headItemLore)
                     .asGuiItem();
 
-            gui.addItem(guiItem);
+            paginatedGui.addItem(guiItem);
         }
 
         if (async) { //Opening gui cannot be asynchronous
-            this.taskScheduler.runLater(() -> gui.open(player));
+            this.taskScheduler.runLater(() -> paginatedGui.open(player));
         }
         else {
-            gui.open(player);
+            paginatedGui.open(player);
         }
+    }
+
+    private GuiItem createNextPageItem(PaginatedGui paginatedGui) {
+        return ItemBuilder.from(this.guiConfiguration.nextPageItem)
+                .asGuiItem(event -> {
+                    if (!paginatedGui.next()) {
+                        paginatedGui.updateItem(event.getSlot(), this.guiConfiguration.noNextPageItem);
+                    }
+                });
+    }
+
+    private GuiItem createPreviousPageItem(PaginatedGui paginatedGui) {
+        return ItemBuilder.from(this.guiConfiguration.previousPageItem)
+                .asGuiItem(event -> {
+                    if (!paginatedGui.previous()) {
+                        paginatedGui.updateItem(event.getSlot(), this.guiConfiguration.noPreviousPageItem);
+                    }
+                });
     }
 }

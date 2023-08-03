@@ -11,6 +11,7 @@ import com.github.imdmk.spenttime.configuration.PluginConfiguration;
 import com.github.imdmk.spenttime.configuration.serializer.pack.SpentTimePack;
 import com.github.imdmk.spenttime.database.DatabaseManager;
 import com.github.imdmk.spenttime.gui.TopSpentTimeGui;
+import com.github.imdmk.spenttime.gui.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.task.TaskScheduler;
@@ -63,6 +64,7 @@ public class SpentTime {
     private final TaskScheduler taskScheduler;
 
     private final TopSpentTimeGui topSpentTimeGui;
+    private final TopSpentTimePaginatedGui topSpentTimePaginatedGui;
 
     private final LiteCommands<CommandSender> liteCommands;
 
@@ -100,7 +102,8 @@ public class SpentTime {
         this.taskScheduler = new TaskSchedulerImpl(plugin, this.server);
 
         /* Guis */
-        this.topSpentTimeGui = new TopSpentTimeGui(this.server, this.pluginConfiguration, this.taskScheduler);
+        this.topSpentTimeGui = new TopSpentTimeGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
+        this.topSpentTimePaginatedGui = new TopSpentTimePaginatedGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
 
         /* Listeners */
         Stream.of(
@@ -167,7 +170,7 @@ public class SpentTime {
                 .invalidUsageHandler(new UsageHandler(this.pluginConfiguration.messageConfiguration, this.notificationSender))
 
                 .commandInstance(
-                        new SpentTimeCommand(this.pluginConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.userManager, this.notificationSender, this.topSpentTimeGui)
+                        new SpentTimeCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.userManager, this.notificationSender, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
                 )
 
                 .commandEditor(SpentTimeCommand.class, new SpentTimeCommandEditor(this.pluginConfiguration))

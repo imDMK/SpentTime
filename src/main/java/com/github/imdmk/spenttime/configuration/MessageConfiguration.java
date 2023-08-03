@@ -14,7 +14,7 @@ public class MessageConfiguration extends OkaeriConfig {
     public Notification topSpentTimeIsEmpty = new Notification(NotificationType.CHAT, "<red>The top spent time is empty<dark_gray>.");
     public Notification topSpentTimeListFirstNotification = new Notification(NotificationType.CHAT, "<green>Top 10 players who spent the most time on the server<dark_gray>:");
     @Comment("# {PLAYER} - The player name")
-    public Notification topSpentTimeListNotification = new Notification(NotificationType.CHAT, "<dark_gray>- <green>Player {PLAYER}<dark_gray>: <red>{TIME}");
+    public Notification topSpentTimeListNotification = new Notification(NotificationType.CHAT, "<dark_gray>- <green>{POSITION} Player {PLAYER}<dark_gray>: <red>{TIME}");
 
     @Comment("# {PLAYER} - The player name")
     public Notification targetResetTimeNotification = new Notification(NotificationType.CHAT, "<red>The player {PLAYER} spent time on the server has been reset<dark_gray>.");
