@@ -3,6 +3,8 @@ package com.github.imdmk.spenttime.user.listener;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
+import com.github.imdmk.spenttime.user.repository.UserRepository;
+import com.github.imdmk.spenttime.util.PlayerUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,10 +14,12 @@ import java.util.UUID;
 
 public class UserCreateListener implements Listener {
 
+    private final UserRepository userRepository;
     private final UserManager userManager;
     private final TaskScheduler taskScheduler;
 
-    public UserCreateListener(UserManager userManager, TaskScheduler taskScheduler) {
+    public UserCreateListener(UserRepository userRepository, UserManager userManager, TaskScheduler taskScheduler) {
+        this.userRepository = userRepository;
         this.userManager = userManager;
         this.taskScheduler = taskScheduler;
     }
@@ -30,13 +34,36 @@ public class UserCreateListener implements Listener {
         this.taskScheduler.runAsync(() -> {
             User user = this.userManager.findOrCreateUser(playerUniqueId, playerName);
 
-            if (!this.isUserHasValidName(user.getName(), playerName)) {
-                user.setName(playerName);
+            boolean updatedSpentTime = this.updateSpentTime(player, user);
+            boolean updatedUserName = this.updateUserName(player, user);
+
+            if (updatedSpentTime || updatedUserName) {
+                this.userRepository.save(user);
             }
         });
     }
 
-    private boolean isUserHasValidName(String userName, String playerName) {
-        return userName.equals(playerName);
+    private boolean updateSpentTime(Player player, User user) {
+        long playerSpentTime = PlayerUtil.getSpentTime(player);
+        long userSpentTime = user.getSpentTime();
+
+        if (playerSpentTime == userSpentTime) {
+            return false;
+        }
+
+        user.setSpentTime(playerSpentTime);
+        return true;
+    }
+
+    private boolean updateUserName(Player player, User user) {
+        String playerName = player.getName();
+        String userName = user.getName();
+
+        if (playerName.equals(userName)) {
+            return false;
+        }
+
+        user.setName(playerName);
+        return true;
     }
 }

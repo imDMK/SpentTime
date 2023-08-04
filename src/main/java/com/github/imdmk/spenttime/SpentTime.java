@@ -112,7 +112,7 @@ public class SpentTime {
 
         /* Listeners */
         Stream.of(
-            new UserCreateListener(this.userManager, this.taskScheduler),
+            new UserCreateListener(this.userRepository, this.userManager, this.taskScheduler),
             new UserSaveListener(this.userManager, this.userRepository, this.taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
