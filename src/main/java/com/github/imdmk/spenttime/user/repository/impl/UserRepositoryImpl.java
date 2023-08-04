@@ -94,6 +94,26 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    @Override
+    public void createTable() {
+        try {
+            TableUtils.createTable(this.userDao.getConnectionSource(), User.class);
+        }
+        catch (SQLException sqlException) {
+            this.logSevere("An error occurred while trying to drop table users from database.", sqlException);
+        }
+    }
+
+    @Override
+    public void dropTable() {
+        try {
+            TableUtils.dropTable(this.userDao.getConnectionSource(), User.class, false);
+        }
+        catch (SQLException sqlException) {
+            this.logSevere("An error occurred while trying to drop table users from database.", sqlException);
+        }
+    }
+
     private void logSevere(String message, Throwable thrown) {
         this.logger.log(Level.SEVERE, message, thrown);
     }

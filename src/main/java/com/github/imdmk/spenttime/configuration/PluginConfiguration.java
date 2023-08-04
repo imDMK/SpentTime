@@ -7,6 +7,7 @@ public class PluginConfiguration extends OkaeriConfig {
     public boolean checkForUpdate = true;
 
     public String spentTimeResetTimeCommandPermission = "spenttime.resettime";
+    public String spentTimeResetTimeForAllCommandPermission = "spenttime.resettimeforall";
 
     public GuiConfiguration guiConfiguration = new GuiConfiguration();
     public MessageConfiguration messageConfiguration = new MessageConfiguration();

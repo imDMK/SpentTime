@@ -32,4 +32,12 @@ public class UserEmptyRepositoryImpl implements UserRepository {
     @Override
     public void delete(UUID uuid) {
     }
+
+    @Override
+    public void createTable() {
+    }
+
+    @Override
+    public void dropTable() {
+    }
 }

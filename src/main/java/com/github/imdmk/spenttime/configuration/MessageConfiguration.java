@@ -20,6 +20,8 @@ public class MessageConfiguration extends OkaeriConfig {
     public Notification targetResetTimeNotification = new Notification(NotificationType.CHAT, "<red>The player {PLAYER} spent time on the server has been reset<dark_gray>.");
     public Notification playerNotFoundNotification = new Notification(NotificationType.CHAT, "<red>Player not found<dark_gray>.");
 
+    public Notification resetSpentTimeForAllUsersNotification = new Notification(NotificationType.CHAT, "<green>Time spent on the server has been reset for all users.");
+
     @Comment("# {PERMISSIONS} - Required permissions")
     public Notification missingPermissionsNotification = new Notification(NotificationType.CHAT, "<red>Missing permissions: <dark_red>{PERMISSIONS}<dark_gray>.");
 

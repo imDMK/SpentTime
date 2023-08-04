@@ -17,4 +17,8 @@ public interface UserRepository {
     void save(User user);
 
     void delete(UUID uuid);
+
+    void createTable();
+
+    void dropTable();
 }
