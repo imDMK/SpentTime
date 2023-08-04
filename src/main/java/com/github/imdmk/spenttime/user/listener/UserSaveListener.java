@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.user.listener;
 
-import com.github.imdmk.spenttime.task.TaskScheduler;
+import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.repository.UserRepository;

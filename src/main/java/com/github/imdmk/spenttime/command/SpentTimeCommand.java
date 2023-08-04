@@ -7,7 +7,7 @@ import com.github.imdmk.spenttime.gui.top.TopSpentTimeGui;
 import com.github.imdmk.spenttime.gui.top.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.task.TaskScheduler;
+import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.repository.UserRepository;

@@ -14,8 +14,8 @@ import com.github.imdmk.spenttime.gui.top.TopSpentTimeGui;
 import com.github.imdmk.spenttime.gui.top.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.task.TaskScheduler;
-import com.github.imdmk.spenttime.task.TaskSchedulerImpl;
+import com.github.imdmk.spenttime.scheduler.TaskScheduler;
+import com.github.imdmk.spenttime.scheduler.TaskSchedulerImpl;
 import com.github.imdmk.spenttime.update.UpdateService;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.listener.UserCreateListener;
@@ -23,7 +23,9 @@ import com.github.imdmk.spenttime.user.listener.UserSaveListener;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.user.repository.impl.UserEmptyRepositoryImpl;
 import com.github.imdmk.spenttime.user.repository.impl.UserRepositoryImpl;
+import com.github.imdmk.spenttime.user.task.UserTimeSaveTask;
 import com.github.imdmk.spenttime.util.AnsiColor;
+import com.github.imdmk.spenttime.util.DurationUtil;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
@@ -68,6 +70,8 @@ public class SpentTime {
 
     private final LiteCommands<CommandSender> liteCommands;
 
+    private final Metrics metrics;
+
     public SpentTime(Plugin plugin) {
         Instant start = Instant.now();
         File dataFolder = plugin.getDataFolder();
@@ -100,6 +104,7 @@ public class SpentTime {
 
         /* Tasks */
         this.taskScheduler = new TaskSchedulerImpl(plugin, this.server);
+        this.taskScheduler.runTimerAsync(new UserTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.playerSpentTimeSaveDuration));
 
         /* Guis */
         this.topSpentTimeGui = new TopSpentTimeGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
@@ -127,7 +132,7 @@ public class SpentTime {
         }
 
         /* Metrics */
-        new Metrics((JavaPlugin) plugin, 19362);
+        this.metrics = new Metrics((JavaPlugin) plugin, 19362);
 
         Duration timeElapsed = Duration.between(start, Instant.now());
         this.logger.info("Enabled plugin in " + timeElapsed.toMillis() + "ms.");
@@ -138,13 +143,9 @@ public class SpentTime {
             this.databaseManager.close();
         }
 
-        if (this.bukkitAudiences != null) {
-            this.bukkitAudiences.close();
-        }
-
-        if (this.liteCommands != null) {
-            this.liteCommands.getPlatform().unregisterAll();
-        }
+        this.bukkitAudiences.close();
+        this.liteCommands.getPlatform().unregisterAll();
+        this.metrics.shutdown();
 
         this.logger.info("GoodBye...");
     }

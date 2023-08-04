@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.task;
+package com.github.imdmk.spenttime.scheduler;
 
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;

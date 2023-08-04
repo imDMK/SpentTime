@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.gui;
 
-import com.github.imdmk.spenttime.task.TaskScheduler;
+import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiAction;
