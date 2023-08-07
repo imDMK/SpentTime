@@ -24,10 +24,10 @@ public class GuiConfiguration extends OkaeriConfig {
     @Comment({
             "# The type of gui",
             "# Available types: ",
-            "# BASIC - Standard, basic gui",
+            "# STANDARD - Standard, basic gui",
             "# PAGINATED - Gui with pages; Useful when you want to display several pages of tops"
     })
-    public GuiType guiType = GuiType.BASIC;
+    public GuiType guiType = GuiType.STANDARD;
 
     public Component title = ComponentUtil.createItalic("<red>Top spent time<dark_gray>:");
 
@@ -90,6 +90,6 @@ public class GuiConfiguration extends OkaeriConfig {
             .build();
 
     public enum GuiType {
-        BASIC, PAGINATED
+        STANDARD, PAGINATED
     }
 }

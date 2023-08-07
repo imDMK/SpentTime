@@ -2,6 +2,8 @@ package com.github.imdmk.spenttime;
 
 import com.eternalcode.gitcheck.git.GitException;
 import com.github.imdmk.spenttime.command.SpentTimeCommand;
+import com.github.imdmk.spenttime.command.SpentTimeResetCommand;
+import com.github.imdmk.spenttime.command.SpentTimeTopCommand;
 import com.github.imdmk.spenttime.command.argument.PlayerArgument;
 import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
@@ -186,7 +188,9 @@ public class SpentTime {
                 .invalidUsageHandler(new UsageHandler(this.pluginConfiguration.messageConfiguration, this.notificationSender))
 
                 .commandInstance(
-                        new SpentTimeCommand(this.server, this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.userManager, this.notificationSender, this.taskScheduler, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
+                        new SpentTimeCommand(this.pluginConfiguration.messageConfiguration, this.notificationSender),
+                        new SpentTimeResetCommand(this.server, this.pluginConfiguration.messageConfiguration, this.userRepository, this.userManager, this.notificationSender, this.taskScheduler),
+                        new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
                 )
 
                 .commandEditor(SpentTimeCommand.class, new SpentTimeCommandEditor(this.pluginConfiguration))
