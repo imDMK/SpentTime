@@ -5,3 +5,5 @@ main: com.github.imdmk.spenttime.SpentTimePlugin
 author: DMK
 description: Spent time plugin
 website: https://github.com/imDMK/SpentTime
+softdepend:
+  - PlaceholderAPI

@@ -7,6 +7,7 @@ import com.eternalcode.gitcheck.git.GitRelease;
 import com.eternalcode.gitcheck.git.GitRepository;
 import com.eternalcode.gitcheck.git.GitTag;
 import com.github.imdmk.spenttime.util.AnsiColor;
+import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.util.logging.Logger;
 
@@ -14,18 +15,18 @@ public class UpdateService {
 
     private static final GitRepository GIT_REPOSITORY = GitRepository.of("imDMK", "SpentTime");
 
-    private final String version;
+    private final PluginDescriptionFile pluginDescriptionFile;
     private final Logger logger;
 
-    public UpdateService(String version, Logger logger) {
-        this.version = version;
+    public UpdateService(PluginDescriptionFile pluginDescriptionFile, Logger logger) {
+        this.pluginDescriptionFile = pluginDescriptionFile;
         this.logger = logger;
     }
 
     public void check() throws GitException {
         GitCheck gitCheck = new GitCheck();
 
-        GitTag gitTag = GitTag.of("v" + this.version);
+        GitTag gitTag = GitTag.of("v" + this.pluginDescriptionFile.getVersion());
         GitCheckResult checkResult = gitCheck.checkRelease(GIT_REPOSITORY, gitTag);
 
         if (checkResult.isUpToDate()) {

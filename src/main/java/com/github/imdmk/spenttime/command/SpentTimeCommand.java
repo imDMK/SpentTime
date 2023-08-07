@@ -56,7 +56,7 @@ public class SpentTimeCommand {
     @Async
     @Execute(required = 0)
     void showSelfSpentTime(Player player) {
-        Duration playerSpentTime = Duration.ofMillis(PlayerUtil.getSpentTime(player));
+        Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
 
         Notification notification = Notification.builder()
                 .fromNotification(this.messageConfiguration.spentTimeNotification)
@@ -69,7 +69,7 @@ public class SpentTimeCommand {
     @Async
     @Execute(required = 1)
     void showTargetSpentTime(CommandSender sender, @Arg @Name("target") Player target) {
-        Duration targetSpentTime = Duration.ofMillis(PlayerUtil.getSpentTime(target));
+        Duration targetSpentTime = PlayerUtil.getSpentTimeDuration(target);
 
         Notification notification = Notification.builder()
                 .fromNotification(this.messageConfiguration.targetSpentTimeNotification)

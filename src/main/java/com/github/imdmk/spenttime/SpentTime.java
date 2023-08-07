@@ -14,6 +14,7 @@ import com.github.imdmk.spenttime.gui.top.TopSpentTimeGui;
 import com.github.imdmk.spenttime.gui.top.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.scheduler.TaskSchedulerImpl;
 import com.github.imdmk.spenttime.update.UpdateService;
@@ -57,6 +58,7 @@ public class SpentTime {
     private final PluginConfiguration pluginConfiguration;
 
     private final DatabaseManager databaseManager;
+
     private UserRepository userRepository;
     private final UserManager userManager;
 
@@ -69,6 +71,8 @@ public class SpentTime {
     private final TopSpentTimePaginatedGui topSpentTimePaginatedGui;
 
     private final LiteCommands<CommandSender> liteCommands;
+
+    private PlaceholderRegistry placeholderRegistry;
 
     private final Metrics metrics;
 
@@ -121,14 +125,20 @@ public class SpentTime {
 
         /* Update check */
         if (this.pluginConfiguration.checkForUpdate) {
-            String version = plugin.getDescription().getVersion();
-
             try {
-                new UpdateService(version, this.logger).check();
+                UpdateService updateService = new UpdateService(plugin.getDescription(), this.logger);
+
+                this.taskScheduler.runLaterAsync(updateService::check, DurationUtil.toTicks(Duration.ofSeconds(5)));
             }
             catch (GitException gitException) {
                 this.logger.info(AnsiColor.RED + "An error occurred while checking for update: " + gitException.getMessage() + AnsiColor.RESET);
             }
+        }
+
+        /* PlaceholderAPI */
+        if (this.server.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            this.placeholderRegistry = new PlaceholderRegistry(plugin.getDescription());
+            this.placeholderRegistry.registerAll();
         }
 
         /* Metrics */
@@ -145,6 +155,11 @@ public class SpentTime {
 
         this.bukkitAudiences.close();
         this.liteCommands.getPlatform().unregisterAll();
+
+        if (this.placeholderRegistry != null) {
+            this.placeholderRegistry.unregisterAll();
+        }
+
         this.metrics.shutdown();
 
         this.logger.info("GoodBye...");
