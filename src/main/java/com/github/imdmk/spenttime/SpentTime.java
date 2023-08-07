@@ -193,7 +193,7 @@ public class SpentTime {
                         new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
                 )
 
-                .commandEditor(SpentTimeCommand.class, new SpentTimeCommandEditor(this.pluginConfiguration))
+                .commandEditor("spent-time", new SpentTimeCommandEditor(this.pluginConfiguration))
 
                 .register();
     }
