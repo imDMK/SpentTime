@@ -45,25 +45,36 @@ public class UserManager {
             return userOptional.get();
         }
 
-        Optional<User> foundedUserOptional = this.userRepository.findByUUID(uuid);
-        if (foundedUserOptional.isPresent()) {
-            User foundedUser = foundedUserOptional.get();
+        Optional<User> foundedUserOptional = this.findUser(uuid);
 
-            this.addUser(foundedUser);
-            return foundedUser;
-        }
+        return foundedUserOptional
+                .orElseGet(() -> this.createUser(uuid, name));
+    }
 
-        return this.createUser(uuid, name);
+    public Optional<User> findUser(UUID uuid) {
+        Optional<User> userOptional = this.userRepository.findByUUID(uuid);
+
+        userOptional.ifPresent(this::addUser);
+
+        return userOptional;
+    }
+
+    public Optional<User> findUser(String name) {
+        Optional<User> userOptional = this.userRepository.findByName(name);
+
+        userOptional.ifPresent(this::addUser);
+
+        return userOptional;
     }
 
     public Optional<User> getOrFindUser(UUID uuid) {
         return this.getUser(uuid)
-                .or(() -> this.userRepository.findByUUID(uuid));
+                .or(() -> this.findUser(uuid));
     }
 
     public Optional<User> getOrFindUser(String name) {
         return this.getUser(name)
-                .or(() -> this.userRepository.findByName(name));
+                .or(() -> this.findUser(name));
     }
 
     public Optional<User> getUser(UUID uuid) {
