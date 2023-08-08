@@ -1,10 +1,11 @@
 package com.github.imdmk.spenttime;
 
-import com.eternalcode.gitcheck.git.GitException;
 import com.github.imdmk.spenttime.command.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.SpentTimeResetCommand;
 import com.github.imdmk.spenttime.command.SpentTimeTopCommand;
+
 import com.github.imdmk.spenttime.command.argument.PlayerArgument;
+import com.github.imdmk.spenttime.command.argument.UserArgument;
 import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
@@ -20,6 +21,7 @@ import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.scheduler.TaskSchedulerImpl;
 import com.github.imdmk.spenttime.update.UpdateService;
+import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.listener.UserCreateListener;
 import com.github.imdmk.spenttime.user.listener.UserSaveListener;
@@ -27,7 +29,6 @@ import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.user.repository.impl.UserEmptyRepositoryImpl;
 import com.github.imdmk.spenttime.user.repository.impl.UserRepositoryImpl;
 import com.github.imdmk.spenttime.user.task.UserTimeSaveTask;
-import com.github.imdmk.spenttime.util.AnsiColor;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
@@ -127,14 +128,9 @@ public class SpentTime {
 
         /* Update check */
         if (this.pluginConfiguration.checkForUpdate) {
-            try {
-                UpdateService updateService = new UpdateService(plugin.getDescription(), this.logger);
+            UpdateService updateService = new UpdateService(plugin.getDescription(), this.logger);
 
-                this.taskScheduler.runLaterAsync(updateService::check, DurationUtil.toTicks(Duration.ofSeconds(5)));
-            }
-            catch (GitException gitException) {
-                this.logger.info(AnsiColor.RED + "An error occurred while checking for update: " + gitException.getMessage() + AnsiColor.RESET);
-            }
+            this.taskScheduler.runLaterAsync(updateService::check, DurationUtil.toTicks(Duration.ofSeconds(5)));
         }
 
         /* PlaceholderAPI */
@@ -180,6 +176,7 @@ public class SpentTime {
     private LiteCommands<CommandSender> registerLiteCommands() {
         return LiteBukkitAdventurePlatformFactory.builder(this.server, "SpentTime", false, this.bukkitAudiences, true)
                 .argument(Player.class, new PlayerArgument(this.server, this.pluginConfiguration.messageConfiguration))
+                .argument(User.class, new UserArgument(this.pluginConfiguration.messageConfiguration, this.userManager))
 
                 .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("Only player can use this command."))
 
@@ -188,7 +185,7 @@ public class SpentTime {
                 .invalidUsageHandler(new UsageHandler(this.pluginConfiguration.messageConfiguration, this.notificationSender))
 
                 .commandInstance(
-                        new SpentTimeCommand(this.pluginConfiguration.messageConfiguration, this.notificationSender),
+                        new SpentTimeCommand(this.server, this.pluginConfiguration.messageConfiguration, this.notificationSender),
                         new SpentTimeResetCommand(this.server, this.pluginConfiguration.messageConfiguration, this.userRepository, this.userManager, this.notificationSender, this.taskScheduler),
                         new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
                 )
@@ -197,4 +194,6 @@ public class SpentTime {
 
                 .register();
     }
+
+
 }
