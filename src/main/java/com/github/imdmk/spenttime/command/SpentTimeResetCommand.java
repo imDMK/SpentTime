@@ -37,26 +37,26 @@ public class SpentTimeResetCommand {
         this.taskScheduler = taskScheduler;
     }
 
-    @Async
-    @Execute(route = "reset-time", required = 1)
-    void resetTime(CommandSender sender, @Arg @Name("target") Player player) {
-        this.userManager.getOrFindUser(player.getUniqueId()).ifPresent(user -> {
-            user.setSpentTime(0L);
-            this.userRepository.save(user);
-        });
+    @Execute(route = "reset", required = 1)
+    void resetTime(CommandSender sender, @Arg @Name("target") Player target) {
+        if (sender instanceof Player player) {
+            new ConfirmGui(this.taskScheduler, "<red>Reset " + target.getName() + " player spent time?")
+                    .afterConfirm(event -> {
+                        player.closeInventory();
 
-        player.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
-        player.saveData();
+                        this.taskScheduler.runAsync(() -> this.resetSpentTime(target));
+                        this.sendTargetResetNotification(sender, target);
+                    })
+                    .afterCancel(event -> player.closeInventory())
+                    .open(player, false);
+            return;
+        }
 
-        Notification notification = Notification.builder()
-                .fromNotification(this.messageConfiguration.targetResetTimeNotification)
-                .placeholder("{PLAYER}", player.getName())
-                .build();
-
-        this.notificationSender.sendMessage(sender, notification);
+        this.taskScheduler.runAsync(() -> this.resetSpentTime(target));
+        this.sendTargetResetNotification(sender, target);
     }
 
-    @Execute(route = "reset-time-all")
+    @Execute(route = "reset-all")
     void resetTimeAll(CommandSender sender) {
         if (sender instanceof Player player) {
             new ConfirmGui(this.taskScheduler, "<red>Reset spent time of all users?")
@@ -75,16 +75,32 @@ public class SpentTimeResetCommand {
         this.notificationSender.sendMessage(sender, this.messageConfiguration.resetSpentTimeForAllUsersNotification);
     }
 
+    private void resetSpentTime(Player player) {
+        this.userManager.getOrFindUser(player.getUniqueId())
+                .ifPresent(user -> {
+                    user.setSpentTime(0L);
+                    this.userRepository.save(user);
+                });
+
+        player.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
+        player.saveData();
+    }
+
     private void resetTimeAll() {
         this.userRepository.dropTable();
         this.userRepository.createTable();
 
         for (OfflinePlayer offlinePlayer : this.server.getOfflinePlayers()) {
-            if (!offlinePlayer.hasPlayedBefore()) {
-                return;
-            }
-
             offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
         }
+    }
+
+    private void sendTargetResetNotification(CommandSender sender, Player target) {
+        Notification notification = Notification.builder()
+                .fromNotification(this.messageConfiguration.targetResetTimeNotification)
+                .placeholder("{PLAYER}", target.getName())
+                .build();
+
+        this.notificationSender.sendMessage(sender, notification);
     }
 }
