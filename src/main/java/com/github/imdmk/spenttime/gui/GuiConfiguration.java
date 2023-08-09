@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.configuration;
+package com.github.imdmk.spenttime.gui;
 
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -12,14 +12,18 @@ import java.util.List;
 
 public class GuiConfiguration extends OkaeriConfig {
 
-    public boolean enabled = true;
-
     @Comment({
-            "# This determines how many players are to be displayed in the Player top",
+            "# This determines how many players are to be displayed in the player top",
             "# WARNING: Increasing this value may increase the consumption of database server resources",
-            "# recommended value: 10"
+            "# Recommended value: 10"
     })
     public int querySize = 10;
+
+    @Comment({
+            "# Should the gui be enabled?",
+            "# If you disable the gui, a list of top players in the chat will be displayed"
+    })
+    public boolean enabled = true;
 
     @Comment({
             "# The type of gui",
@@ -27,21 +31,19 @@ public class GuiConfiguration extends OkaeriConfig {
             "# STANDARD - Standard, basic gui",
             "# PAGINATED - Gui with pages; Useful when you want to display several pages of tops"
     })
-    public GuiType guiType = GuiType.STANDARD;
+    public GuiType type = GuiType.STANDARD;
 
+    @Comment("# The title of spent time gui")
     public Component title = ComponentUtil.createItalic("<red>Top spent time<dark_gray>:");
 
     @Comment({
-            "# The title of head item in spent time gui",
+            "# The head item in top spent time gui",
+            "# {PLAYER} - The player name",
             "# {POSITION} - The player position",
-            "# {PLAYER} - The player name"
+            "# {TIME} - The player time"
     })
     public Component headItemTitle = ComponentUtil.createItalic("<red>{POSITION}. <gray>Player <red>{PLAYER}");
 
-    @Comment({
-            "# The lore of head item in spent time gui",
-            "# {TIME} - The spent time"
-    })
     public List<Component> headItemLore = List.of(
             ComponentUtil.createItalic(""),
             ComponentUtil.createItalic("<green>The player has spent <red>{TIME} <green>on the server<dark_gray>."),
@@ -56,7 +58,7 @@ public class GuiConfiguration extends OkaeriConfig {
     @Comment({
             "# Exit item slot",
             "# Set to -1 to disable",
-            "# USEFUL: https://i.imgur.com/yuNaucx.png"
+            "# USEFUL: https://i.imgur.com/gK9plGo.png"
     })
     public int exitItemSlot = 49;
     public ItemStack exitItem = ItemBuilder.from(Material.ACACIA_BUTTON)

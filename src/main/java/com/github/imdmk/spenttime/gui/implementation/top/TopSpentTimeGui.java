@@ -1,6 +1,6 @@
-package com.github.imdmk.spenttime.gui.top;
+package com.github.imdmk.spenttime.gui.implementation.top;
 
-import com.github.imdmk.spenttime.configuration.GuiConfiguration;
+import com.github.imdmk.spenttime.gui.GuiConfiguration;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.util.DurationUtil;
@@ -12,7 +12,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,7 +27,7 @@ public class TopSpentTimeGui {
         this.taskScheduler = taskScheduler;
     }
 
-    public void open(Player player, List<User> topUsers, boolean async) {
+    public void open(Player player, List<User> topUsers) {
         Gui gui = Gui.gui()
                 .title(this.guiConfiguration.title)
                 .rows(6)
@@ -46,28 +45,26 @@ public class TopSpentTimeGui {
 
         gui.setItem(this.guiConfiguration.exitItemSlot, exitGuiItem);
 
-        AtomicInteger position = new AtomicInteger(1);
+        AtomicInteger position = new AtomicInteger(0);
 
         for (User user : topUsers) {
-            Duration userTimeSpent = user.getSpentTimeDuration();
+            position.incrementAndGet();
+
+            String userTimeSpent = DurationUtil.toHumanReadable(user.getSpentTimeDuration());
             OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(user.getUuid());
 
             Component headItemTitle = this.guiConfiguration.headItemTitle
-                    .replaceText(builder -> builder
-                            .matchLiteral("{PLAYER}")
-                            .replacement(player.getName())
-                    )
-                    .replaceText(builder -> builder
-                            .matchLiteral("{POSITION}")
-                            .replacement(String.valueOf(position.getAndIncrement()))
-                    );
+                    .replaceText(builder -> builder.matchLiteral("{POSITION}").replacement(String.valueOf(position.get())))
+                    .replaceText(builder -> builder.matchLiteral("{PLAYER}").replacement(player.getName()))
+                    .replaceText(builder -> builder.matchLiteral("{TIME}").replacement(userTimeSpent));
 
             List<Component> headItemLore = this.guiConfiguration.headItemLore
                     .stream()
-                    .map(component -> component.replaceText(builder -> builder
-                            .matchLiteral("{TIME}")
-                            .replacement(DurationUtil.toHumanReadable(userTimeSpent))
-                    ))
+                    .map(component -> component
+                            .replaceText(builder -> builder.matchLiteral("{POSITION}").replacement(String.valueOf(position.get())))
+                            .replaceText(builder -> builder.matchLiteral("{PLAYER}").replacement(player.getName()))
+                            .replaceText(builder -> builder.matchLiteral("{TIME}").replacement(userTimeSpent))
+                    )
                     .toList();
 
             GuiItem guiItem = ItemBuilder.skull()
@@ -79,11 +76,6 @@ public class TopSpentTimeGui {
             gui.addItem(guiItem);
         }
 
-        if (async) { //Opening gui cannot be asynchronous
-            this.taskScheduler.runLater(() -> gui.open(player));
-        }
-        else {
-            gui.open(player);
-        }
+        this.taskScheduler.runSync(() -> gui.open(player));
     }
 }

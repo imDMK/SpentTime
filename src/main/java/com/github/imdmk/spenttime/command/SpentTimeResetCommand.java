@@ -1,15 +1,15 @@
 package com.github.imdmk.spenttime.command;
 
 import com.github.imdmk.spenttime.configuration.MessageConfiguration;
-import com.github.imdmk.spenttime.gui.ConfirmGui;
+import com.github.imdmk.spenttime.gui.implementation.ConfirmGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
+import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Name;
-import dev.rollczi.litecommands.command.async.Async;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
 import org.bukkit.OfflinePlayer;
@@ -40,7 +40,7 @@ public class SpentTimeResetCommand {
     @Execute(route = "reset", required = 1)
     void resetTime(CommandSender sender, @Arg @Name("target") Player target) {
         if (sender instanceof Player player) {
-            new ConfirmGui(this.taskScheduler, "<red>Reset " + target.getName() + " player spent time?")
+            new ConfirmGui(this.taskScheduler, ComponentUtil.createItalic("<red>Reset " + target.getName() + " player spent time?"))
                     .afterConfirm(event -> {
                         player.closeInventory();
 
@@ -48,7 +48,7 @@ public class SpentTimeResetCommand {
                         this.sendTargetResetNotification(sender, target);
                     })
                     .afterCancel(event -> player.closeInventory())
-                    .open(player, false);
+                    .open(player);
             return;
         }
 
@@ -59,7 +59,7 @@ public class SpentTimeResetCommand {
     @Execute(route = "reset-all")
     void resetTimeAll(CommandSender sender) {
         if (sender instanceof Player player) {
-            new ConfirmGui(this.taskScheduler, "<red>Reset spent time of all users?")
+            new ConfirmGui(this.taskScheduler, ComponentUtil.createItalic("<red>Reset spent time of all users?"))
                     .afterConfirm(event -> {
                         player.closeInventory();
 
@@ -67,7 +67,7 @@ public class SpentTimeResetCommand {
                         this.notificationSender.sendMessage(player, this.messageConfiguration.resetSpentTimeForAllUsersNotification);
                     })
                     .afterCancel(event -> player.closeInventory())
-                    .open(player, false);
+                    .open(player);
             return;
         }
 
@@ -87,8 +87,7 @@ public class SpentTimeResetCommand {
     }
 
     private void resetTimeAll() {
-        this.userRepository.dropTable();
-        this.userRepository.createTable();
+        this.userRepository.resetGlobalSpentTime();
 
         for (OfflinePlayer offlinePlayer : this.server.getOfflinePlayers()) {
             offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);

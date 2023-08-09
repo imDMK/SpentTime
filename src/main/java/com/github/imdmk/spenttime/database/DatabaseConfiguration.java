@@ -1,6 +1,5 @@
-package com.github.imdmk.spenttime.configuration;
+package com.github.imdmk.spenttime.database;
 
-import com.github.imdmk.spenttime.database.DatabaseMode;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 

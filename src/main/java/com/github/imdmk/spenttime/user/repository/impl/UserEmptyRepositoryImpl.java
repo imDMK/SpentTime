@@ -34,10 +34,6 @@ public class UserEmptyRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void createTable() {
-    }
-
-    @Override
-    public void dropTable() {
+    public void resetGlobalSpentTime() {
     }
 }

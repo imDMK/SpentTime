@@ -1,6 +1,5 @@
 package com.github.imdmk.spenttime.database;
 
-import com.github.imdmk.spenttime.configuration.DatabaseConfiguration;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.zaxxer.hikari.HikariDataSource;

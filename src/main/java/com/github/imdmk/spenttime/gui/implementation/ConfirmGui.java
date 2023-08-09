@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.gui;
+package com.github.imdmk.spenttime.gui.implementation;
 
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.util.ComponentUtil;
@@ -6,6 +6,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,10 +19,10 @@ public class ConfirmGui {
     private GuiAction<InventoryClickEvent> actionAfterConfirm;
     private GuiAction<InventoryClickEvent> actionAfterCancel;
 
-    public ConfirmGui(TaskScheduler taskScheduler, String title) {
+    public ConfirmGui(TaskScheduler taskScheduler, Component title) {
         this.taskScheduler = taskScheduler;
         this.gui = Gui.gui()
-                .title(ComponentUtil.createItalic(title))
+                .title(title)
                 .rows(6)
                 .disableAllInteractions()
                 .create();
@@ -37,7 +38,7 @@ public class ConfirmGui {
         return this;
     }
 
-    public void open(Player player, boolean async) {
+    public void open(Player player) {
         GuiItem cancelItem = ItemBuilder.from(Material.RED_CONCRETE)
                 .name(ComponentUtil.createItalic("<red>Cancel"))
                 .asGuiItem();
@@ -62,11 +63,6 @@ public class ConfirmGui {
         this.gui.setItem(23, cancelItem);
         this.gui.setItem(32, cancelItem);
 
-        if (async) { //opening inventory cannot be async
-            this.taskScheduler.runLater(() -> this.gui.open(player));
-        }
-        else {
-            this.gui.open(player);
-        }
+        this.taskScheduler.runSync(() -> this.gui.open(player));
     }
 }

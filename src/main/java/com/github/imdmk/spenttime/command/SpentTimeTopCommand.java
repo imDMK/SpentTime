@@ -1,9 +1,9 @@
 package com.github.imdmk.spenttime.command;
 
-import com.github.imdmk.spenttime.configuration.GuiConfiguration;
 import com.github.imdmk.spenttime.configuration.MessageConfiguration;
-import com.github.imdmk.spenttime.gui.top.TopSpentTimeGui;
-import com.github.imdmk.spenttime.gui.top.TopSpentTimePaginatedGui;
+import com.github.imdmk.spenttime.gui.GuiConfiguration;
+import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimeGui;
+import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.user.User;
@@ -47,22 +47,24 @@ public class SpentTimeTopCommand {
         }
 
         if (this.guiConfiguration.enabled) {
-            switch (this.guiConfiguration.guiType) {
-                case STANDARD -> this.topSpentTimeGui.open(player, topUsers, true);
-                case PAGINATED -> this.topSpentTimePaginatedGui.open(player, topUsers, true);
-                default -> throw new IllegalStateException("Unexpected gui type value: " + this.guiConfiguration.guiType);
+            switch (this.guiConfiguration.type) {
+                case STANDARD -> this.topSpentTimeGui.open(player, topUsers);
+                case PAGINATED -> this.topSpentTimePaginatedGui.open(player, topUsers);
+                default -> throw new IllegalStateException("Unexpected gui type value: " + this.guiConfiguration.type);
             }
             return;
         }
 
         this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeListFirstNotification);
 
-        AtomicInteger position = new AtomicInteger(1);
+        AtomicInteger position = new AtomicInteger(0);
 
         for (User user : topUsers) {
+            position.incrementAndGet();
+
             Notification notification = Notification.builder()
                     .fromNotification(this.messageConfiguration.topSpentTimeListNotification)
-                    .placeholder("{POSITION}", position.getAndIncrement())
+                    .placeholder("{POSITION}", position.get())
                     .placeholder("{PLAYER}", user.getName())
                     .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
                     .build();

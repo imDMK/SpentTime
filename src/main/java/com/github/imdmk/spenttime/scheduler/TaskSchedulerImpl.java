@@ -14,13 +14,13 @@ public final class TaskSchedulerImpl implements TaskScheduler {
     }
 
     @Override
-    public void runAsync(Runnable runnable) {
-        this.server.getScheduler().runTaskAsynchronously(this.plugin, runnable);
+    public void runSync(Runnable runnable) {
+        this.server.getScheduler().runTask(this.plugin, runnable);
     }
 
     @Override
-    public void runLater(Runnable runnable) {
-        this.server.getScheduler().runTask(this.plugin, runnable);
+    public void runAsync(Runnable runnable) {
+        this.server.getScheduler().runTaskAsynchronously(this.plugin, runnable);
     }
 
     @Override

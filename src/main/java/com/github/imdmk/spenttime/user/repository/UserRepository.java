@@ -18,7 +18,5 @@ public interface UserRepository {
 
     void delete(UUID uuid);
 
-    void createTable();
-
-    void dropTable();
+    void resetGlobalSpentTime();
 }

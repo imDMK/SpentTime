@@ -3,7 +3,6 @@ package com.github.imdmk.spenttime;
 import com.github.imdmk.spenttime.command.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.SpentTimeResetCommand;
 import com.github.imdmk.spenttime.command.SpentTimeTopCommand;
-
 import com.github.imdmk.spenttime.command.argument.PlayerArgument;
 import com.github.imdmk.spenttime.command.argument.UserArgument;
 import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
@@ -13,8 +12,8 @@ import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.configuration.PluginConfiguration;
 import com.github.imdmk.spenttime.configuration.serializer.pack.SpentTimePack;
 import com.github.imdmk.spenttime.database.DatabaseManager;
-import com.github.imdmk.spenttime.gui.top.TopSpentTimeGui;
-import com.github.imdmk.spenttime.gui.top.TopSpentTimePaginatedGui;
+import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimeGui;
+import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
@@ -194,6 +193,4 @@ public class SpentTime {
 
                 .register();
     }
-
-
 }

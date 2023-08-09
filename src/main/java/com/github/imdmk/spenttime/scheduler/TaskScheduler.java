@@ -2,9 +2,9 @@ package com.github.imdmk.spenttime.scheduler;
 
 public interface TaskScheduler {
 
-    void runAsync(Runnable runnable);
+    void runSync(Runnable runnable);
 
-    void runLater(Runnable runnable);
+    void runAsync(Runnable runnable);
 
     void runLaterAsync(Runnable runnable, long delay);
 

@@ -95,22 +95,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void createTable() {
+    public void resetGlobalSpentTime() {
         try {
-            TableUtils.createTable(this.userDao.getConnectionSource(), User.class);
+            this.userDao.updateBuilder()
+                    .updateColumnValue("spentTime", 0L)
+                    .update();
         }
         catch (SQLException sqlException) {
-            this.logSevere("An error occurred while trying to drop table users from database.", sqlException);
-        }
-    }
-
-    @Override
-    public void dropTable() {
-        try {
-            TableUtils.dropTable(this.userDao.getConnectionSource(), User.class, false);
-        }
-        catch (SQLException sqlException) {
-            this.logSevere("An error occurred while trying to drop table users from database.", sqlException);
+            this.logSevere("An error occurred while trying to update users.", sqlException);
         }
     }
 

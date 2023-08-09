@@ -3,7 +3,7 @@ package com.github.imdmk.spenttime.configuration.serializer.pack;
 import com.github.imdmk.spenttime.configuration.serializer.ComponentSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
-import com.github.imdmk.spenttime.configuration.serializer.NotificationSerializer;
+import com.github.imdmk.spenttime.notification.NotificationSerializer;
 import eu.okaeri.configs.serdes.OkaeriSerdesPack;
 import eu.okaeri.configs.serdes.SerdesRegistry;
 import org.checkerframework.checker.nullness.qual.NonNull;
