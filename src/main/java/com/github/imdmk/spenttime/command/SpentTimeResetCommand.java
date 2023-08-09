@@ -63,7 +63,7 @@ public class SpentTimeResetCommand {
                     .afterConfirm(event -> {
                         player.closeInventory();
 
-                        this.taskScheduler.runAsync(this::resetTimeAll);
+                        this.taskScheduler.runAsync(this::resetGlobalSpentTime);
                         this.notificationSender.sendMessage(player, this.messageConfiguration.resetSpentTimeForAllUsersNotification);
                     })
                     .afterCancel(event -> player.closeInventory())
@@ -71,7 +71,7 @@ public class SpentTimeResetCommand {
             return;
         }
 
-        this.taskScheduler.runAsync(this::resetTimeAll);
+        this.taskScheduler.runAsync(this::resetGlobalSpentTime);
         this.notificationSender.sendMessage(sender, this.messageConfiguration.resetSpentTimeForAllUsersNotification);
     }
 
@@ -86,7 +86,7 @@ public class SpentTimeResetCommand {
         player.saveData();
     }
 
-    private void resetTimeAll() {
+    private void resetGlobalSpentTime() {
         this.userRepository.resetGlobalSpentTime();
 
         for (OfflinePlayer offlinePlayer : this.server.getOfflinePlayers()) {
