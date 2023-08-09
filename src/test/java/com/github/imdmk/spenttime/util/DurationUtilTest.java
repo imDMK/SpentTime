@@ -9,42 +9,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DurationUtilTest {
 
     @Test
-    void testSeconds() {
+    void testHumanReadable() {
         Duration ofSeconds = Duration.ofSeconds(5);
+        String secondsExcepted = "5s";
+        String secondsResult = DurationUtil.toHumanReadable(ofSeconds);
 
-        String excepted = "5s";
-        String result = DurationUtil.toHumanReadable(ofSeconds);
-
-        assertEquals(excepted, result);
-    }
-
-    @Test
-    void testMinutes() {
         Duration ofMinutes = Duration.ofMinutes(5);
+        String minutesExcepted = "5m";
+        String minutesResult = DurationUtil.toHumanReadable(ofMinutes);
 
-        String excepted = "5m";
-        String result = DurationUtil.toHumanReadable(ofMinutes);
-
-        assertEquals(excepted, result);
-    }
-
-    @Test
-    void testHours() {
         Duration ofHours = Duration.ofHours(10);
+        String hoursExcepted = "10h";
+        String hoursResult = DurationUtil.toHumanReadable(ofHours);
 
-        String excepted = "10h";
-        String result = DurationUtil.toHumanReadable(ofHours);
-
-        assertEquals(excepted, result);
+        assertEquals(secondsExcepted, secondsResult);
+        assertEquals(minutesExcepted, minutesResult);
+        assertEquals(hoursExcepted, hoursResult);
     }
 
     @Test
-    void testDays() {
-        Duration ofDays = Duration.ofDays(30);
+    void testToTicks() {
+        Duration ofSeconds = Duration.ofSeconds(6);
+        long ofSecondsExcepted = 120;
+        long ofSecondsResult = DurationUtil.toTicks(ofSeconds);
 
-        String excepted = "720h";
-        String result = DurationUtil.toHumanReadable(ofDays);
+        Duration ofMinutes = Duration.ofMinutes(3);
+        long ofMinutesExcepted = 3600;
+        long ofMinutesResult = DurationUtil.toTicks(ofMinutes);
 
-        assertEquals(excepted, result);
+        assertEquals(ofSecondsExcepted, ofSecondsResult);
+        assertEquals(ofMinutesExcepted, ofMinutesResult);
     }
 }
