@@ -5,7 +5,7 @@ import com.github.imdmk.spenttime.command.SpentTimeResetCommand;
 import com.github.imdmk.spenttime.command.SpentTimeTopCommand;
 import com.github.imdmk.spenttime.command.argument.PlayerArgument;
 import com.github.imdmk.spenttime.command.argument.UserArgument;
-import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
+import com.github.imdmk.spenttime.command.editor.SpentTimeResetCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
@@ -125,17 +125,17 @@ public class SpentTime {
         /* Commands */
         this.liteCommands = this.registerLiteCommands();
 
+        /* PlaceholderAPI */
+        if (this.server.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            this.placeholderRegistry = new PlaceholderRegistry(plugin.getDescription());
+            this.placeholderRegistry.registerAll();
+        }
+
         /* Update check */
         if (this.pluginConfiguration.checkForUpdate) {
             UpdateService updateService = new UpdateService(plugin.getDescription(), this.logger);
 
             this.taskScheduler.runLaterAsync(updateService::check, DurationUtil.toTicks(Duration.ofSeconds(5)));
-        }
-
-        /* PlaceholderAPI */
-        if (this.server.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            this.placeholderRegistry = new PlaceholderRegistry(plugin.getDescription());
-            this.placeholderRegistry.registerAll();
         }
 
         /* Metrics */
@@ -189,7 +189,7 @@ public class SpentTime {
                         new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
                 )
 
-                .commandEditor("spent-time", new SpentTimeCommandEditor(this.pluginConfiguration))
+                .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration))
 
                 .register();
     }

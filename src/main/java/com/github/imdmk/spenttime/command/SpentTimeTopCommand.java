@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Route(name = "spent-time")
+@Route(name = "spenttime")
 public class SpentTimeTopCommand {
 
     private final GuiConfiguration guiConfiguration;

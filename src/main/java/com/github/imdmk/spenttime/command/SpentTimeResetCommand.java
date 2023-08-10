@@ -18,7 +18,7 @@ import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@Route(name = "spent-time")
+@Route(name = "spenttime")
 public class SpentTimeResetCommand {
 
     private final Server server;

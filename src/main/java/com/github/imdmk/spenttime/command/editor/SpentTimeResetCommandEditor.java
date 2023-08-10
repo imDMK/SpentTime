@@ -5,11 +5,11 @@ import dev.rollczi.litecommands.factory.CommandEditor;
 
 import java.util.List;
 
-public class SpentTimeCommandEditor implements CommandEditor {
+public class SpentTimeResetCommandEditor implements CommandEditor {
 
     private final PluginConfiguration pluginConfiguration;
 
-    public SpentTimeCommandEditor(PluginConfiguration pluginConfiguration) {
+    public SpentTimeResetCommandEditor(PluginConfiguration pluginConfiguration) {
         this.pluginConfiguration = pluginConfiguration;
     }
 

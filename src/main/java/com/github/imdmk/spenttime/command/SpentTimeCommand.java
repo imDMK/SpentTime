@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.time.Duration;
 
-@Route(name = "spent-time")
+@Route(name = "spenttime")
 public class SpentTimeCommand {
 
     private final Server server;
