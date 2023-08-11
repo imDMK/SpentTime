@@ -12,7 +12,7 @@ public interface UserRepository {
 
     Optional<User> findByName(String name);
 
-    List<User> findUsersByOrderSpentTime(long limit);
+    List<User> findByOrderSpentTime(long limit);
 
     void save(User user);
 

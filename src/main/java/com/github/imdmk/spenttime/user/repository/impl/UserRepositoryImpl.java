@@ -60,7 +60,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> findUsersByOrderSpentTime(long limit) {
+    public List<User> findByOrderSpentTime(long limit) {
         try {
             return this.userDao.queryBuilder()
                     .orderBy("spentTime", false)

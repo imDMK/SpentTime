@@ -21,7 +21,7 @@ public class UserEmptyRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> findUsersByOrderSpentTime(long limit) {
+    public List<User> findByOrderSpentTime(long limit) {
         return Collections.emptyList();
     }
 
