@@ -39,7 +39,7 @@ public class SpentTimeTopCommand {
     @Async
     @Execute(route = "top", required = 0)
     void showTopSpentTime(Player player) {
-        List<User> topUsers = this.userRepository.findUsersByOrderSpentTime(this.guiConfiguration.querySize);
+        List<User> topUsers = this.userRepository.findByOrderSpentTime(this.guiConfiguration.querySize);
 
         if (topUsers.isEmpty()) {
             this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeIsEmpty);
