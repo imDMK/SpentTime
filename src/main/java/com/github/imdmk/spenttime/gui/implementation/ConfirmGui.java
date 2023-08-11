@@ -14,18 +14,25 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 public class ConfirmGui {
 
     private final TaskScheduler taskScheduler;
-    private final Gui gui;
+
+    private Gui gui;
 
     private GuiAction<InventoryClickEvent> actionAfterConfirm;
     private GuiAction<InventoryClickEvent> actionAfterCancel;
 
-    public ConfirmGui(TaskScheduler taskScheduler, Component title) {
+    private boolean closeAfterCancel;
+
+    public ConfirmGui(TaskScheduler taskScheduler) {
         this.taskScheduler = taskScheduler;
+    }
+
+    public ConfirmGui create(Component title) {
         this.gui = Gui.gui()
                 .title(title)
                 .rows(6)
                 .disableAllInteractions()
                 .create();
+        return this;
     }
 
     public ConfirmGui afterConfirm(GuiAction<InventoryClickEvent> actionAfterConfirm) {
@@ -35,6 +42,11 @@ public class ConfirmGui {
 
     public ConfirmGui afterCancel(GuiAction<InventoryClickEvent> actionAfterCancel) {
         this.actionAfterCancel = actionAfterCancel;
+        return this;
+    }
+
+    public ConfirmGui closeAfterCancel() {
+        this.closeAfterCancel = true;
         return this;
     }
 
@@ -53,6 +65,9 @@ public class ConfirmGui {
 
         if (this.actionAfterConfirm != null) {
             confirmItem.setAction(this.actionAfterConfirm);
+        }
+        else if (this.closeAfterCancel) {
+            confirmItem.setAction(event -> this.gui.close(player));
         }
 
         this.gui.getFiller().fillBorder(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).asGuiItem());

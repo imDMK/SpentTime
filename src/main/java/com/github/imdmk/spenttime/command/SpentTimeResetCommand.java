@@ -5,7 +5,7 @@ import com.github.imdmk.spenttime.gui.implementation.ConfirmGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
-import com.github.imdmk.spenttime.user.UserManager;
+import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.rollczi.litecommands.argument.Arg;
@@ -24,82 +24,75 @@ public class SpentTimeResetCommand {
     private final Server server;
     private final MessageConfiguration messageConfiguration;
     private final UserRepository userRepository;
-    private final UserManager userManager;
     private final NotificationSender notificationSender;
     private final TaskScheduler taskScheduler;
+    private final ConfirmGui confirmGui;
 
-    public SpentTimeResetCommand(Server server, MessageConfiguration messageConfiguration, UserRepository userRepository, UserManager userManager, NotificationSender notificationSender, TaskScheduler taskScheduler) {
+    public SpentTimeResetCommand(Server server, MessageConfiguration messageConfiguration, UserRepository userRepository, NotificationSender notificationSender, TaskScheduler taskScheduler, ConfirmGui confirmGui) {
         this.server = server;
         this.messageConfiguration = messageConfiguration;
         this.userRepository = userRepository;
-        this.userManager = userManager;
         this.notificationSender = notificationSender;
         this.taskScheduler = taskScheduler;
+        this.confirmGui = confirmGui;
     }
 
     @Execute(route = "reset", required = 1)
-    void resetTime(CommandSender sender, @Arg @Name("target") Player target) {
+    void resetTime(CommandSender sender, @Arg @Name("target") User target) {
         if (sender instanceof Player player) {
-            new ConfirmGui(this.taskScheduler, ComponentUtil.createItalic("<red>Reset " + target.getName() + " player spent time?"))
+            this.confirmGui.create(ComponentUtil.createItalic("<red>Reset " + target.getName() + " player spent time?"))
                     .afterConfirm(event -> {
                         player.closeInventory();
 
-                        this.taskScheduler.runAsync(() -> this.resetSpentTime(target));
-                        this.sendTargetResetNotification(sender, target);
+                        this.taskScheduler.runAsync(() -> this.resetSpentTime(sender, target));
                     })
-                    .afterCancel(event -> player.closeInventory())
+                    .closeAfterCancel()
                     .open(player);
             return;
         }
 
-        this.taskScheduler.runAsync(() -> this.resetSpentTime(target));
-        this.sendTargetResetNotification(sender, target);
+        this.taskScheduler.runAsync(() -> this.resetSpentTime(sender, target));
     }
 
     @Execute(route = "reset-all")
     void resetTimeAll(CommandSender sender) {
         if (sender instanceof Player player) {
-            new ConfirmGui(this.taskScheduler, ComponentUtil.createItalic("<red>Reset spent time of all users?"))
+            this.confirmGui.create(ComponentUtil.createItalic("<red>Reset spent time of all users?"))
                     .afterConfirm(event -> {
                         player.closeInventory();
 
-                        this.taskScheduler.runAsync(this::resetGlobalSpentTime);
-                        this.notificationSender.sendMessage(player, this.messageConfiguration.resetSpentTimeForAllUsersNotification);
+                        this.taskScheduler.runAsync(() -> this.resetGlobalSpentTime(sender));
                     })
-                    .afterCancel(event -> player.closeInventory())
+                    .closeAfterCancel()
                     .open(player);
             return;
         }
 
-        this.taskScheduler.runAsync(this::resetGlobalSpentTime);
-        this.notificationSender.sendMessage(sender, this.messageConfiguration.resetSpentTimeForAllUsersNotification);
+        this.taskScheduler.runAsync(() -> this.resetGlobalSpentTime(sender));
     }
 
-    private void resetSpentTime(Player player) {
-        this.userManager.getOrFindUser(player.getUniqueId())
-                .ifPresent(user -> {
-                    user.setSpentTime(0L);
-                    this.userRepository.save(user);
-                });
+    private void resetSpentTime(CommandSender sender, User target) {
+        target.setSpentTime(0L);
+        this.userRepository.save(target);
 
-        player.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
-        player.saveData();
+        OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(target.getUuid());
+        offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
+
+        Notification notification = Notification.builder()
+                .fromNotification(this.messageConfiguration.targetResetSpentTimeNotification)
+                .placeholder("{PLAYER}", target.getName())
+                .build();
+
+        this.notificationSender.sendMessage(sender, notification);
     }
 
-    private void resetGlobalSpentTime() {
+    private void resetGlobalSpentTime(CommandSender sender) {
         this.userRepository.resetGlobalSpentTime();
 
         for (OfflinePlayer offlinePlayer : this.server.getOfflinePlayers()) {
             offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
         }
-    }
 
-    private void sendTargetResetNotification(CommandSender sender, Player target) {
-        Notification notification = Notification.builder()
-                .fromNotification(this.messageConfiguration.targetResetTimeNotification)
-                .placeholder("{PLAYER}", target.getName())
-                .build();
-
-        this.notificationSender.sendMessage(sender, notification);
+        this.notificationSender.sendMessage(sender, this.messageConfiguration.resetGlobalSpentTimeNotification);
     }
 }
