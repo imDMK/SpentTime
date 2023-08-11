@@ -26,21 +26,20 @@ public class SpentTimeResetCommand {
     private final UserRepository userRepository;
     private final NotificationSender notificationSender;
     private final TaskScheduler taskScheduler;
-    private final ConfirmGui confirmGui;
 
-    public SpentTimeResetCommand(Server server, MessageConfiguration messageConfiguration, UserRepository userRepository, NotificationSender notificationSender, TaskScheduler taskScheduler, ConfirmGui confirmGui) {
+    public SpentTimeResetCommand(Server server, MessageConfiguration messageConfiguration, UserRepository userRepository, NotificationSender notificationSender, TaskScheduler taskScheduler) {
         this.server = server;
         this.messageConfiguration = messageConfiguration;
         this.userRepository = userRepository;
         this.notificationSender = notificationSender;
         this.taskScheduler = taskScheduler;
-        this.confirmGui = confirmGui;
     }
 
     @Execute(route = "reset", required = 1)
     void resetTime(CommandSender sender, @Arg @Name("target") User target) {
         if (sender instanceof Player player) {
-            this.confirmGui.create(ComponentUtil.createItalic("<red>Reset " + target.getName() + " player spent time?"))
+            new ConfirmGui(this.taskScheduler)
+                    .create(ComponentUtil.createItalic("<red>Reset " + target.getName() + " player spent time?"))
                     .afterConfirm(event -> {
                         player.closeInventory();
 
@@ -57,7 +56,8 @@ public class SpentTimeResetCommand {
     @Execute(route = "reset-all")
     void resetTimeAll(CommandSender sender) {
         if (sender instanceof Player player) {
-            this.confirmGui.create(ComponentUtil.createItalic("<red>Reset spent time of all users?"))
+            new ConfirmGui(this.taskScheduler)
+                    .create(ComponentUtil.createItalic("<red>Reset spent time of all users?"))
                     .afterConfirm(event -> {
                         player.closeInventory();
 

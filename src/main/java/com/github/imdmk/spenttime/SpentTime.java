@@ -12,7 +12,6 @@ import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.configuration.PluginConfiguration;
 import com.github.imdmk.spenttime.configuration.serializer.pack.SpentTimePack;
 import com.github.imdmk.spenttime.database.DatabaseManager;
-import com.github.imdmk.spenttime.gui.implementation.ConfirmGui;
 import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimeGui;
 import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimePaginatedGui;
 import com.github.imdmk.spenttime.notification.Notification;
@@ -70,7 +69,6 @@ public class SpentTime {
 
     private final TaskScheduler taskScheduler;
 
-    private final ConfirmGui confirmGui;
     private final TopSpentTimeGui topSpentTimeGui;
     private final TopSpentTimePaginatedGui topSpentTimePaginatedGui;
 
@@ -115,7 +113,6 @@ public class SpentTime {
         this.taskScheduler.runTimerAsync(new UserTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.playerSpentTimeSaveDuration));
 
         /* Guis */
-        this.confirmGui = new ConfirmGui(this.taskScheduler);
         this.topSpentTimeGui = new TopSpentTimeGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
         this.topSpentTimePaginatedGui = new TopSpentTimePaginatedGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
 
@@ -188,7 +185,7 @@ public class SpentTime {
 
                 .commandInstance(
                         new SpentTimeCommand(this.server, this.pluginConfiguration.messageConfiguration, this.notificationSender),
-                        new SpentTimeResetCommand(this.server, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.taskScheduler, this.confirmGui),
+                        new SpentTimeResetCommand(this.server, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
                 )
 
