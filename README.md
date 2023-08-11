@@ -3,8 +3,8 @@
 [![Build Status](https://github.com/imDMK/SpentTime/actions/workflows/maven.yml/badge.svg)](https://github.com/imDMK/SpentTime/actions/workflows/maven.yml)
 ![JDK](https://img.shields.io/badge/JDK-1.17-blue.svg)
 ![Supported versions](https://img.shields.io/badge/Minecraft-1.17--1.20.1-green.svg)
-[![SpigotMC](https://img.shields.io/badge/SpigotMC-yellow.svg)]()
-[![Bukkit](https://img.shields.io/badge/Bukkit-blue.svg)]()
+[![SpigotMC](https://img.shields.io/badge/SpigotMC-yellow.svg)](https://www.spigotmc.org/resources/spenttime.111938/)
+[![Bukkit](https://img.shields.io/badge/Bukkit-blue.svg)](https://dev.bukkit.org/projects/spenttime)
 [![bStats](https://img.shields.io/badge/bStats-00695c)](https://bstats.org/plugin/bukkit/SpentTime/19362)
 
 Efficient spent time plugin with many features and configuration possibilities.
