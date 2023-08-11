@@ -9,13 +9,13 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public class UserTimeSaveTask implements Runnable {
+public class UserSpentTimeSaveTask implements Runnable {
 
     private final Server server;
     private final UserRepository userRepository;
     private final UserManager userManager;
 
-    public UserTimeSaveTask(Server server, UserRepository userRepository, UserManager userManager) {
+    public UserSpentTimeSaveTask(Server server, UserRepository userRepository, UserManager userManager) {
         this.server = server;
         this.userRepository = userRepository;
         this.userManager = userManager;

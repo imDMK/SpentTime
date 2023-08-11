@@ -27,7 +27,7 @@ import com.github.imdmk.spenttime.user.listener.UserSaveListener;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.user.repository.impl.UserEmptyRepositoryImpl;
 import com.github.imdmk.spenttime.user.repository.impl.UserRepositoryImpl;
-import com.github.imdmk.spenttime.user.task.UserTimeSaveTask;
+import com.github.imdmk.spenttime.user.task.UserSpentTimeSaveTask;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
@@ -110,7 +110,7 @@ public class SpentTime {
 
         /* Tasks */
         this.taskScheduler = new TaskSchedulerImpl(plugin, this.server);
-        this.taskScheduler.runTimerAsync(new UserTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.playerSpentTimeSaveDuration));
+        this.taskScheduler.runTimerAsync(new UserSpentTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.playerSpentTimeSaveDuration));
 
         /* Guis */
         this.topSpentTimeGui = new TopSpentTimeGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
