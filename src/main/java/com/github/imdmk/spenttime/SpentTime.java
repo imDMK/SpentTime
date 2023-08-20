@@ -29,6 +29,7 @@ import com.github.imdmk.spenttime.user.repository.impl.UserEmptyRepositoryImpl;
 import com.github.imdmk.spenttime.user.repository.impl.UserRepositoryImpl;
 import com.github.imdmk.spenttime.user.task.UserSpentTimeSaveTask;
 import com.github.imdmk.spenttime.util.DurationUtil;
+import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
@@ -47,7 +48,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -79,7 +80,7 @@ public class SpentTime {
     private final Metrics metrics;
 
     public SpentTime(Plugin plugin) {
-        Instant start = Instant.now();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         File dataFolder = plugin.getDataFolder();
 
         this.logger = plugin.getLogger();
@@ -141,8 +142,7 @@ public class SpentTime {
         /* Metrics */
         this.metrics = new Metrics((JavaPlugin) plugin, 19362);
 
-        Duration timeElapsed = Duration.between(start, Instant.now());
-        this.logger.info("Enabled plugin in " + timeElapsed.toMillis() + "ms.");
+        this.logger.info("Enabled plugin in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms.");
     }
 
     public void onDisable() {
@@ -158,6 +158,8 @@ public class SpentTime {
         }
 
         this.metrics.shutdown();
+
+        this.closeAllPlayersInventory();
 
         this.logger.info("GoodBye...");
     }
@@ -192,5 +194,11 @@ public class SpentTime {
                 .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration))
 
                 .register();
+    }
+
+    private void closeAllPlayersInventory() {
+        for (Player player : this.server.getOnlinePlayers()) {
+            player.closeInventory();
+        }
     }
 }
