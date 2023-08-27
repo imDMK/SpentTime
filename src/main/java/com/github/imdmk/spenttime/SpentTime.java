@@ -130,8 +130,12 @@ public class SpentTime {
 
         /* PlaceholderAPI */
         if (this.server.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            this.placeholderRegistry = new PlaceholderRegistry(plugin.getDescription());
-            this.placeholderRegistry.registerAll();
+            this.placeholderRegistry = new PlaceholderRegistry();
+
+            Stream.of(
+                    new SpentTimeFormattedPlaceholder(plugin.getDescription()),
+                    new SpentTimePlaceholder(plugin.getDescription())
+            ).forEach(this.placeholderRegistry::register);
         }
 
         /* Update check */

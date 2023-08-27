@@ -1,26 +1,27 @@
 package com.github.imdmk.spenttime.placeholder;
 
-import com.github.imdmk.spenttime.placeholder.implementation.SpentTimeFormattedPlaceholder;
-import com.github.imdmk.spenttime.placeholder.implementation.SpentTimePlaceholder;
-import org.bukkit.plugin.PluginDescriptionFile;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class PlaceholderRegistry {
 
-    private final SpentTimeFormattedPlaceholder spentTimeFormattedPlaceholder;
-    private final SpentTimePlaceholder spentTimePlaceholder;
+    private final Set<PlaceholderExpansion> placeholderExpansions = new HashSet<>();
 
-    public PlaceholderRegistry(PluginDescriptionFile pluginDescriptionFile) {
-        this.spentTimeFormattedPlaceholder = new SpentTimeFormattedPlaceholder(pluginDescriptionFile);
-        this.spentTimePlaceholder = new SpentTimePlaceholder(pluginDescriptionFile);
+    public void register(PlaceholderExpansion placeholder) {
+        this.placeholderExpansions.add(placeholder);
+
+        placeholder.register();
     }
 
-    public void registerAll() {
-        this.spentTimeFormattedPlaceholder.register();
-        this.spentTimePlaceholder.register();
+    public void unregister(PlaceholderExpansion placeholderExpansion) {
+        this.placeholderExpansions.remove(placeholderExpansion);
+
+        placeholderExpansion.unregister();
     }
 
     public void unregisterAll() {
-        this.spentTimeFormattedPlaceholder.unregister();
-        this.spentTimePlaceholder.unregister();
+        this.placeholderExpansions.forEach(this::unregister);
     }
 }
