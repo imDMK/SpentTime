@@ -78,21 +78,13 @@ public class SpentTimeTopGui {
         for (User user : topUsers) {
             position.incrementAndGet();
 
-            String userTimeSpent = DurationUtil.toHumanReadable(user.getSpentTimeDuration());
             OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(user.getUuid());
 
-            Component headItemTitle = this.guiConfiguration.headItemTitle
-                    .replaceText(builder -> builder.matchLiteral("{POSITION}").replacement(String.valueOf(position.get())))
-                    .replaceText(builder -> builder.matchLiteral("{PLAYER}").replacement(player.getName()))
-                    .replaceText(builder -> builder.matchLiteral("{TIME}").replacement(userTimeSpent));
+            Component headItemTitle = this.replaceUserInformation(this.guiConfiguration.headItemTitle, user, position.get());
 
             List<Component> headItemLore = (hasPermissionToReset ? this.guiConfiguration.headItemLoreAdmin : this.guiConfiguration.headItemLore)
                     .stream()
-                    .map(component -> component
-                            .replaceText(builder -> builder.matchLiteral("{POSITION}").replacement(String.valueOf(position.get())))
-                            .replaceText(builder -> builder.matchLiteral("{PLAYER}").replacement(player.getName()))
-                            .replaceText(builder -> builder.matchLiteral("{TIME}").replacement(userTimeSpent))
-                    )
+                    .map(component -> this.replaceUserInformation(component, user, position.get()))
                     .toList();
 
             GuiItem guiItem = ItemBuilder.skull()
@@ -160,6 +152,16 @@ public class SpentTimeTopGui {
                         paginatedGui.updateItem(event.getSlot(), this.guiConfiguration.noPreviousPageItem);
                     }
                 });
+    }
+
+    private Component replaceUserInformation(Component componentToReplace, User user, int userPosition) {
+        return componentToReplace
+                .replaceText(builder -> builder.matchLiteral("{PLAYER}")
+                        .replacement(user.getName()))
+                .replaceText(builder -> builder.matchLiteral("{POSITION}")
+                        .replacement(String.valueOf(userPosition)))
+                .replaceText(builder -> builder.matchLiteral("{TIME}")
+                        .replacement(DurationUtil.toHumanReadable(user.getSpentTimeDuration())));
     }
 }
 
