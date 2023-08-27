@@ -17,6 +17,8 @@ import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimePaginatedGu
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
+import com.github.imdmk.spenttime.placeholder.implementation.SpentTimeFormattedPlaceholder;
+import com.github.imdmk.spenttime.placeholder.implementation.SpentTimePlaceholder;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.scheduler.TaskSchedulerImpl;
 import com.github.imdmk.spenttime.update.UpdateService;
@@ -139,6 +141,9 @@ public class SpentTime {
             this.taskScheduler.runLaterAsync(updateService::check, DurationUtil.toTicks(Duration.ofSeconds(5)));
         }
 
+        /* Load all players; Used when the server reload */
+        this.loadAllPlayers();
+
         /* Metrics */
         this.metrics = new Metrics((JavaPlugin) plugin, 19362);
 
@@ -194,6 +199,14 @@ public class SpentTime {
                 .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration))
 
                 .register();
+    }
+
+    private void loadAllPlayers() {
+        this.taskScheduler.runSync(() -> {
+            for (Player player : this.server.getOnlinePlayers()) {
+                this.userManager.findOrCreateUser(player.getUniqueId(), player.getName());
+            }
+        });
     }
 
     private void closeAllPlayersInventory() {
