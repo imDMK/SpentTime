@@ -18,8 +18,8 @@ public class PluginConfiguration extends OkaeriConfig {
     })
     public Duration playerSpentTimeSaveDuration = Duration.ofMinutes(10L);
 
-    public String spentTimeResetTimeCommandPermission = "spenttime.resettime";
-    public String spentTimeResetTimeForAllCommandPermission = "spenttime.resettimeforall";
+    public String spentTimeResetPermission = "spenttime.resettime";
+    public String spentTimeResetForAllPermission = "spenttime.resettimeforall";
 
     public GuiConfiguration guiConfiguration = new GuiConfiguration();
     public MessageConfiguration messageConfiguration = new MessageConfiguration();

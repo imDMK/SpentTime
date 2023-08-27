@@ -6,6 +6,7 @@ import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -49,6 +50,21 @@ public class GuiConfiguration extends OkaeriConfig {
             ComponentUtil.createItalic("<green>The player has spent <red>{TIME} <green>on the server<dark_gray>."),
             ComponentUtil.createItalic("")
     );
+
+    @Comment("# Displayed when a player has permission to reset a player's spent time")
+    public List<Component> headItemLoreAdmin = List.of(
+            ComponentUtil.createItalic(""),
+            ComponentUtil.createItalic("<green>The player has spent <red>{TIME} <green>on the server<dark_gray>."),
+            ComponentUtil.createItalic(""),
+            ComponentUtil.createItalic("<red>Click SHIFT RIGHT <gray>to <red>reset {PLAYER} <gray>spent time.")
+    );
+
+    @Comment({
+            "# What type of button does the admin need to click to reset the player's spent time using the gui?",
+            "# When the admin clicks a different button than the set one, nothing will happen",
+            "# Types: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html"
+    })
+    public ClickType headItemLoreAdminResetClick = ClickType.SHIFT_RIGHT;
 
     @Comment("# Include the item that is around the gui?")
     public boolean borderItemEnabled = true;

@@ -12,8 +12,7 @@ import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.configuration.PluginConfiguration;
 import com.github.imdmk.spenttime.configuration.serializer.pack.SpentTimePack;
 import com.github.imdmk.spenttime.database.DatabaseManager;
-import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimeGui;
-import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimePaginatedGui;
+import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
@@ -72,8 +71,7 @@ public class SpentTime {
 
     private final TaskScheduler taskScheduler;
 
-    private final TopSpentTimeGui topSpentTimeGui;
-    private final TopSpentTimePaginatedGui topSpentTimePaginatedGui;
+    private final SpentTimeTopGui spentTimeTopGui;
 
     private final LiteCommands<CommandSender> liteCommands;
 
@@ -116,8 +114,7 @@ public class SpentTime {
         this.taskScheduler.runTimerAsync(new UserSpentTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.playerSpentTimeSaveDuration));
 
         /* Guis */
-        this.topSpentTimeGui = new TopSpentTimeGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
-        this.topSpentTimePaginatedGui = new TopSpentTimePaginatedGui(this.server, this.pluginConfiguration.guiConfiguration, this.taskScheduler);
+        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration, this.pluginConfiguration.messageConfiguration, this.pluginConfiguration.guiConfiguration, this.notificationSender, this.userRepository, this.taskScheduler);
 
         /* Listeners */
         Stream.of(
@@ -197,7 +194,7 @@ public class SpentTime {
                 .commandInstance(
                         new SpentTimeCommand(this.server, this.pluginConfiguration.messageConfiguration, this.notificationSender),
                         new SpentTimeResetCommand(this.server, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.taskScheduler),
-                        new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.topSpentTimeGui, this.topSpentTimePaginatedGui)
+                        new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.spentTimeTopGui)
                 )
 
                 .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration))

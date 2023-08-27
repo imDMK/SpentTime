@@ -2,8 +2,7 @@ package com.github.imdmk.spenttime.command;
 
 import com.github.imdmk.spenttime.configuration.MessageConfiguration;
 import com.github.imdmk.spenttime.gui.GuiConfiguration;
-import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimeGui;
-import com.github.imdmk.spenttime.gui.implementation.top.TopSpentTimePaginatedGui;
+import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.user.User;
@@ -24,16 +23,14 @@ public class SpentTimeTopCommand {
     private final MessageConfiguration messageConfiguration;
     private final UserRepository userRepository;
     private final NotificationSender notificationSender;
-    private final TopSpentTimeGui topSpentTimeGui;
-    private final TopSpentTimePaginatedGui topSpentTimePaginatedGui;
+    private final SpentTimeTopGui spentTimeTopGui;
 
-    public SpentTimeTopCommand(GuiConfiguration guiConfiguration, MessageConfiguration messageConfiguration, UserRepository userRepository, NotificationSender notificationSender, TopSpentTimeGui topSpentTimeGui, TopSpentTimePaginatedGui topSpentTimePaginatedGui) {
+    public SpentTimeTopCommand(GuiConfiguration guiConfiguration, MessageConfiguration messageConfiguration, UserRepository userRepository, NotificationSender notificationSender, SpentTimeTopGui spentTimeTopGui) {
         this.guiConfiguration = guiConfiguration;
         this.messageConfiguration = messageConfiguration;
         this.userRepository = userRepository;
         this.notificationSender = notificationSender;
-        this.topSpentTimeGui = topSpentTimeGui;
-        this.topSpentTimePaginatedGui = topSpentTimePaginatedGui;
+        this.spentTimeTopGui = spentTimeTopGui;
     }
 
     @Async
@@ -47,11 +44,7 @@ public class SpentTimeTopCommand {
         }
 
         if (this.guiConfiguration.enabled) {
-            switch (this.guiConfiguration.type) {
-                case STANDARD -> this.topSpentTimeGui.open(player, topUsers);
-                case PAGINATED -> this.topSpentTimePaginatedGui.open(player, topUsers);
-                default -> throw new IllegalStateException("Unexpected gui type value: " + this.guiConfiguration.type);
-            }
+            this.spentTimeTopGui.open(player, topUsers);
             return;
         }
 

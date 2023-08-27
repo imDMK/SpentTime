@@ -15,8 +15,8 @@ public class SpentTimeResetCommandEditor implements CommandEditor {
 
     @Override
     public State edit(State state) {
-        state.editChild("reset", s -> s.permission(List.of(this.pluginConfiguration.spentTimeResetTimeCommandPermission)));
-        state.editChild("reset-all", s -> s.permission(List.of(this.pluginConfiguration.spentTimeResetTimeForAllCommandPermission)));
+        state.editChild("reset", s -> s.permission(List.of(this.pluginConfiguration.spentTimeResetPermission)));
+        state.editChild("reset-all", s -> s.permission(List.of(this.pluginConfiguration.spentTimeResetForAllPermission)));
 
         return state;
     }
