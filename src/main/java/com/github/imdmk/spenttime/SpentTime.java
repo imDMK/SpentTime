@@ -10,11 +10,14 @@ import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.configuration.PluginConfiguration;
-import com.github.imdmk.spenttime.configuration.serializer.pack.SpentTimePack;
+import com.github.imdmk.spenttime.configuration.serializer.ComponentSerializer;
+import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
+import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
 import com.github.imdmk.spenttime.database.DatabaseManager;
 import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.notification.NotificationSerializer;
 import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
 import com.github.imdmk.spenttime.placeholder.implementation.SpentTimeFormattedPlaceholder;
 import com.github.imdmk.spenttime.placeholder.implementation.SpentTimePlaceholder;
@@ -172,7 +175,13 @@ public class SpentTime {
 
     private PluginConfiguration createConfiguration(File dataFolder) {
         return ConfigManager.create(PluginConfiguration.class, (it) -> {
-            it.withConfigurer(new YamlBukkitConfigurer(), new SpentTimePack(), new SerdesCommons());
+            it.withConfigurer(new YamlBukkitConfigurer(), new SerdesCommons());
+            it.withSerdesPack(registry -> {
+                registry.register(new ComponentSerializer());
+                registry.register(new ItemMetaSerializer());
+                registry.register(new ItemStackSerializer());
+                registry.register(new NotificationSerializer());
+            });
             it.withBindFile(new File(dataFolder, "configuration.yml"));
             it.withRemoveOrphans(true);
             it.saveDefaults();
