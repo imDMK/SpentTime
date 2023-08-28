@@ -5,7 +5,10 @@ import eu.okaeri.configs.annotation.Comment;
 
 public class DatabaseConfiguration extends OkaeriConfig {
 
-    @Comment("# Database modes: SQLITE, MYSQL, MARIADB")
+    @Comment({
+            "# Database mode",
+            "# Supported databases: SQLITE, MYSQL, MARIADB"
+    })
     public DatabaseMode databaseMode = DatabaseMode.SQLITE;
 
     public String hostname = "localhost";
