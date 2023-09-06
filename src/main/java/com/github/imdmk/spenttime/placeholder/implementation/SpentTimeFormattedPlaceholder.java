@@ -37,7 +37,7 @@ public class SpentTimeFormattedPlaceholder extends PlaceholderExpansion {
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
         if (player == null) {
-            return "0s";
+            return null;
         }
 
         Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
@@ -47,7 +47,7 @@ public class SpentTimeFormattedPlaceholder extends PlaceholderExpansion {
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         if (player == null) {
-            return "0s";
+            return null;
         }
 
         Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
