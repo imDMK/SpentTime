@@ -3,7 +3,6 @@ package com.github.imdmk.spenttime.notification;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,18 +10,16 @@ import org.bukkit.entity.Player;
 public class NotificationSender {
 
     private final AudienceProvider audienceProvider;
-    private final MiniMessage miniMessage;
 
-    public NotificationSender(AudienceProvider audienceProvider, MiniMessage miniMessage) {
+    public NotificationSender(AudienceProvider audienceProvider) {
         this.audienceProvider = audienceProvider;
-        this.miniMessage = miniMessage;
     }
 
     public void sendMessage(CommandSender sender, Notification notification) {
         NotificationType type = notification.type();
+        Component message = notification.message();
 
         Audience audience = this.createAudience(sender);
-        Component message = this.miniMessage.deserialize(notification.message());
 
         switch (type) {
             case CHAT -> audience.sendMessage(message);

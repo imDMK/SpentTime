@@ -41,7 +41,6 @@ import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.serdes.commons.SerdesCommons;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -110,7 +109,7 @@ public class SpentTime {
 
         /* Adventure */
         this.bukkitAudiences = BukkitAudiences.create(plugin);
-        this.notificationSender = new NotificationSender(this.bukkitAudiences, MiniMessage.miniMessage());
+        this.notificationSender = new NotificationSender(this.bukkitAudiences);
 
         /* Tasks */
         this.taskScheduler = new TaskSchedulerImpl(plugin, this.server);
