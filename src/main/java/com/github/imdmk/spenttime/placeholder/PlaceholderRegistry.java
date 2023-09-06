@@ -16,8 +16,6 @@ public class PlaceholderRegistry {
     }
 
     public void unregister(PlaceholderExpansion placeholderExpansion) {
-        this.placeholderExpansions.remove(placeholderExpansion);
-
         placeholderExpansion.unregister();
     }
 
