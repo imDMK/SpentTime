@@ -7,7 +7,6 @@ import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
 import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.async.Async;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
 import org.bukkit.OfflinePlayer;
@@ -30,7 +29,6 @@ public class SpentTimeCommand {
         this.notificationSender = notificationSender;
     }
 
-    @Async
     @Execute(required = 0)
     void showSelfSpentTime(Player player) {
         Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
@@ -43,7 +41,6 @@ public class SpentTimeCommand {
         this.notificationSender.sendMessage(player, notification);
     }
 
-    @Async
     @Execute(required = 1)
     void showTargetSpentTime(CommandSender sender, @Arg User target) {
         OfflinePlayer targetPlayer = this.server.getOfflinePlayer(target.getUuid());
