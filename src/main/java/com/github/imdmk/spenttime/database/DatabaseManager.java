@@ -37,7 +37,9 @@ public class DatabaseManager {
         this.dataSource.addDataSourceProperty("useServerPrepStmts", true);
 
         String databaseModeName = this.databaseConfiguration.databaseMode.name().toUpperCase();
-        switch (DatabaseMode.valueOf(databaseModeName)) {
+        DatabaseMode databaseMode = DatabaseMode.valueOf(databaseModeName);
+
+        switch (databaseMode) {
             case SQLITE -> {
                 this.dataSource.setDriverClassName("org.sqlite.JDBC");
                 this.dataSource.setJdbcUrl("jdbc:sqlite:" + this.dataFolder + "/database.db");
