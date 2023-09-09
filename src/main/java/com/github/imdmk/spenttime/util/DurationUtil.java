@@ -9,8 +9,13 @@ public class DurationUtil {
     }
 
     public static String toHumanReadable(Duration duration) {
-        return Duration.ofSeconds(duration.toSeconds())
-                .toString()
+        Duration ofSeconds = Duration.ofSeconds(duration.toSeconds());
+
+        if (ofSeconds.isZero() || ofSeconds.isNegative()) {
+            return "<1s";
+        }
+
+        return ofSeconds.toString()
                 .substring(2)
                 .replaceAll("(\\d[HMS])(?!$)", "$1 ")
                 .toLowerCase();
