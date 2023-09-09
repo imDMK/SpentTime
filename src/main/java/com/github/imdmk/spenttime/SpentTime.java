@@ -121,6 +121,7 @@ public class SpentTime {
         /* Listeners */
         Stream.of(
             new UserCreateListener(this.userRepository, this.userManager, this.taskScheduler),
+            new UserLoadListener(this.server, this.userManager),
             new UserSaveListener(this.userManager, this.userRepository, this.taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
@@ -143,9 +144,6 @@ public class SpentTime {
 
             this.taskScheduler.runLaterAsync(updateService::check, DurationUtil.toTicks(Duration.ofSeconds(5)));
         }
-
-        /* Load all players; Used when the server reload */
-        this.loadAllPlayers();
 
         /* Metrics */
         this.metrics = new Metrics((JavaPlugin) plugin, 19362);
@@ -208,14 +206,6 @@ public class SpentTime {
                 .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration))
 
                 .register();
-    }
-
-    private void loadAllPlayers() {
-        this.taskScheduler.runSync(() -> {
-            for (Player player : this.server.getOnlinePlayers()) {
-                this.userManager.findOrCreateUser(player.getUniqueId(), player.getName());
-            }
-        });
     }
 
     private void closeAllPlayersInventory() {
