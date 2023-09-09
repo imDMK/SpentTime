@@ -27,6 +27,7 @@ import com.github.imdmk.spenttime.update.UpdateService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.listener.UserCreateListener;
+import com.github.imdmk.spenttime.user.listener.UserLoadListener;
 import com.github.imdmk.spenttime.user.listener.UserSaveListener;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.user.repository.impl.UserEmptyRepositoryImpl;
@@ -45,6 +46,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -157,6 +159,7 @@ public class SpentTime {
         }
 
         this.bukkitAudiences.close();
+
         this.liteCommands.getPlatform().unregisterAll();
 
         if (this.placeholderRegistry != null) {
@@ -165,7 +168,7 @@ public class SpentTime {
 
         this.metrics.shutdown();
 
-        this.closeAllPlayersInventory();
+        this.closeAllPlayersGuis();
 
         this.logger.info("GoodBye...");
     }
@@ -208,8 +211,12 @@ public class SpentTime {
                 .register();
     }
 
-    private void closeAllPlayersInventory() {
+    private void closeAllPlayersGuis() {
         for (Player player : this.server.getOnlinePlayers()) {
+            if (player.getOpenInventory().getType() != InventoryType.CHEST) {
+                return;
+            }
+
             player.closeInventory();
         }
     }
