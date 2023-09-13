@@ -3,16 +3,15 @@ package com.github.imdmk.spenttime;
 import com.github.imdmk.spenttime.command.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.SpentTimeResetCommand;
 import com.github.imdmk.spenttime.command.SpentTimeTopCommand;
-import com.github.imdmk.spenttime.command.argument.PlayerArgument;
 import com.github.imdmk.spenttime.command.argument.UserArgument;
 import com.github.imdmk.spenttime.command.editor.SpentTimeResetCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.configuration.PluginConfiguration;
-import com.github.imdmk.spenttime.configuration.serializer.ComponentSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
+import com.github.imdmk.spenttime.configuration.transformer.ComponentSerializer;
 import com.github.imdmk.spenttime.database.DatabaseManager;
 import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.notification.Notification;
@@ -38,6 +37,7 @@ import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
+import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.serdes.commons.SerdesCommons;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
@@ -191,7 +191,7 @@ public class SpentTime {
 
     private LiteCommands<CommandSender> registerLiteCommands() {
         return LiteBukkitAdventurePlatformFactory.builder(this.server, "SpentTime", false, this.bukkitAudiences, true)
-                .argument(Player.class, new PlayerArgument(this.server, this.pluginConfiguration.messageConfiguration))
+                .argument(Player.class, new BukkitPlayerArgument<>(this.server, this.pluginConfiguration.messageConfiguration.playerNotFoundNotification))
                 .argument(User.class, new UserArgument(this.pluginConfiguration.messageConfiguration, this.userManager))
 
                 .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("Only player can use this command."))

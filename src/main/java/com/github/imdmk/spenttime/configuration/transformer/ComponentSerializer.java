@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.configuration.serializer;
+package com.github.imdmk.spenttime.configuration.transformer;
 
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import eu.okaeri.configs.schema.GenericsPair;
