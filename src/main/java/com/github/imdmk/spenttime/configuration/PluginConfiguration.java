@@ -9,6 +9,7 @@ import java.time.Duration;
 
 public class PluginConfiguration extends OkaeriConfig {
 
+    @Comment("# Check for plugin update after the administrator join to server?")
     public boolean checkForUpdate = true;
 
     @Comment({

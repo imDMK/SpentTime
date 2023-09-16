@@ -22,6 +22,7 @@ import com.github.imdmk.spenttime.placeholder.implementation.SpentTimeFormattedP
 import com.github.imdmk.spenttime.placeholder.implementation.SpentTimePlaceholder;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.scheduler.TaskSchedulerImpl;
+import com.github.imdmk.spenttime.update.UpdateListener;
 import com.github.imdmk.spenttime.update.UpdateService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
@@ -109,6 +110,9 @@ public class SpentTime {
 
         this.userManager = new UserManager(this.userRepository);
 
+        /* Services */
+        UpdateService updateService = new UpdateService(plugin.getDescription());
+
         /* Adventure */
         this.bukkitAudiences = BukkitAudiences.create(plugin);
         this.notificationSender = new NotificationSender(this.bukkitAudiences);
@@ -124,7 +128,8 @@ public class SpentTime {
         Stream.of(
             new UserCreateListener(this.userRepository, this.userManager, this.taskScheduler),
             new UserLoadListener(this.server, this.userManager),
-            new UserSaveListener(this.userManager, this.userRepository, this.taskScheduler)
+            new UserSaveListener(this.userManager, this.userRepository, this.taskScheduler),
+            new UpdateListener(this.pluginConfiguration, this.notificationSender, updateService, this.taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
         /* Commands */
@@ -138,13 +143,6 @@ public class SpentTime {
                     new SpentTimeFormattedPlaceholder(plugin.getDescription()),
                     new SpentTimePlaceholder(plugin.getDescription())
             ).forEach(this.placeholderRegistry::register);
-        }
-
-        /* Update check */
-        if (this.pluginConfiguration.checkForUpdate) {
-            UpdateService updateService = new UpdateService(plugin.getDescription(), this.logger);
-
-            this.taskScheduler.runLaterAsync(updateService::check, DurationUtil.toTicks(Duration.ofSeconds(5)));
         }
 
         /* Metrics */
