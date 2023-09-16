@@ -83,7 +83,7 @@ public class SpentTimeResetCommand {
                 .placeholder("{PLAYER}", target.getName())
                 .build();
 
-        this.notificationSender.sendMessage(sender, notification);
+        this.notificationSender.send(sender, notification);
     }
 
     private void resetGlobalSpentTime(CommandSender sender) {
@@ -93,6 +93,6 @@ public class SpentTimeResetCommand {
             offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
         }
 
-        this.notificationSender.sendMessage(sender, this.messageConfiguration.resetGlobalSpentTimeNotification);
+        this.notificationSender.send(sender, this.messageConfiguration.resetGlobalSpentTimeNotification);
     }
 }

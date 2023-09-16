@@ -38,7 +38,7 @@ public class SpentTimeCommand {
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(playerSpentTime))
                 .build();
 
-        this.notificationSender.sendMessage(player, notification);
+        this.notificationSender.send(player, notification);
     }
 
     @Execute(required = 1)
@@ -52,6 +52,6 @@ public class SpentTimeCommand {
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(targetSpentTime))
                 .build();
 
-        this.notificationSender.sendMessage(sender, notification);
+        this.notificationSender.send(sender, notification);
     }
 }

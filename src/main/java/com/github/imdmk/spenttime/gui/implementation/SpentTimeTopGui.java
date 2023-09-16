@@ -115,7 +115,7 @@ public class SpentTimeTopGui {
                                             .placeholder("{PLAYER}", user.getName())
                                             .build();
 
-                                    this.notificationSender.sendMessage(player, notification);
+                                    this.notificationSender.send(player, notification);
 
                                     gui.close(player);
                                 })

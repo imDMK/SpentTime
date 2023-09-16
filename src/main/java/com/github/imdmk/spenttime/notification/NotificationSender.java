@@ -15,7 +15,7 @@ public class NotificationSender {
         this.audienceProvider = audienceProvider;
     }
 
-    public void sendMessage(CommandSender sender, Notification notification) {
+    public void send(CommandSender sender, Notification notification) {
         NotificationType type = notification.type();
         Component message = notification.message();
 

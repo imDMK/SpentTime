@@ -39,7 +39,7 @@ public class SpentTimeTopCommand {
         List<User> topUsers = this.userRepository.findByOrderSpentTime(this.guiConfiguration.querySize);
 
         if (topUsers.isEmpty()) {
-            this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeIsEmpty);
+            this.notificationSender.send(player, this.messageConfiguration.topSpentTimeIsEmpty);
             return;
         }
 
@@ -48,7 +48,7 @@ public class SpentTimeTopCommand {
             return;
         }
 
-        this.notificationSender.sendMessage(player, this.messageConfiguration.topSpentTimeListFirstNotification);
+        this.notificationSender.send(player, this.messageConfiguration.topSpentTimeListFirstNotification);
 
         AtomicInteger position = new AtomicInteger(0);
 
@@ -62,7 +62,7 @@ public class SpentTimeTopCommand {
                     .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
                     .build();
 
-            this.notificationSender.sendMessage(player, notification);
+            this.notificationSender.send(player, notification);
         }
     }
 }

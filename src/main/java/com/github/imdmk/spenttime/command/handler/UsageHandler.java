@@ -26,11 +26,11 @@ public class UsageHandler implements InvalidUsageHandler<CommandSender> {
                     .placeholder("{USAGE}", schematic.first())
                     .build();
 
-            this.notificationSender.sendMessage(sender, notification);
+            this.notificationSender.send(sender, notification);
             return;
         }
 
-        this.notificationSender.sendMessage(sender, this.messageConfiguration.invalidUsageFirstNotification);
+        this.notificationSender.send(sender, this.messageConfiguration.invalidUsageFirstNotification);
 
         for (String schema : schematic.getSchematics()) {
             Notification notification = Notification.builder()
@@ -38,7 +38,7 @@ public class UsageHandler implements InvalidUsageHandler<CommandSender> {
                     .placeholder("{USAGE}", schema)
                     .build();
 
-            this.notificationSender.sendMessage(sender, notification);
+            this.notificationSender.send(sender, notification);
         }
     }
 }

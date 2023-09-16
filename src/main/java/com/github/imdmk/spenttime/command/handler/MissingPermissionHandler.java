@@ -25,6 +25,6 @@ public class MissingPermissionHandler implements PermissionHandler<CommandSender
                 .placeholder("{PERMISSIONS}", requiredPermissions.getPermissions())
                 .build();
 
-        this.notificationSender.sendMessage(commandSender, notification);
+        this.notificationSender.send(commandSender, notification);
     }
 }
