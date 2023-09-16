@@ -58,7 +58,7 @@ public class UpdateListener implements Listener {
             String message = UPDATE_AVAILABLE.formatted(latestRelease.getTag(), latestRelease.getPageUrl());
             Notification updateAvailableNotification = new Notification(NotificationType.CHAT, message);
 
-            this.notificationSender.send(player,updateAvailableNotification);
+            this.notificationSender.send(player, updateAvailableNotification);
         }
         catch (GitException gitException) {
             String message = UPDATE_EXCEPTION.formatted(gitException.getMessage());
