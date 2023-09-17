@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime.configuration;
 
+import com.github.imdmk.spenttime.command.configuration.CommandConfiguration;
 import com.github.imdmk.spenttime.database.DatabaseConfiguration;
 import com.github.imdmk.spenttime.gui.GuiConfiguration;
 import eu.okaeri.configs.OkaeriConfig;
@@ -19,9 +20,7 @@ public class PluginConfiguration extends OkaeriConfig {
     })
     public Duration playerSpentTimeSaveDuration = Duration.ofMinutes(10L);
 
-    public String spentTimeResetPermission = "spenttime.resettime";
-    public String spentTimeResetForAllPermission = "spenttime.resettimeforall";
-
+    public CommandConfiguration commandConfiguration = new CommandConfiguration();
     public GuiConfiguration guiConfiguration = new GuiConfiguration();
     public MessageConfiguration messageConfiguration = new MessageConfiguration();
     public DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();

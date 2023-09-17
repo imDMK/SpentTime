@@ -1,7 +1,7 @@
 package com.github.imdmk.spenttime.gui.implementation;
 
+import com.github.imdmk.spenttime.command.configuration.CommandConfiguration;
 import com.github.imdmk.spenttime.configuration.MessageConfiguration;
-import com.github.imdmk.spenttime.configuration.PluginConfiguration;
 import com.github.imdmk.spenttime.gui.GuiConfiguration;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
@@ -28,16 +28,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SpentTimeTopGui {
 
     private final Server server;
-    private final PluginConfiguration pluginConfiguration;
+    private final CommandConfiguration commandConfiguration;
     private final MessageConfiguration messageConfiguration;
     private final GuiConfiguration guiConfiguration;
     private final NotificationSender notificationSender;
     private final UserRepository userRepository;
     private final TaskScheduler taskScheduler;
 
-    public SpentTimeTopGui(Server server, PluginConfiguration pluginConfiguration, MessageConfiguration messageConfiguration, GuiConfiguration guiConfiguration, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
+    public SpentTimeTopGui(Server server, CommandConfiguration commandConfiguration, MessageConfiguration messageConfiguration, GuiConfiguration guiConfiguration, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
         this.server = server;
-        this.pluginConfiguration = pluginConfiguration;
+        this.commandConfiguration = commandConfiguration;
         this.messageConfiguration = messageConfiguration;
         this.guiConfiguration = guiConfiguration;
         this.notificationSender = notificationSender;
@@ -71,7 +71,7 @@ public class SpentTimeTopGui {
 
         gui.setItem(this.guiConfiguration.exitItemSlot, exitGuiItem);
 
-        boolean hasPermissionToReset = player.hasPermission(this.pluginConfiguration.spentTimeResetPermission);
+        boolean hasPermissionToReset = player.hasPermission(this.commandConfiguration.spentTimeResetPermission);
 
         AtomicInteger position = new AtomicInteger(0);
 

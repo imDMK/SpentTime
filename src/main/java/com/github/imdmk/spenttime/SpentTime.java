@@ -4,6 +4,7 @@ import com.github.imdmk.spenttime.command.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.SpentTimeResetCommand;
 import com.github.imdmk.spenttime.command.SpentTimeTopCommand;
 import com.github.imdmk.spenttime.command.argument.UserArgument;
+import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
 import com.github.imdmk.spenttime.command.editor.SpentTimeResetCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
@@ -122,7 +123,7 @@ public class SpentTime {
         this.taskScheduler.runTimerAsync(new UserSpentTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.playerSpentTimeSaveDuration));
 
         /* Guis */
-        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration, this.pluginConfiguration.messageConfiguration, this.pluginConfiguration.guiConfiguration, this.notificationSender, this.userRepository, this.taskScheduler);
+        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration.commandConfiguration, this.pluginConfiguration.messageConfiguration, this.pluginConfiguration.guiConfiguration, this.notificationSender, this.userRepository, this.taskScheduler);
 
         /* Listeners */
         Stream.of(
@@ -204,7 +205,8 @@ public class SpentTime {
                         new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.spentTimeTopGui)
                 )
 
-                .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration))
+                .commandEditor(SpentTimeCommand.class, new SpentTimeCommandEditor(this.pluginConfiguration.commandConfiguration))
+                .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration.commandConfiguration))
 
                 .register();
     }
