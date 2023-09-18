@@ -1,18 +1,11 @@
 package com.github.imdmk.spenttime.notification;
 
-import com.github.imdmk.spenttime.util.ComponentUtil;
-import net.kyori.adventure.text.Component;
-
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-public record Notification(NotificationType type, Component message) {
-
-    public Notification(NotificationType notificationType, String message) {
-        this(notificationType, ComponentUtil.deserialize(message));
-    }
+public record Notification(NotificationType type, String message) {
 
     public static NotificationBuilder builder() {
         return new NotificationBuilder();
@@ -21,7 +14,7 @@ public record Notification(NotificationType type, Component message) {
     public static class NotificationBuilder {
 
         private NotificationType type;
-        private Component message;
+        private String message;
 
         private final Map<String, String> placeholders = new HashMap<>();
 
@@ -39,7 +32,7 @@ public record Notification(NotificationType type, Component message) {
         }
 
         @CheckReturnValue
-        public NotificationBuilder message(@Nonnull Component message) {
+        public NotificationBuilder message(@Nonnull String message) {
             this.message = message;
             return this;
         }
@@ -64,8 +57,7 @@ public record Notification(NotificationType type, Component message) {
 
         private void replacePlaceholders() {
             for (Map.Entry<String, String> entry : this.placeholders.entrySet()) {
-                this.message = this.message.replaceText(b ->
-                        b.matchLiteral(entry.getKey()).replacement(entry.getValue()));
+                this.message = this.message.replace(entry.getKey(), entry.getValue());
             }
         }
 

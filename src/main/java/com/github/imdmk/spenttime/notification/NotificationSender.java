@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime.notification;
 
+import com.github.imdmk.spenttime.util.ComponentUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
@@ -16,10 +17,10 @@ public class NotificationSender {
     }
 
     public void send(CommandSender sender, Notification notification) {
-        NotificationType type = notification.type();
-        Component message = notification.message();
-
         Audience audience = this.createAudience(sender);
+
+        NotificationType type = notification.type();
+        Component message = ComponentUtil.deserialize(notification.message());
 
         switch (type) {
             case CHAT -> audience.sendMessage(message);
