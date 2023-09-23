@@ -8,7 +8,7 @@
 [![PaperMC](https://img.shields.io/badge/Paper-004ee9.svg)](https://hangar.papermc.io/imDMK/SpentTime)
 [![bStats](https://img.shields.io/badge/bStats-00695c)](https://bstats.org/plugin/bukkit/SpentTime/19362)
 
-Efficiently spent time plugin with many features and configuration possibilities.
+An efficient plugin for your time spent in the game with many features and configuration possibilities.
 
 # Features
 * Top players spent time (with Gui).
