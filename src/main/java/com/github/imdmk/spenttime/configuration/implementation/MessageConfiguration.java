@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.configuration;
+package com.github.imdmk.spenttime.configuration.implementation;
 
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationType;

@@ -3,7 +3,7 @@ package com.github.imdmk.spenttime.update;
 import com.eternalcode.gitcheck.GitCheckResult;
 import com.eternalcode.gitcheck.git.GitException;
 import com.eternalcode.gitcheck.git.GitRelease;
-import com.github.imdmk.spenttime.configuration.PluginConfiguration;
+import com.github.imdmk.spenttime.configuration.implementation.PluginConfiguration;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.NotificationType;

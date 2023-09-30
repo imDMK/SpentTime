@@ -9,15 +9,12 @@ import com.github.imdmk.spenttime.command.editor.SpentTimeResetCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
-import com.github.imdmk.spenttime.configuration.PluginConfiguration;
-import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
-import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
-import com.github.imdmk.spenttime.configuration.transformer.ComponentSerializer;
+import com.github.imdmk.spenttime.configuration.ConfigurationFactory;
+import com.github.imdmk.spenttime.configuration.implementation.PluginConfiguration;
 import com.github.imdmk.spenttime.database.DatabaseManager;
 import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSerializer;
 import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
 import com.github.imdmk.spenttime.placeholder.implementation.SpentTimeFormattedPlaceholder;
 import com.github.imdmk.spenttime.placeholder.implementation.SpentTimePlaceholder;
@@ -40,9 +37,6 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
-import eu.okaeri.configs.ConfigManager;
-import eu.okaeri.configs.serdes.commons.SerdesCommons;
-import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
@@ -93,7 +87,7 @@ public class SpentTime {
         this.server = plugin.getServer();
 
         /* Configuration */
-        this.pluginConfiguration = this.createConfiguration(dataFolder);
+        this.pluginConfiguration = ConfigurationFactory.create(PluginConfiguration.class, new File(dataFolder, "configuration.yml"));
 
         /* Database */
         this.databaseManager = new DatabaseManager(this.logger, dataFolder, this.pluginConfiguration.databaseConfiguration);
@@ -137,7 +131,7 @@ public class SpentTime {
         this.liteCommands = this.registerLiteCommands();
 
         /* PlaceholderAPI */
-        if (this.server.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (this.server.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.placeholderRegistry = new PlaceholderRegistry();
 
             Stream.of(
@@ -170,22 +164,6 @@ public class SpentTime {
         this.closeAllPlayersGuis();
 
         this.logger.info("GoodBye...");
-    }
-
-    private PluginConfiguration createConfiguration(File dataFolder) {
-        return ConfigManager.create(PluginConfiguration.class, (it) -> {
-            it.withConfigurer(new YamlBukkitConfigurer(), new SerdesCommons());
-            it.withSerdesPack(registry -> {
-                registry.register(new ComponentSerializer());
-                registry.register(new ItemMetaSerializer());
-                registry.register(new ItemStackSerializer());
-                registry.register(new NotificationSerializer());
-            });
-            it.withBindFile(new File(dataFolder, "configuration.yml"));
-            it.withRemoveOrphans(true);
-            it.saveDefaults();
-            it.load(true);
-        });
     }
 
     private LiteCommands<CommandSender> registerLiteCommands() {

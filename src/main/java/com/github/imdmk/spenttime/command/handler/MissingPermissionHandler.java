@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.command.handler;
 
-import com.github.imdmk.spenttime.configuration.MessageConfiguration;
+import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import dev.rollczi.litecommands.command.LiteInvocation;

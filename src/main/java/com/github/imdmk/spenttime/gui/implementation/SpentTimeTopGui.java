@@ -1,7 +1,7 @@
 package com.github.imdmk.spenttime.gui.implementation;
 
 import com.github.imdmk.spenttime.command.configuration.CommandConfiguration;
-import com.github.imdmk.spenttime.configuration.MessageConfiguration;
+import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
 import com.github.imdmk.spenttime.gui.GuiConfiguration;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;

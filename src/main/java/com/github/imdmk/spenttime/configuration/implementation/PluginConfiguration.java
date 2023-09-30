@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.configuration;
+package com.github.imdmk.spenttime.configuration.implementation;
 
 import com.github.imdmk.spenttime.command.configuration.CommandConfiguration;
 import com.github.imdmk.spenttime.database.DatabaseConfiguration;
