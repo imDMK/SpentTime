@@ -1,6 +1,6 @@
 # SpentTime
 
-[![Build Status](https://github.com/imDMK/SpentTime/actions/workflows/maven.yml/badge.svg)](https://github.com/imDMK/SpentTime/actions/workflows/maven.yml)
+[![Build Status](https://github.com/imDMK/SpentTime/actions/workflows/gradle.yml/badge.svg)](https://github.com/imDMK/SpentTime/actions/workflows/gradle.yml)
 ![JDK](https://img.shields.io/badge/JDK-1.17-blue.svg)
 ![Supported versions](https://img.shields.io/badge/Minecraft-1.17--1.20.1-green.svg)
 [![SpigotMC](https://img.shields.io/badge/SpigotMC-yellow.svg)](https://www.spigotmc.org/resources/spenttime.111938/)
