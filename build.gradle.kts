@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.github.imdmk"
-version = "2.0.8"
+version = "1.0.3"
 
 repositories {
     mavenCentral()
