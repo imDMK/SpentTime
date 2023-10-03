@@ -130,7 +130,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.3.0</version>
+            <version>4.3.1</version>
         </dependency>
 
         <!-- HikariCP -->
@@ -214,7 +214,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.12.3</version>
+                        <version>10.12.4</version>
                     </dependency>
                 </dependencies>
                 <executions>
