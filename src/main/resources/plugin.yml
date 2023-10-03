@@ -1,9 +1,0 @@
-name: SpentTime
-version: ${project.version}
-api-version: 1.17
-main: com.github.imdmk.spenttime.SpentTimePlugin
-author: DMK
-description: Spent time plugin
-website: https://github.com/imDMK/SpentTime
-softdepend:
-  - PlaceholderAPI

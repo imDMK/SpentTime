@@ -40,15 +40,9 @@ public class UserManager {
     }
 
     public User findOrCreateUser(UUID uuid, String name) {
-        Optional<User> userOptional = this.getUser(uuid);
-        if (userOptional.isPresent()) {
-            return userOptional.get();
-        }
+        Optional<User> userOptional = this.getOrFindUser(uuid);
 
-        Optional<User> foundedUserOptional = this.findUser(uuid);
-
-        return foundedUserOptional
-                .orElseGet(() -> this.createUser(uuid, name));
+        return userOptional.orElseGet(() -> this.createUser(uuid, name));
     }
 
     public Optional<User> findUser(UUID uuid) {
