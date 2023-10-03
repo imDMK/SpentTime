@@ -1,5 +1,7 @@
-package com.github.imdmk.spenttime.user;
+package com.github.imdmk.spenttime;
 
+import com.github.imdmk.spenttime.user.User;
+import com.github.imdmk.spenttime.user.UserManager;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.user.repository.impl.UserEmptyRepositoryImpl;
 import org.junit.jupiter.api.Test;
@@ -50,5 +52,3 @@ public class UserManagerTest {
         assertEquals(3, userManager.getNameUserCache().size());
     }
 }
-
-

@@ -27,7 +27,9 @@ public class ItemMetaSerializer implements ObjectSerializer<ItemMeta> {
     @Override
     public void serialize(@NonNull ItemMeta itemMeta, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
         if (itemMeta.hasDisplayName()) {
-            data.add("display-name", itemMeta.getDisplayName(), Component.class);
+            Component displayName = ComponentUtil.deserialize(itemMeta.getDisplayName());
+
+            data.add("display-name", displayName, Component.class);
         }
 
         if (itemMeta.hasLore()) {
