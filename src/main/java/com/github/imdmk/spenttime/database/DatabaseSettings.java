@@ -3,7 +3,7 @@ package com.github.imdmk.spenttime.database;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 
-public class DatabaseConfiguration extends OkaeriConfig {
+public class DatabaseSettings extends OkaeriConfig {
 
     @Comment({
             "# Database mode",

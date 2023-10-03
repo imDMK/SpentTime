@@ -2,7 +2,7 @@ package com.github.imdmk.spenttime.configuration;
 
 import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
-import com.github.imdmk.spenttime.configuration.transformer.ComponentSerializer;
+import com.github.imdmk.spenttime.configuration.transformer.ComponentStringTransformer;
 import com.github.imdmk.spenttime.notification.NotificationSerializer;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
@@ -22,7 +22,7 @@ public class ConfigurationFactory {
 
         configFile.withConfigurer(new YamlBukkitConfigurer(), new SerdesCommons());
         configFile.withSerdesPack(registry -> {
-            registry.register(new ComponentSerializer());
+            registry.register(new ComponentStringTransformer());
             registry.register(new ItemMetaSerializer());
             registry.register(new ItemStackSerializer());
             registry.register(new NotificationSerializer());

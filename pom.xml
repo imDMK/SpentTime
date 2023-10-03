@@ -99,6 +99,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Panda utiltities -->
+        <dependency>
+            <groupId>org.panda-lang</groupId>
+            <artifactId>panda-utilities</artifactId>
+            <version>0.5.3-alpha</version>
+        </dependency>
+
         <!-- Git check -->
         <dependency>
             <groupId>com.eternalcode</groupId>

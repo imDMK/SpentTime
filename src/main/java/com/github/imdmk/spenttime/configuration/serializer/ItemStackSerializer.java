@@ -21,15 +21,15 @@ public class ItemStackSerializer implements ObjectSerializer<ItemStack> {
 
     @Override
     public void serialize(@NonNull ItemStack itemStack, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
-        data.add("material", itemStack.getType());
+        data.add("material", itemStack.getType(), Material.class);
 
         if (itemStack.getAmount() > 1) {
-            data.add("amount", itemStack.getAmount());
+            data.add("amount", itemStack.getAmount(), Integer.class);
         }
 
         if (itemStack instanceof Damageable damageable) {
             if (damageable.getDamage() != 0) {
-                data.add("durability", damageable.getDamage());
+                data.add("durability", damageable.getDamage(), Short.class);
             }
         }
 
@@ -40,18 +40,12 @@ public class ItemStackSerializer implements ObjectSerializer<ItemStack> {
 
     @Override
     public ItemStack deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
-        String materialName = data.get("material", String.class);
-        Material material = Material.valueOf(materialName);
+        Material material = data.get("material", Material.class);
 
-        int amount = data.containsKey("amount")
-                ? data.get("amount", Integer.class) : 1;
+        int amount = Optional.ofNullable(data.get("amount", Integer.class)).orElse(1);
+        short durability = Optional.ofNullable(data.get("durability", Short.class)).orElse((short) 0);
 
-        short durability = data.containsKey("durability")
-                ? data.get("durability", Short.class) : 0;
-
-        Optional<ItemMeta> itemMetaOptional = Optional.ofNullable(
-                data.get("item-meta", ItemMeta.class)
-        );
+        Optional<ItemMeta> itemMetaOptional = Optional.ofNullable(data.get("item-meta", ItemMeta.class));
 
         ItemStack itemStack = new ItemStack(material, amount);
 

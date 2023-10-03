@@ -1,8 +1,8 @@
-package com.github.imdmk.spenttime.command;
+package com.github.imdmk.spenttime.command.implementation;
 
-import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
@@ -20,21 +20,21 @@ import java.time.Duration;
 public class SpentTimeCommand {
 
     private final Server server;
-    private final MessageConfiguration messageConfiguration;
+    private final NotificationSettings notificationSettings;
     private final NotificationSender notificationSender;
 
-    public SpentTimeCommand(Server server, MessageConfiguration messageConfiguration, NotificationSender notificationSender) {
+    public SpentTimeCommand(Server server, NotificationSettings notificationSettings, NotificationSender notificationSender) {
         this.server = server;
-        this.messageConfiguration = messageConfiguration;
+        this.notificationSettings = notificationSettings;
         this.notificationSender = notificationSender;
     }
 
     @Execute(required = 0)
-    void showSelfSpentTime(Player player) {
+    void showSpentTime(Player player) {
         Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
 
         Notification notification = Notification.builder()
-                .fromNotification(this.messageConfiguration.spentTimeNotification)
+                .fromNotification(this.notificationSettings.spentTimeNotification)
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(playerSpentTime))
                 .build();
 
@@ -42,12 +42,12 @@ public class SpentTimeCommand {
     }
 
     @Execute(required = 1)
-    void showTargetSpentTime(CommandSender sender, @Arg User target) {
+    void showSpentTimeTarget(CommandSender sender, @Arg User target) {
         OfflinePlayer targetPlayer = this.server.getOfflinePlayer(target.getUuid());
         Duration targetSpentTime = PlayerUtil.getSpentTimeDuration(targetPlayer);
 
         Notification notification = Notification.builder()
-                .fromNotification(this.messageConfiguration.targetSpentTimeNotification)
+                .fromNotification(this.notificationSettings.targetSpentTimeNotification)
                 .placeholder("{PLAYER}", target.getName())
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(targetSpentTime))
                 .build();

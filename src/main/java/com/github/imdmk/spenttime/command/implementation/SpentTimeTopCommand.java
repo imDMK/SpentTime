@@ -1,10 +1,10 @@
-package com.github.imdmk.spenttime.command;
+package com.github.imdmk.spenttime.command.implementation;
 
-import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
-import com.github.imdmk.spenttime.gui.GuiConfiguration;
 import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
+import com.github.imdmk.spenttime.gui.settings.GuiSettings;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.DurationUtil;
@@ -19,15 +19,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Route(name = "spenttime")
 public class SpentTimeTopCommand {
 
-    private final GuiConfiguration guiConfiguration;
-    private final MessageConfiguration messageConfiguration;
+    private final GuiSettings guiSettings;
+    private final NotificationSettings notificationSettings;
     private final UserRepository userRepository;
     private final NotificationSender notificationSender;
     private final SpentTimeTopGui spentTimeTopGui;
 
-    public SpentTimeTopCommand(GuiConfiguration guiConfiguration, MessageConfiguration messageConfiguration, UserRepository userRepository, NotificationSender notificationSender, SpentTimeTopGui spentTimeTopGui) {
-        this.guiConfiguration = guiConfiguration;
-        this.messageConfiguration = messageConfiguration;
+    public SpentTimeTopCommand(GuiSettings guiSettings, NotificationSettings notificationSettings, UserRepository userRepository, NotificationSender notificationSender, SpentTimeTopGui spentTimeTopGui) {
+        this.guiSettings = guiSettings;
+        this.notificationSettings = notificationSettings;
         this.userRepository = userRepository;
         this.notificationSender = notificationSender;
         this.spentTimeTopGui = spentTimeTopGui;
@@ -36,19 +36,19 @@ public class SpentTimeTopCommand {
     @Async
     @Execute(route = "top", required = 0)
     void showTopSpentTime(Player player) {
-        List<User> topUsers = this.userRepository.findByOrderSpentTime(this.guiConfiguration.querySize);
+        List<User> topUsers = this.userRepository.findByOrderSpentTime(this.guiSettings.querySize);
 
         if (topUsers.isEmpty()) {
-            this.notificationSender.send(player, this.messageConfiguration.topSpentTimeIsEmpty);
+            this.notificationSender.send(player, this.notificationSettings.topSpentTimeIsEmpty);
             return;
         }
 
-        if (this.guiConfiguration.enabled) {
+        if (this.guiSettings.enabled) {
             this.spentTimeTopGui.open(player, topUsers);
             return;
         }
 
-        this.notificationSender.send(player, this.messageConfiguration.topSpentTimeListFirstNotification);
+        this.notificationSender.send(player, this.notificationSettings.topSpentTimeListFirstNotification);
 
         AtomicInteger position = new AtomicInteger(0);
 
@@ -56,7 +56,7 @@ public class SpentTimeTopCommand {
             position.incrementAndGet();
 
             Notification notification = Notification.builder()
-                    .fromNotification(this.messageConfiguration.topSpentTimeListNotification)
+                    .fromNotification(this.notificationSettings.topSpentTimeListNotification)
                     .placeholder("{POSITION}", position.get())
                     .placeholder("{PLAYER}", user.getName())
                     .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))

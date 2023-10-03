@@ -1,14 +1,13 @@
 package com.github.imdmk.spenttime;
 
-import com.github.imdmk.spenttime.command.SpentTimeCommand;
-import com.github.imdmk.spenttime.command.SpentTimeResetCommand;
-import com.github.imdmk.spenttime.command.SpentTimeTopCommand;
 import com.github.imdmk.spenttime.command.argument.UserArgument;
-import com.github.imdmk.spenttime.command.editor.SpentTimeCommandEditor;
-import com.github.imdmk.spenttime.command.editor.SpentTimeResetCommandEditor;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
+import com.github.imdmk.spenttime.command.implementation.SpentTimeCommand;
+import com.github.imdmk.spenttime.command.implementation.SpentTimeResetCommand;
+import com.github.imdmk.spenttime.command.implementation.SpentTimeTopCommand;
+import com.github.imdmk.spenttime.command.implementation.editor.SpentTimeResetCommandEditor;
 import com.github.imdmk.spenttime.configuration.ConfigurationFactory;
 import com.github.imdmk.spenttime.configuration.implementation.PluginConfiguration;
 import com.github.imdmk.spenttime.database.DatabaseManager;
@@ -90,7 +89,7 @@ public class SpentTime {
         this.pluginConfiguration = ConfigurationFactory.create(PluginConfiguration.class, new File(dataFolder, "configuration.yml"));
 
         /* Database */
-        this.databaseManager = new DatabaseManager(this.logger, dataFolder, this.pluginConfiguration.databaseConfiguration);
+        this.databaseManager = new DatabaseManager(this.logger, dataFolder, this.pluginConfiguration.databaseSettings);
 
         try {
             this.databaseManager.connect();
@@ -114,10 +113,10 @@ public class SpentTime {
 
         /* Tasks */
         this.taskScheduler = new TaskSchedulerImpl(plugin, this.server);
-        this.taskScheduler.runTimerAsync(new UserSpentTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.playerSpentTimeSaveDuration));
+        this.taskScheduler.runTimerAsync(new UserSpentTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.spentTimeSaveDelay));
 
         /* Guis */
-        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration.commandConfiguration, this.pluginConfiguration.messageConfiguration, this.pluginConfiguration.guiConfiguration, this.notificationSender, this.userRepository, this.taskScheduler);
+        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration.commandSettings, this.pluginConfiguration.notificationSettings, this.pluginConfiguration.guiSettings, this.pluginConfiguration.guiSettings.guiItemSettings, this.pluginConfiguration.guiSettings.paginatedGuiItemSettings, this.notificationSender, this.userRepository, this.taskScheduler);
 
         /* Listeners */
         Stream.of(
@@ -152,7 +151,6 @@ public class SpentTime {
         }
 
         this.bukkitAudiences.close();
-
         this.liteCommands.getPlatform().unregisterAll();
 
         if (this.placeholderRegistry != null) {
@@ -160,7 +158,6 @@ public class SpentTime {
         }
 
         this.metrics.shutdown();
-
         this.closeAllPlayersGuis();
 
         this.logger.info("GoodBye...");
@@ -168,23 +165,22 @@ public class SpentTime {
 
     private LiteCommands<CommandSender> registerLiteCommands() {
         return LiteBukkitAdventurePlatformFactory.builder(this.server, "SpentTime", false, this.bukkitAudiences, true)
-                .argument(Player.class, new BukkitPlayerArgument<>(this.server, this.pluginConfiguration.messageConfiguration.playerNotFoundNotification))
-                .argument(User.class, new UserArgument(this.pluginConfiguration.messageConfiguration, this.userManager))
+                .argument(Player.class, new BukkitPlayerArgument<>(this.server, this.pluginConfiguration.notificationSettings.playerNotFoundNotification))
+                .argument(User.class, new UserArgument(this.pluginConfiguration.notificationSettings, this.userManager))
 
                 .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("Only player can use this command."))
 
-                .permissionHandler(new MissingPermissionHandler(this.pluginConfiguration.messageConfiguration, this.notificationSender))
+                .permissionHandler(new MissingPermissionHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
                 .resultHandler(Notification.class, new NotificationHandler(this.notificationSender))
-                .invalidUsageHandler(new UsageHandler(this.pluginConfiguration.messageConfiguration, this.notificationSender))
+                .invalidUsageHandler(new UsageHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
 
                 .commandInstance(
-                        new SpentTimeCommand(this.server, this.pluginConfiguration.messageConfiguration, this.notificationSender),
-                        new SpentTimeResetCommand(this.server, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.taskScheduler),
-                        new SpentTimeTopCommand(this.pluginConfiguration.guiConfiguration, this.pluginConfiguration.messageConfiguration, this.userRepository, this.notificationSender, this.spentTimeTopGui)
+                        new SpentTimeCommand(this.server, this.pluginConfiguration.notificationSettings, this.notificationSender),
+                        new SpentTimeResetCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
+                        new SpentTimeTopCommand(this.pluginConfiguration.guiSettings, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.spentTimeTopGui)
                 )
 
-                .commandEditor(SpentTimeCommand.class, new SpentTimeCommandEditor(this.pluginConfiguration.commandConfiguration))
-                .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration.commandConfiguration))
+                .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration.commandSettings))
 
                 .register();
     }

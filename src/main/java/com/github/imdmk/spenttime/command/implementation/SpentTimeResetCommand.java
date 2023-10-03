@@ -1,9 +1,9 @@
-package com.github.imdmk.spenttime.command;
+package com.github.imdmk.spenttime.command.implementation;
 
-import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
 import com.github.imdmk.spenttime.gui.implementation.ConfirmGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
@@ -22,14 +22,14 @@ import org.bukkit.entity.Player;
 public class SpentTimeResetCommand {
 
     private final Server server;
-    private final MessageConfiguration messageConfiguration;
+    private final NotificationSettings notificationSettings;
     private final UserRepository userRepository;
     private final NotificationSender notificationSender;
     private final TaskScheduler taskScheduler;
 
-    public SpentTimeResetCommand(Server server, MessageConfiguration messageConfiguration, UserRepository userRepository, NotificationSender notificationSender, TaskScheduler taskScheduler) {
+    public SpentTimeResetCommand(Server server, NotificationSettings notificationSettings, UserRepository userRepository, NotificationSender notificationSender, TaskScheduler taskScheduler) {
         this.server = server;
-        this.messageConfiguration = messageConfiguration;
+        this.notificationSettings = notificationSettings;
         this.userRepository = userRepository;
         this.notificationSender = notificationSender;
         this.taskScheduler = taskScheduler;
@@ -79,7 +79,7 @@ public class SpentTimeResetCommand {
         offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
 
         Notification notification = Notification.builder()
-                .fromNotification(this.messageConfiguration.targetResetSpentTimeNotification)
+                .fromNotification(this.notificationSettings.targetResetSpentTimeNotification)
                 .placeholder("{PLAYER}", target.getName())
                 .build();
 
@@ -93,6 +93,6 @@ public class SpentTimeResetCommand {
             offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
         }
 
-        this.notificationSender.send(sender, this.messageConfiguration.resetGlobalSpentTimeNotification);
+        this.notificationSender.send(sender, this.notificationSettings.resetGlobalSpentTimeNotification);
     }
 }

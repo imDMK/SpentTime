@@ -8,10 +8,10 @@ import java.util.List;
 
 public class ComponentUtil {
 
-    public static final CharSequence LEGACY_CHAR = "§";
+    private static final CharSequence LEGACY_CHAR = "§";
+    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
 
-    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
-    public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private ComponentUtil() {
         throw new UnsupportedOperationException("This is utility class.");
@@ -19,6 +19,10 @@ public class ComponentUtil {
 
     public static Component createItalic(String text) {
         return MINI_MESSAGE.deserialize("<!italic>" + text);
+    }
+
+    public static String serialize(Component component) {
+        return MINI_MESSAGE.serialize(component);
     }
 
     public static Component deserialize(String text) {

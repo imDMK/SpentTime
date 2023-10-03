@@ -1,8 +1,8 @@
 package com.github.imdmk.spenttime.command.handler;
 
-import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.notification.NotificationSettings;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
 import dev.rollczi.litecommands.schematic.Schematic;
@@ -10,11 +10,11 @@ import org.bukkit.command.CommandSender;
 
 public class UsageHandler implements InvalidUsageHandler<CommandSender> {
 
-    private final MessageConfiguration messageConfiguration;
+    private final NotificationSettings notificationSettings;
     private final NotificationSender notificationSender;
 
-    public UsageHandler(MessageConfiguration messageConfiguration, NotificationSender notificationSender) {
-        this.messageConfiguration = messageConfiguration;
+    public UsageHandler(NotificationSettings notificationSettings, NotificationSender notificationSender) {
+        this.notificationSettings = notificationSettings;
         this.notificationSender = notificationSender;
     }
 
@@ -22,7 +22,7 @@ public class UsageHandler implements InvalidUsageHandler<CommandSender> {
     public void handle(CommandSender sender, LiteInvocation liteInvocation, Schematic schematic) {
         if (schematic.isOnlyFirst()) {
             Notification notification = Notification.builder()
-                    .fromNotification(this.messageConfiguration.invalidUsageNotification)
+                    .fromNotification(this.notificationSettings.invalidUsageNotification)
                     .placeholder("{USAGE}", schematic.first())
                     .build();
 
@@ -30,11 +30,11 @@ public class UsageHandler implements InvalidUsageHandler<CommandSender> {
             return;
         }
 
-        this.notificationSender.send(sender, this.messageConfiguration.invalidUsageFirstNotification);
+        this.notificationSender.send(sender, this.notificationSettings.invalidUsageFirstNotification);
 
         for (String schema : schematic.getSchematics()) {
             Notification notification = Notification.builder()
-                    .fromNotification(this.messageConfiguration.invalidUsageListNotification)
+                    .fromNotification(this.notificationSettings.invalidUsageListNotification)
                     .placeholder("{USAGE}", schema)
                     .build();
 

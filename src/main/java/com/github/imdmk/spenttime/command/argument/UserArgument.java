@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.command.argument;
 
-import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
+import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
@@ -13,11 +13,11 @@ import java.util.Optional;
 
 public class UserArgument implements OneArgument<User> {
 
-    private final MessageConfiguration messageConfiguration;
+    private final NotificationSettings notificationSettings;
     private final UserManager userManager;
 
-    public UserArgument(MessageConfiguration messageConfiguration, UserManager userManager) {
-        this.messageConfiguration = messageConfiguration;
+    public UserArgument(NotificationSettings notificationSettings, UserManager userManager) {
+        this.notificationSettings = notificationSettings;
         this.userManager = userManager;
     }
 
@@ -26,7 +26,7 @@ public class UserArgument implements OneArgument<User> {
         Optional<User> userOptional = this.userManager.getOrFindUser(argument);
 
         return userOptional.map(Result::ok)
-                .orElseGet(() -> Result.error(this.messageConfiguration.playerNotFoundNotification));
+                .orElseGet(() -> Result.error(this.notificationSettings.playerNotFoundNotification));
     }
 
     @Override

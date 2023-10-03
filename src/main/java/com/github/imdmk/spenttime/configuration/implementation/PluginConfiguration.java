@@ -1,13 +1,26 @@
 package com.github.imdmk.spenttime.configuration.implementation;
 
-import com.github.imdmk.spenttime.command.configuration.CommandConfiguration;
-import com.github.imdmk.spenttime.database.DatabaseConfiguration;
-import com.github.imdmk.spenttime.gui.GuiConfiguration;
+import com.github.imdmk.spenttime.command.settings.CommandSettings;
+import com.github.imdmk.spenttime.database.DatabaseSettings;
+import com.github.imdmk.spenttime.gui.settings.GuiSettings;
+import com.github.imdmk.spenttime.notification.NotificationSettings;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
+import eu.okaeri.configs.annotation.Header;
 
 import java.time.Duration;
 
+@Header({
+        "#",
+        "# Configuration file for the SpentTime plugin.",
+        "#",
+        "# If you have a problem with plugin configuration, please create an issue on the project's github.",
+        "# However, if you like the plugin, leave a star for the project on GitHub.",
+        "# ",
+        "# Support site: https://github.com/imDMK/SpentTime/issues/new/choose",
+        "# GitHub: https://github.com/imDMK/SpentTime",
+        "#",
+})
 public class PluginConfiguration extends OkaeriConfig {
 
     @Comment("# Check for plugin update after the administrator join to server?")
@@ -18,10 +31,17 @@ public class PluginConfiguration extends OkaeriConfig {
             "# Including a spent time top update",
             "# Recommended value: 10m"
     })
-    public Duration playerSpentTimeSaveDuration = Duration.ofMinutes(10L);
+    public Duration spentTimeSaveDelay = Duration.ofMinutes(10L);
 
-    public CommandConfiguration commandConfiguration = new CommandConfiguration();
-    public GuiConfiguration guiConfiguration = new GuiConfiguration();
-    public MessageConfiguration messageConfiguration = new MessageConfiguration();
-    public DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
+    @Comment({"#", "# Gui settings", "#"})
+    public GuiSettings guiSettings = new GuiSettings();
+
+    @Comment({"#", "# Database settings", "#"})
+    public DatabaseSettings databaseSettings = new DatabaseSettings();
+
+    @Comment({"#", "# Command settings", "#"})
+    public CommandSettings commandSettings = new CommandSettings();
+
+    @Comment({"#", "# Notification settings", "#"})
+    public NotificationSettings notificationSettings = new NotificationSettings();
 }

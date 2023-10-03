@@ -1,11 +1,9 @@
-package com.github.imdmk.spenttime.configuration.implementation;
+package com.github.imdmk.spenttime.notification;
 
-import com.github.imdmk.spenttime.notification.Notification;
-import com.github.imdmk.spenttime.notification.NotificationType;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 
-public class MessageConfiguration extends OkaeriConfig {
+public class NotificationSettings extends OkaeriConfig {
 
     @Comment("# {TIME} - The spent time")
     public Notification spentTimeNotification = new Notification(NotificationType.CHAT, "<gray>You have spent <red>{TIME} <gray>on the server<dark_gray>.");

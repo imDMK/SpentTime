@@ -1,10 +1,12 @@
 package com.github.imdmk.spenttime.gui.implementation;
 
-import com.github.imdmk.spenttime.command.configuration.CommandConfiguration;
-import com.github.imdmk.spenttime.configuration.implementation.MessageConfiguration;
-import com.github.imdmk.spenttime.gui.GuiConfiguration;
+import com.github.imdmk.spenttime.command.settings.CommandSettings;
+import com.github.imdmk.spenttime.gui.settings.GuiSettings;
+import com.github.imdmk.spenttime.gui.settings.item.GuiItemSettings;
+import com.github.imdmk.spenttime.gui.settings.item.PaginatedGuiItemSettings;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
@@ -21,6 +23,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
+import panda.utilities.text.Formatter;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,18 +31,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SpentTimeTopGui {
 
     private final Server server;
-    private final CommandConfiguration commandConfiguration;
-    private final MessageConfiguration messageConfiguration;
-    private final GuiConfiguration guiConfiguration;
+    private final CommandSettings commandSettings;
+    private final NotificationSettings notificationSettings;
+    private final GuiSettings guiSettings;
+    private final GuiItemSettings guiItemSettings;
+    private final PaginatedGuiItemSettings paginatedGuiItemSettings;
     private final NotificationSender notificationSender;
     private final UserRepository userRepository;
     private final TaskScheduler taskScheduler;
 
-    public SpentTimeTopGui(Server server, CommandConfiguration commandConfiguration, MessageConfiguration messageConfiguration, GuiConfiguration guiConfiguration, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
+    public SpentTimeTopGui(Server server, CommandSettings commandSettings, NotificationSettings notificationSettings, GuiSettings guiSettings, GuiItemSettings guiItemSettings, PaginatedGuiItemSettings paginatedGuiItemSettings, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
         this.server = server;
-        this.commandConfiguration = commandConfiguration;
-        this.messageConfiguration = messageConfiguration;
-        this.guiConfiguration = guiConfiguration;
+        this.commandSettings = commandSettings;
+        this.notificationSettings = notificationSettings;
+        this.guiSettings = guiSettings;
+        this.guiItemSettings = guiItemSettings;
+        this.paginatedGuiItemSettings = paginatedGuiItemSettings;
         this.notificationSender = notificationSender;
         this.userRepository = userRepository;
         this.taskScheduler = taskScheduler;
@@ -47,13 +54,13 @@ public class SpentTimeTopGui {
 
     public void open(Player player, List<User> topUsers) {
         BaseGui gui = this.createGuiBuilder()
-                .title(this.guiConfiguration.title)
+                .title(ComponentUtil.deserialize(this.guiSettings.title))
                 .rows(6)
                 .disableAllInteractions()
                 .create();
 
-        if (this.guiConfiguration.borderItemEnabled) {
-            GuiItem sideGuiItem = ItemBuilder.from(this.guiConfiguration.borderItem).asGuiItem();
+        if (this.guiItemSettings.fillBorder) {
+            GuiItem sideGuiItem = ItemBuilder.from(this.guiItemSettings.borderItem).asGuiItem();
 
             gui.getFiller().fillBorder(sideGuiItem);
         }
@@ -62,16 +69,14 @@ public class SpentTimeTopGui {
             GuiItem nextPageItem = this.createNextPageItem(paginatedGui);
             GuiItem previousPageItem = this.createPreviousPageItem(paginatedGui);
 
-            paginatedGui.setItem(this.guiConfiguration.nextPageItemSlot, nextPageItem);
-            paginatedGui.setItem(this.guiConfiguration.previousPageItemSlot, previousPageItem);
+            paginatedGui.setItem(this.paginatedGuiItemSettings.nextPageItemSlot, nextPageItem);
+            paginatedGui.setItem(this.paginatedGuiItemSettings.previousPageItemSlot, previousPageItem);
         }
 
-        GuiItem exitGuiItem = ItemBuilder.from(this.guiConfiguration.exitItem)
+        GuiItem exitGuiItem = ItemBuilder.from(this.guiSettings.guiItemSettings.exitItem)
                 .asGuiItem(event -> gui.close(player));
 
-        gui.setItem(this.guiConfiguration.exitItemSlot, exitGuiItem);
-
-        boolean hasPermissionToReset = player.hasPermission(this.commandConfiguration.spentTimeResetPermission);
+        gui.setItem(this.guiItemSettings.exitItemSlot, exitGuiItem);
 
         AtomicInteger position = new AtomicInteger(0);
 
@@ -80,11 +85,18 @@ public class SpentTimeTopGui {
 
             OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(user.getUuid());
 
-            Component headItemTitle = this.replaceUserInformation(this.guiConfiguration.headItemTitle, user, position.get());
+            Formatter formatter = new Formatter()
+                    .register("{PLAYER}", user.getName())
+                    .register("{POSITION}", position)
+                    .register("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
+                    .register("{CLICK}", this.guiItemSettings.headClickType.name());
 
-            List<Component> headItemLore = (hasPermissionToReset ? this.guiConfiguration.headItemLoreAdmin : this.guiConfiguration.headItemLore)
+            Component headItemTitle = ComponentUtil.deserialize(formatter.format(this.guiItemSettings.headName));
+
+            List<Component> headItemLore = (this.hasPermissionToReset(player) ? this.guiItemSettings.headLoreAdmin : this.guiItemSettings.headLore)
                     .stream()
-                    .map(component -> this.replaceUserInformation(component, user, position.get()))
+                    .map(formatter::format)
+                    .map(ComponentUtil::deserialize)
                     .toList();
 
             GuiItem guiItem = ItemBuilder.skull()
@@ -92,11 +104,11 @@ public class SpentTimeTopGui {
                     .name(headItemTitle)
                     .lore(headItemLore)
                     .asGuiItem(event -> {
-                        if (event.getClick() != this.guiConfiguration.headItemLoreAdminResetClick) {
+                        if (event.getClick() != this.guiSettings.guiItemSettings.headClickType) {
                             return;
                         }
 
-                        if (!hasPermissionToReset) {
+                        if (!this.hasPermissionToReset(player)) {
                             return;
                         }
 
@@ -111,7 +123,7 @@ public class SpentTimeTopGui {
                                     });
 
                                     Notification notification = Notification.builder()
-                                            .fromNotification(this.messageConfiguration.targetResetSpentTimeNotification)
+                                            .fromNotification(this.notificationSettings.targetResetSpentTimeNotification)
                                             .placeholder("{PLAYER}", user.getName())
                                             .build();
 
@@ -130,38 +142,32 @@ public class SpentTimeTopGui {
     }
 
     private BaseGuiBuilder<?, ?> createGuiBuilder() {
-        return switch (this.guiConfiguration.type) {
+        return switch (this.guiSettings.type) {
             case PAGINATED -> Gui.paginated();
             case STANDARD -> Gui.gui();
         };
     }
 
     private GuiItem createNextPageItem(PaginatedGui paginatedGui) {
-        return ItemBuilder.from(this.guiConfiguration.nextPageItem)
+        return ItemBuilder.from(this.guiSettings.paginatedGuiItemSettings.nextPageItem)
                 .asGuiItem(event -> {
                     if (!paginatedGui.next()) {
-                        paginatedGui.updateItem(event.getSlot(), this.guiConfiguration.noNextPageItem);
+                        paginatedGui.updateItem(event.getSlot(), this.guiSettings.paginatedGuiItemSettings.noNextPageItem);
                     }
                 });
     }
 
     private GuiItem createPreviousPageItem(PaginatedGui paginatedGui) {
-        return ItemBuilder.from(this.guiConfiguration.previousPageItem)
+        return ItemBuilder.from(this.guiSettings.paginatedGuiItemSettings.previousPageItem)
                 .asGuiItem(event -> {
                     if (!paginatedGui.previous()) {
-                        paginatedGui.updateItem(event.getSlot(), this.guiConfiguration.noPreviousPageItem);
+                        paginatedGui.updateItem(event.getSlot(), this.guiSettings.paginatedGuiItemSettings.noPreviousPageItem);
                     }
                 });
     }
 
-    private Component replaceUserInformation(Component componentToReplace, User user, int userPosition) {
-        return componentToReplace
-                .replaceText(builder -> builder.matchLiteral("{PLAYER}")
-                        .replacement(user.getName()))
-                .replaceText(builder -> builder.matchLiteral("{POSITION}")
-                        .replacement(String.valueOf(userPosition)))
-                .replaceText(builder -> builder.matchLiteral("{TIME}")
-                        .replacement(DurationUtil.toHumanReadable(user.getSpentTimeDuration())));
+    private boolean hasPermissionToReset(Player player) {
+        return player.hasPermission(this.commandSettings.spentTimeResetPermission);
     }
 }
 
