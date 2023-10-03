@@ -89,8 +89,6 @@ tasks.withType<ShadowJar> {
             "org/intellij/lang/annotations/**",
             "org/jetbrains/annotations/**",
             "META-INF/**",
-            "javassist",
-            "org.javassist"
     )
 
     val libPrefix = "com.github.imdmk.spenttime.lib"
@@ -107,6 +105,7 @@ tasks.withType<ShadowJar> {
             "org.json",
             "org.bstats",
             "panda",
+            "javassist"
     ).forEach { lib ->
         relocate(lib, "$libPrefix.$lib")
     }
