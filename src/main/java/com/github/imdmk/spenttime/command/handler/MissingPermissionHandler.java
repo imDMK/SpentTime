@@ -1,8 +1,8 @@
 package com.github.imdmk.spenttime.command.handler;
 
-import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.text.Formatter;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.command.permission.RequiredPermissions;
 import dev.rollczi.litecommands.handle.PermissionHandler;
@@ -20,11 +20,9 @@ public class MissingPermissionHandler implements PermissionHandler<CommandSender
 
     @Override
     public void handle(CommandSender commandSender, LiteInvocation liteInvocation, RequiredPermissions requiredPermissions) {
-        Notification notification = Notification.builder()
-                .fromNotification(this.notificationSettings.missingPermissionsNotification)
-                .placeholder("{PERMISSIONS}", requiredPermissions.getPermissions())
-                .build();
+        Formatter formatter = new Formatter()
+                .placeholder("{PERMISSIONS}", requiredPermissions.getPermissions());
 
-        this.notificationSender.send(commandSender, notification);
+        this.notificationSender.send(commandSender, this.notificationSettings.missingPermissionsNotification, formatter);
     }
 }

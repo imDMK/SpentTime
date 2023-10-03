@@ -1,10 +1,10 @@
 package com.github.imdmk.spenttime.command.implementation;
 
 import com.github.imdmk.spenttime.gui.implementation.ConfirmGui;
-import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
+import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.ComponentUtil;
@@ -78,12 +78,10 @@ public class SpentTimeResetCommand {
         OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(target.getUuid());
         offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
 
-        Notification notification = Notification.builder()
-                .fromNotification(this.notificationSettings.targetResetSpentTimeNotification)
-                .placeholder("{PLAYER}", target.getName())
-                .build();
+        Formatter formatter = new Formatter()
+                .placeholder("{PLAYER}", target.getName());
 
-        this.notificationSender.send(sender, notification);
+        this.notificationSender.send(sender, this.notificationSettings.targetResetSpentTimeNotification, formatter);
     }
 
     private void resetGlobalSpentTime(CommandSender sender) {

@@ -4,10 +4,10 @@ import com.github.imdmk.spenttime.command.settings.CommandSettings;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
 import com.github.imdmk.spenttime.gui.settings.item.GuiItemSettings;
 import com.github.imdmk.spenttime.gui.settings.item.PaginatedGuiItemSettings;
-import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
+import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.ComponentUtil;
@@ -23,7 +23,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
-import panda.utilities.text.Formatter;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -86,10 +85,10 @@ public class SpentTimeTopGui {
             OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(user.getUuid());
 
             Formatter formatter = new Formatter()
-                    .register("{PLAYER}", user.getName())
-                    .register("{POSITION}", position)
-                    .register("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
-                    .register("{CLICK}", this.guiItemSettings.headClickType.name());
+                    .placeholder("{PLAYER}", user.getName())
+                    .placeholder("{POSITION}", position)
+                    .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
+                    .placeholder("{CLICK}", this.guiItemSettings.headClickType.name());
 
             Component headItemTitle = ComponentUtil.deserialize(formatter.format(this.guiItemSettings.headName));
 
@@ -122,12 +121,7 @@ public class SpentTimeTopGui {
                                         offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
                                     });
 
-                                    Notification notification = Notification.builder()
-                                            .fromNotification(this.notificationSettings.targetResetSpentTimeNotification)
-                                            .placeholder("{PLAYER}", user.getName())
-                                            .build();
-
-                                    this.notificationSender.send(player, notification);
+                                    this.notificationSender.send(player, this.notificationSettings.targetResetSpentTimeNotification, formatter);
 
                                     gui.close(player);
                                 })

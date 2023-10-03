@@ -2,9 +2,9 @@ package com.github.imdmk.spenttime.command.implementation;
 
 import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
-import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.DurationUtil;
@@ -55,14 +55,12 @@ public class SpentTimeTopCommand {
         for (User user : topUsers) {
             position.incrementAndGet();
 
-            Notification notification = Notification.builder()
-                    .fromNotification(this.notificationSettings.topSpentTimeListNotification)
+            Formatter formatter = new Formatter()
                     .placeholder("{POSITION}", position.get())
                     .placeholder("{PLAYER}", user.getName())
-                    .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
-                    .build();
+                    .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()));
 
-            this.notificationSender.send(player, notification);
+            this.notificationSender.send(player, this.notificationSettings.topSpentTimeListNotification, formatter);
         }
     }
 }

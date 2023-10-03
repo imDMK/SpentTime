@@ -1,8 +1,8 @@
 package com.github.imdmk.spenttime.command.implementation;
 
-import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
@@ -33,12 +33,10 @@ public class SpentTimeCommand {
     void showSpentTime(Player player) {
         Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
 
-        Notification notification = Notification.builder()
-                .fromNotification(this.notificationSettings.spentTimeNotification)
-                .placeholder("{TIME}", DurationUtil.toHumanReadable(playerSpentTime))
-                .build();
+        Formatter formatter = new Formatter()
+                .placeholder("{TIME}", DurationUtil.toHumanReadable(playerSpentTime));
 
-        this.notificationSender.send(player, notification);
+        this.notificationSender.send(player, this.notificationSettings.spentTimeNotification, formatter);
     }
 
     @Execute(required = 1)
@@ -46,12 +44,10 @@ public class SpentTimeCommand {
         OfflinePlayer targetPlayer = this.server.getOfflinePlayer(target.getUuid());
         Duration targetSpentTime = PlayerUtil.getSpentTimeDuration(targetPlayer);
 
-        Notification notification = Notification.builder()
-                .fromNotification(this.notificationSettings.targetSpentTimeNotification)
+        Formatter formatter = new Formatter()
                 .placeholder("{PLAYER}", target.getName())
-                .placeholder("{TIME}", DurationUtil.toHumanReadable(targetSpentTime))
-                .build();
+                .placeholder("{TIME}", DurationUtil.toHumanReadable(targetSpentTime));
 
-        this.notificationSender.send(sender, notification);
+        this.notificationSender.send(sender, this.notificationSettings.targetSpentTimeNotification, formatter);
     }
 }
