@@ -36,12 +36,14 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
 import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
+import dev.triumphteam.gui.guis.BaseGui;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -187,7 +189,10 @@ public class SpentTime {
 
     private void closeAllPlayersGuis() {
         for (Player player : this.server.getOnlinePlayers()) {
-            if (player.getOpenInventory().getType() != InventoryType.CHEST) {
+            InventoryView inventoryView = player.getOpenInventory();
+            Inventory topInventory = inventoryView.getTopInventory();
+
+            if (!(topInventory.getHolder() instanceof BaseGui)) {
                 return;
             }
 
