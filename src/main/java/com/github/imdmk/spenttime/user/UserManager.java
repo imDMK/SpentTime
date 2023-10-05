@@ -62,13 +62,11 @@ public class UserManager {
     }
 
     public Optional<User> getOrFindUser(UUID uuid) {
-        return this.getUser(uuid)
-                .or(() -> this.findUser(uuid));
+        return this.getUser(uuid).or(() -> this.findUser(uuid));
     }
 
     public Optional<User> getOrFindUser(String name) {
-        return this.getUser(name)
-                .or(() -> this.findUser(name));
+        return this.getUser(name).or(() -> this.findUser(name));
     }
 
     public Optional<User> getUser(UUID uuid) {
