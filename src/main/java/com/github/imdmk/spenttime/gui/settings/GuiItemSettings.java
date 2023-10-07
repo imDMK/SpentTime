@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.gui.settings.item;
+package com.github.imdmk.spenttime.gui.settings;
 
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -11,15 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class GuiItemSettings extends OkaeriConfig {
-
-    @Comment({
-            "# Exit item",
-            "# Set to -1 to disable",
-    })
-    public int exitItemSlot = 49;
-    public ItemStack exitItem = ItemBuilder.from(Material.ACACIA_BUTTON)
-            .name(ComponentUtil.createItalic("<red>Quit"))
-            .build();
 
     @Comment({
             "# The head item name",
@@ -56,4 +47,42 @@ public class GuiItemSettings extends OkaeriConfig {
 
     @Comment("# The item that is around the gui")
     public ItemStack borderItem = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).build();
+
+    @Comment({
+            "# Exit item",
+            "# Set to -1 to disable",
+    })
+    public int exitItemSlot = 49;
+    public ItemStack exitItem = ItemBuilder.from(Material.ACACIA_BUTTON)
+            .name(ComponentUtil.createItalic("<red>Quit"))
+            .build();
+
+
+    @Comment({
+            "# Previous page item",
+            "# Set to -1 to disable"
+    })
+    public int previousPageItemSlot = 46;
+    public ItemStack previousPageItem = ItemBuilder.from(Material.ARROW)
+            .name(ComponentUtil.createItalic("<green>Previous page"))
+            .build();
+
+    @Comment("# Used when the player clicks on the previous page but there is no page")
+    public ItemStack noPreviousPageItem = ItemBuilder.from(Material.BARRIER)
+            .name(ComponentUtil.createItalic("<red>There is no previous page"))
+            .build();
+
+    @Comment({
+            "# Next page item",
+            "# Set to -1 to disable"
+    })
+    public int nextPageItemSlot = 52;
+    public ItemStack nextPageItem = ItemBuilder.from(Material.ARROW)
+            .name(ComponentUtil.createItalic("<green>Next page"))
+            .build();
+
+    @Comment("# Used when the player clicks on the next page but there is no page")
+    public ItemStack noNextPageItem = ItemBuilder.from(Material.BARRIER)
+            .name(ComponentUtil.createItalic("<red>There is no next page"))
+            .build();
 }

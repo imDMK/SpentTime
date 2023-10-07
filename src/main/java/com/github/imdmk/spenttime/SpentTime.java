@@ -118,7 +118,7 @@ public class SpentTime {
         this.taskScheduler.runTimerAsync(new UserSpentTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.spentTimeSaveDelay));
 
         /* Guis */
-        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration.commandSettings, this.pluginConfiguration.notificationSettings, this.pluginConfiguration.guiSettings, this.pluginConfiguration.guiSettings.guiItemSettings, this.pluginConfiguration.guiSettings.paginatedGuiItemSettings, this.notificationSender, this.userRepository, this.taskScheduler);
+        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration.commandSettings, this.pluginConfiguration.notificationSettings, this.pluginConfiguration.guiSettings, this.pluginConfiguration.scrollingGuiSettings, this.pluginConfiguration.guiSettings.guiItemSettings, this.notificationSender, this.userRepository, this.taskScheduler);
 
         /* Listeners */
         Stream.of(

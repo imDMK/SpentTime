@@ -1,9 +1,9 @@
 package com.github.imdmk.spenttime.gui.implementation;
 
 import com.github.imdmk.spenttime.command.settings.CommandSettings;
+import com.github.imdmk.spenttime.gui.settings.GuiItemSettings;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
-import com.github.imdmk.spenttime.gui.settings.item.GuiItemSettings;
-import com.github.imdmk.spenttime.gui.settings.item.PaginatedGuiItemSettings;
+import com.github.imdmk.spenttime.gui.settings.ScrollingGuiSettings;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.NotificationSettings;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
@@ -25,7 +25,6 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpentTimeTopGui {
 
@@ -33,19 +32,19 @@ public class SpentTimeTopGui {
     private final CommandSettings commandSettings;
     private final NotificationSettings notificationSettings;
     private final GuiSettings guiSettings;
+    private final ScrollingGuiSettings scrollingGuiSettings;
     private final GuiItemSettings guiItemSettings;
-    private final PaginatedGuiItemSettings paginatedGuiItemSettings;
     private final NotificationSender notificationSender;
     private final UserRepository userRepository;
     private final TaskScheduler taskScheduler;
 
-    public SpentTimeTopGui(Server server, CommandSettings commandSettings, NotificationSettings notificationSettings, GuiSettings guiSettings, GuiItemSettings guiItemSettings, PaginatedGuiItemSettings paginatedGuiItemSettings, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
+    public SpentTimeTopGui(Server server, CommandSettings commandSettings, NotificationSettings notificationSettings, GuiSettings guiSettings, ScrollingGuiSettings scrollingGuiSettings, GuiItemSettings guiItemSettings, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
         this.server = server;
         this.commandSettings = commandSettings;
         this.notificationSettings = notificationSettings;
         this.guiSettings = guiSettings;
+        this.scrollingGuiSettings = scrollingGuiSettings;
         this.guiItemSettings = guiItemSettings;
-        this.paginatedGuiItemSettings = paginatedGuiItemSettings;
         this.notificationSender = notificationSender;
         this.userRepository = userRepository;
         this.taskScheduler = taskScheduler;
@@ -65,28 +64,33 @@ public class SpentTimeTopGui {
         }
 
         if (gui instanceof PaginatedGui paginatedGui) {
+            int nextPageItemSlot = this.guiItemSettings.nextPageItemSlot;
             GuiItem nextPageItem = this.createNextPageItem(paginatedGui);
+
+            int previousPageItemSlot = this.guiItemSettings.previousPageItemSlot;
             GuiItem previousPageItem = this.createPreviousPageItem(paginatedGui);
 
-            paginatedGui.setItem(this.paginatedGuiItemSettings.nextPageItemSlot, nextPageItem);
-            paginatedGui.setItem(this.paginatedGuiItemSettings.previousPageItemSlot, previousPageItem);
+            if (nextPageItemSlot > 0) {
+                paginatedGui.setItem(nextPageItemSlot, nextPageItem);
+            }
+            if (previousPageItemSlot > 0) {
+                paginatedGui.setItem(previousPageItemSlot, previousPageItem);
+            }
         }
 
-        GuiItem exitGuiItem = ItemBuilder.from(this.guiSettings.guiItemSettings.exitItem)
+        GuiItem exitGuiItem = ItemBuilder.from(this.guiItemSettings.exitItem)
                 .asGuiItem(event -> gui.close(player));
 
         gui.setItem(this.guiItemSettings.exitItemSlot, exitGuiItem);
 
-        AtomicInteger position = new AtomicInteger(0);
-
-        for (User user : topUsers) {
-            position.incrementAndGet();
+        for (int i = 0; i < topUsers.size(); i++) {
+            User user = topUsers.get(i);
 
             OfflinePlayer offlinePlayer = this.server.getOfflinePlayer(user.getUuid());
 
             Formatter formatter = new Formatter()
                     .placeholder("{PLAYER}", user.getName())
-                    .placeholder("{POSITION}", position)
+                    .placeholder("{POSITION}", i + 1)
                     .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()))
                     .placeholder("{CLICK}", this.guiItemSettings.headClickType.name());
 
@@ -103,7 +107,7 @@ public class SpentTimeTopGui {
                     .name(headItemTitle)
                     .lore(headItemLore)
                     .asGuiItem(event -> {
-                        if (event.getClick() != this.guiSettings.guiItemSettings.headClickType) {
+                        if (event.getClick() != this.guiItemSettings.headClickType) {
                             return;
                         }
 
@@ -137,25 +141,27 @@ public class SpentTimeTopGui {
 
     private BaseGuiBuilder<?, ?> createGuiBuilder() {
         return switch (this.guiSettings.type) {
-            case PAGINATED -> Gui.paginated();
             case STANDARD -> Gui.gui();
+            case PAGINATED -> Gui.paginated();
+            case SCROLLING -> Gui.scrolling(this.scrollingGuiSettings.scrollType);
+            case DISABLED -> throw new IllegalArgumentException("");
         };
     }
 
     private GuiItem createNextPageItem(PaginatedGui paginatedGui) {
-        return ItemBuilder.from(this.guiSettings.paginatedGuiItemSettings.nextPageItem)
+        return ItemBuilder.from(this.guiItemSettings.nextPageItem)
                 .asGuiItem(event -> {
                     if (!paginatedGui.next()) {
-                        paginatedGui.updateItem(event.getSlot(), this.guiSettings.paginatedGuiItemSettings.noNextPageItem);
+                        paginatedGui.updateItem(event.getSlot(), this.guiItemSettings.noNextPageItem);
                     }
                 });
     }
 
     private GuiItem createPreviousPageItem(PaginatedGui paginatedGui) {
-        return ItemBuilder.from(this.guiSettings.paginatedGuiItemSettings.previousPageItem)
+        return ItemBuilder.from(this.guiItemSettings.previousPageItem)
                 .asGuiItem(event -> {
                     if (!paginatedGui.previous()) {
-                        paginatedGui.updateItem(event.getSlot(), this.guiSettings.paginatedGuiItemSettings.noPreviousPageItem);
+                        paginatedGui.updateItem(event.getSlot(), this.guiItemSettings.noPreviousPageItem);
                     }
                 });
     }

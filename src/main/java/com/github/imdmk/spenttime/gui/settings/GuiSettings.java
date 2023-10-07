@@ -1,8 +1,6 @@
 package com.github.imdmk.spenttime.gui.settings;
 
 import com.github.imdmk.spenttime.gui.GuiType;
-import com.github.imdmk.spenttime.gui.settings.item.GuiItemSettings;
-import com.github.imdmk.spenttime.gui.settings.item.PaginatedGuiItemSettings;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 
@@ -16,16 +14,12 @@ public class GuiSettings extends OkaeriConfig {
     public int querySize = 10;
 
     @Comment({
-            "# Should the gui be enabled?",
-            "# If you disable the gui, a list of top players in the chat will be displayed"
-    })
-    public boolean enabled = true;
-
-    @Comment({
             "# The type of gui",
-            "# Available types: ",
-            "# STANDARD - Standard, basic gui",
-            "# PAGINATED - Gui with pages; Useful when you want to display several pages of tops"
+            "# Available types:",
+            "# DISABLED - The list of players will be sent in the chat",
+            "# STANDARD - Standard Gui that should be used when the player list does not exceed 10",
+            "# PAGINATED - A Gui with pages that allow you to move between pages through items",
+            "# SCROLLING - A Gui that allows you to scroll through items"
     })
     public GuiType type = GuiType.STANDARD;
 
@@ -34,7 +28,4 @@ public class GuiSettings extends OkaeriConfig {
 
     @Comment({"#", "# Gui item settings", "#"})
     public GuiItemSettings guiItemSettings = new GuiItemSettings();
-
-    @Comment({"#", "# Paginated gui item settings", "#"})
-    public PaginatedGuiItemSettings paginatedGuiItemSettings = new PaginatedGuiItemSettings();
 }

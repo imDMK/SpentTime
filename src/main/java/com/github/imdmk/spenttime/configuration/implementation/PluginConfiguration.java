@@ -3,6 +3,7 @@ package com.github.imdmk.spenttime.configuration.implementation;
 import com.github.imdmk.spenttime.command.settings.CommandSettings;
 import com.github.imdmk.spenttime.database.DatabaseSettings;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
+import com.github.imdmk.spenttime.gui.settings.ScrollingGuiSettings;
 import com.github.imdmk.spenttime.notification.NotificationSettings;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
@@ -35,6 +36,9 @@ public class PluginConfiguration extends OkaeriConfig {
 
     @Comment({"#", "# Gui settings", "#"})
     public GuiSettings guiSettings = new GuiSettings();
+
+    @Comment({"#", "# Scrolling gui settings", "#"})
+    public ScrollingGuiSettings scrollingGuiSettings = new ScrollingGuiSettings();
 
     @Comment({"#", "# Database settings", "#"})
     public DatabaseSettings databaseSettings = new DatabaseSettings();

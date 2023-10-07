@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime.command.implementation;
 
+import com.github.imdmk.spenttime.gui.GuiType;
 import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
 import com.github.imdmk.spenttime.notification.NotificationSender;
@@ -14,7 +15,6 @@ import dev.rollczi.litecommands.command.route.Route;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Route(name = "spenttime")
 public class SpentTimeTopCommand {
@@ -43,20 +43,22 @@ public class SpentTimeTopCommand {
             return;
         }
 
-        if (this.guiSettings.enabled) {
-            this.spentTimeTopGui.open(player, topUsers);
+        if (this.guiSettings.type == GuiType.DISABLED) {
+            this.showSpentTimeTop(player, topUsers);
             return;
         }
 
+        this.spentTimeTopGui.open(player, topUsers);
+    }
+
+    private void showSpentTimeTop(Player player, List<User> topUsers) {
         this.notificationSender.send(player, this.notificationSettings.topSpentTimeListFirstNotification);
 
-        AtomicInteger position = new AtomicInteger(0);
-
-        for (User user : topUsers) {
-            position.incrementAndGet();
+        for (int i = 0; i < topUsers.size(); i++) {
+            User user = topUsers.get(i);
 
             Formatter formatter = new Formatter()
-                    .placeholder("{POSITION}", position.get())
+                    .placeholder("{POSITION}", i + 1)
                     .placeholder("{PLAYER}", user.getName())
                     .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()));
 
