@@ -9,8 +9,6 @@ import com.github.imdmk.spenttime.util.PlayerUtil;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.command.execute.Execute;
 import dev.rollczi.litecommands.command.route.Route;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,12 +17,10 @@ import java.time.Duration;
 @Route(name = "spenttime")
 public class SpentTimeCommand {
 
-    private final Server server;
     private final NotificationSettings notificationSettings;
     private final NotificationSender notificationSender;
 
-    public SpentTimeCommand(Server server, NotificationSettings notificationSettings, NotificationSender notificationSender) {
-        this.server = server;
+    public SpentTimeCommand(NotificationSettings notificationSettings, NotificationSender notificationSender) {
         this.notificationSettings = notificationSettings;
         this.notificationSender = notificationSender;
     }
@@ -41,8 +37,7 @@ public class SpentTimeCommand {
 
     @Execute(required = 1)
     void showSpentTimeTarget(CommandSender sender, @Arg User target) {
-        OfflinePlayer targetPlayer = this.server.getOfflinePlayer(target.getUuid());
-        Duration targetSpentTime = PlayerUtil.getSpentTimeDuration(targetPlayer);
+        Duration targetSpentTime = PlayerUtil.getSpentTimeDuration(target);
 
         Formatter formatter = new Formatter()
                 .placeholder("{PLAYER}", target.getName())
