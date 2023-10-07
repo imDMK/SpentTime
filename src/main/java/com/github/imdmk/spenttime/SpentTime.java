@@ -148,6 +148,11 @@ public class SpentTime {
     }
 
     public void onDisable() {
+        for (Player player : this.server.getOnlinePlayers()) {
+            this.closeGui(player);
+            this.saveUser(player);
+        }
+
         if (this.databaseManager != null) {
             this.databaseManager.close();
         }
@@ -160,7 +165,6 @@ public class SpentTime {
         }
 
         this.metrics.shutdown();
-        this.closeAllPlayersGuis();
 
         this.logger.info("GoodBye...");
     }
@@ -187,16 +191,18 @@ public class SpentTime {
                 .register();
     }
 
-    private void closeAllPlayersGuis() {
-        for (Player player : this.server.getOnlinePlayers()) {
-            InventoryView inventoryView = player.getOpenInventory();
-            Inventory topInventory = inventoryView.getTopInventory();
+    private void closeGui(Player player) {
+        InventoryView inventoryView = player.getOpenInventory();
+        Inventory topInventory = inventoryView.getTopInventory();
 
-            if (!(topInventory.getHolder() instanceof BaseGui)) {
-                return;
-            }
-
-            player.closeInventory();
+        if (!(topInventory.getHolder() instanceof BaseGui)) {
+            return;
         }
+
+        player.closeInventory();
+    }
+
+    private void saveUser(Player player) {
+        this.userManager.getUser(player.getUniqueId()).ifPresent(this.userRepository::save);
     }
 }
