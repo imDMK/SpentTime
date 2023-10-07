@@ -57,7 +57,6 @@ public class GuiItemSettings extends OkaeriConfig {
             .name(ComponentUtil.createItalic("<red>Quit"))
             .build();
 
-
     @Comment({
             "# Previous page item",
             "# Set to -1 to disable"
