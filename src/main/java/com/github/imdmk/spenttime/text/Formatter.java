@@ -17,14 +17,12 @@ public class Formatter {
 
     @CheckReturnValue
     public Formatter placeholder(@Nonnull String from, Iterable<? extends CharSequence> sequences) {
-        this.placeholders.put(from, String.join(", ", sequences));
-        return this;
+        return this.placeholder(from, String.join(", ", sequences));
     }
 
     @CheckReturnValue
     public <T> Formatter placeholder(@Nonnull String from, T to) {
-        this.placeholders.put(from, to.toString());
-        return this;
+        return this.placeholder(from, to.toString());
     }
 
     public String format(String message) {
