@@ -4,7 +4,7 @@ import com.github.imdmk.spenttime.command.settings.CommandSettings;
 import com.github.imdmk.spenttime.database.DatabaseSettings;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
 import com.github.imdmk.spenttime.gui.settings.ScrollingGuiSettings;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.Header;

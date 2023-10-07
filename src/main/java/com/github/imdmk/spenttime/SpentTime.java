@@ -171,7 +171,7 @@ public class SpentTime {
 
     private LiteCommands<CommandSender> registerLiteCommands() {
         return LiteBukkitAdventurePlatformFactory.builder(this.server, "SpentTime", false, this.bukkitAudiences, true)
-                .argument(Player.class, new BukkitPlayerArgument<>(this.server, this.pluginConfiguration.notificationSettings.playerNotFoundNotification))
+                .argument(Player.class, new BukkitPlayerArgument<>(this.server, this.pluginConfiguration.notificationSettings.playerNotFound))
                 .argument(User.class, new UserArgument(this.pluginConfiguration.notificationSettings, this.userManager))
 
                 .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("Only player can use this command."))
@@ -181,7 +181,7 @@ public class SpentTime {
                 .invalidUsageHandler(new UsageHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
 
                 .commandInstance(
-                        new SpentTimeCommand(this.server, this.pluginConfiguration.notificationSettings, this.notificationSender),
+                        new SpentTimeCommand(this.pluginConfiguration.notificationSettings, this.notificationSender),
                         new SpentTimeResetCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeTopCommand(this.pluginConfiguration.guiSettings, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.spentTimeTopGui)
                 )

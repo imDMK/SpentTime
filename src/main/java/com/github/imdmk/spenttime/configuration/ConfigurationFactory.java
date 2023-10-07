@@ -3,7 +3,7 @@ package com.github.imdmk.spenttime.configuration;
 import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
 import com.github.imdmk.spenttime.configuration.transformer.ComponentStringTransformer;
-import com.github.imdmk.spenttime.notification.NotificationSerializer;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSerializer;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.serdes.commons.SerdesCommons;

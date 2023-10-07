@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.command.argument;
 
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
 import dev.rollczi.litecommands.argument.simple.OneArgument;
@@ -26,7 +26,7 @@ public class UserArgument implements OneArgument<User> {
         Optional<User> userOptional = this.userManager.getOrFindUser(argument);
 
         return userOptional.map(Result::ok)
-                .orElseGet(() -> Result.error(this.notificationSettings.playerNotFoundNotification));
+                .orElseGet(() -> Result.error(this.notificationSettings.playerNotFound));
     }
 
     @Override

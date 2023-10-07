@@ -2,7 +2,7 @@ package com.github.imdmk.spenttime.command.implementation;
 
 import com.github.imdmk.spenttime.gui.implementation.ConfirmGui;
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
@@ -81,7 +81,7 @@ public class SpentTimeResetCommand {
         Formatter formatter = new Formatter()
                 .placeholder("{PLAYER}", target.getName());
 
-        this.notificationSender.send(sender, this.notificationSettings.targetResetSpentTimeNotification, formatter);
+        this.notificationSender.send(sender, this.notificationSettings.targetSpentTime, formatter);
     }
 
     private void resetGlobalSpentTime(CommandSender sender) {
@@ -91,6 +91,6 @@ public class SpentTimeResetCommand {
             offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
         }
 
-        this.notificationSender.send(sender, this.notificationSettings.resetGlobalSpentTimeNotification);
+        this.notificationSender.send(sender, this.notificationSettings.globalSpentTimeHasBeenReset);
     }
 }

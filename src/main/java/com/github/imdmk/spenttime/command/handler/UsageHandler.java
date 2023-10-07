@@ -1,7 +1,7 @@
 package com.github.imdmk.spenttime.command.handler;
 
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.text.Formatter;
 import dev.rollczi.litecommands.command.LiteInvocation;
 import dev.rollczi.litecommands.handle.InvalidUsageHandler;
@@ -24,17 +24,17 @@ public class UsageHandler implements InvalidUsageHandler<CommandSender> {
             Formatter formatter = new Formatter()
                     .placeholder("{USAGE}", schematic.first());
 
-            this.notificationSender.send(sender, this.notificationSettings.invalidUsageNotification, formatter);
+            this.notificationSender.send(sender, this.notificationSettings.invalidUsage, formatter);
             return;
         }
 
-        this.notificationSender.send(sender, this.notificationSettings.invalidUsageFirstNotification);
+        this.notificationSender.send(sender, this.notificationSettings.invalidUsageFirst);
 
         for (String schema : schematic.getSchematics()) {
             Formatter formatter = new Formatter()
                     .placeholder("{USAGE}", schema);
 
-            this.notificationSender.send(sender, this.notificationSettings.invalidUsageListNotification, formatter);
+            this.notificationSender.send(sender, this.notificationSettings.invalidUsageList, formatter);
         }
     }
 }

@@ -4,7 +4,7 @@ import com.github.imdmk.spenttime.gui.GuiType;
 import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
@@ -52,7 +52,7 @@ public class SpentTimeTopCommand {
     }
 
     private void showSpentTimeTop(Player player, List<User> topUsers) {
-        this.notificationSender.send(player, this.notificationSettings.topSpentTimeListFirstNotification);
+        this.notificationSender.send(player, this.notificationSettings.topSpentTimeListFirst);
 
         for (int i = 0; i < topUsers.size(); i++) {
             User user = topUsers.get(i);
@@ -62,7 +62,7 @@ public class SpentTimeTopCommand {
                     .placeholder("{PLAYER}", user.getName())
                     .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeDuration()));
 
-            this.notificationSender.send(player, this.notificationSettings.topSpentTimeListNotification, formatter);
+            this.notificationSender.send(player, this.notificationSettings.topSpentTimeList, formatter);
         }
     }
 }

@@ -5,7 +5,7 @@ import com.github.imdmk.spenttime.gui.settings.GuiItemSettings;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
 import com.github.imdmk.spenttime.gui.settings.ScrollingGuiSettings;
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
@@ -125,7 +125,7 @@ public class SpentTimeTopGui {
                                         offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
                                     });
 
-                                    this.notificationSender.send(player, this.notificationSettings.targetResetSpentTimeNotification, formatter);
+                                    this.notificationSender.send(player, this.notificationSettings.targetSpentTimeHasBeenReset, formatter);
 
                                     gui.close(player);
                                 })

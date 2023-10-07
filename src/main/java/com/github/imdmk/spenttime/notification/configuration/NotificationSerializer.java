@@ -1,5 +1,7 @@
-package com.github.imdmk.spenttime.notification;
+package com.github.imdmk.spenttime.notification.configuration;
 
+import com.github.imdmk.spenttime.notification.Notification;
+import com.github.imdmk.spenttime.notification.NotificationType;
 import eu.okaeri.configs.schema.GenericsDeclaration;
 import eu.okaeri.configs.serdes.DeserializationData;
 import eu.okaeri.configs.serdes.ObjectSerializer;

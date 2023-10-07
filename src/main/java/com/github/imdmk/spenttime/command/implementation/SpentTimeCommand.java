@@ -1,7 +1,7 @@
 package com.github.imdmk.spenttime.command.implementation;
 
 import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.util.DurationUtil;
@@ -32,7 +32,7 @@ public class SpentTimeCommand {
         Formatter formatter = new Formatter()
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(playerSpentTime));
 
-        this.notificationSender.send(player, this.notificationSettings.spentTimeNotification, formatter);
+        this.notificationSender.send(player, this.notificationSettings.playerSpentTime, formatter);
     }
 
     @Execute(required = 1)
@@ -43,6 +43,6 @@ public class SpentTimeCommand {
                 .placeholder("{PLAYER}", target.getName())
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(targetSpentTime));
 
-        this.notificationSender.send(sender, this.notificationSettings.targetSpentTimeNotification, formatter);
+        this.notificationSender.send(sender, this.notificationSettings.targetSpentTime, formatter);
     }
 }
