@@ -11,15 +11,15 @@
 An efficient plugin for your time spent in the game with many features and configuration possibilities.
 
 # Features
-* Top players spent time (with Gui).
-* Configurable items in top players spent time.
-* Ability to change the type of top players who spent time GUI.
-* Ability to decorate the top players spent time gui.
-* Possibility to set a custom number of players displayed in the spent time top.
-* Checking the time spent while the player is offline.
-* Resetting a player's spent time.
-* Reset spent time for all players on the server.
-* [Placeholder API](https://github.com/PlaceholderAPI/PlaceholderAPI) support.
+* Spent player time GUI (Customizable),
+* Configurable items in which top players spent time,
+* Ability to change the type of top players who spent time GUI,
+* Ability to decorate the top players spent time gui,
+* Possibility to set a custom number of players displayed in the spent time top,
+* Checking the time spent while the player is offline,
+* Resetting a player's spent time,
+* Reset spent time for all players on the server,
+* [Placeholder API](https://github.com/PlaceholderAPI/PlaceholderAPI) support,
 * [Adventure](https://github.com/KyoriPowered/adventure) components support.
 
 # FAQ
