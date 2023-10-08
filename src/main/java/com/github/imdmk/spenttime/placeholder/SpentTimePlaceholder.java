@@ -1,12 +1,14 @@
-package com.github.imdmk.spenttime.placeholder.implementation;
+package com.github.imdmk.spenttime.placeholder;
 
+import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.Duration;
 
 public class SpentTimePlaceholder extends PlaceholderExpansion {
 
@@ -32,22 +34,12 @@ public class SpentTimePlaceholder extends PlaceholderExpansion {
     }
 
     @Override
-    public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
-        if (player == null) {
-            return null;
-        }
-
-        long playerSpentTime = PlayerUtil.getSpentTime(player);
-        return String.valueOf(playerSpentTime);
-    }
-
-    @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         if (player == null) {
             return null;
         }
 
-        long playerSpentTime = PlayerUtil.getSpentTime(player);
-        return String.valueOf(playerSpentTime);
+        Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
+        return DurationUtil.toHumanReadable(playerSpentTime);
     }
 }

@@ -1,6 +1,5 @@
 package com.github.imdmk.spenttime;
 
-import com.github.imdmk.spenttime.user.argument.UserArgument;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
@@ -15,14 +14,14 @@ import com.github.imdmk.spenttime.gui.implementation.SpentTimeTopGui;
 import com.github.imdmk.spenttime.notification.Notification;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
-import com.github.imdmk.spenttime.placeholder.implementation.SpentTimeFormattedPlaceholder;
-import com.github.imdmk.spenttime.placeholder.implementation.SpentTimePlaceholder;
+import com.github.imdmk.spenttime.placeholder.SpentTimePlaceholder;
 import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.scheduler.TaskSchedulerImpl;
 import com.github.imdmk.spenttime.update.UpdateListener;
 import com.github.imdmk.spenttime.update.UpdateService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
+import com.github.imdmk.spenttime.user.argument.UserArgument;
 import com.github.imdmk.spenttime.user.listener.UserCreateListener;
 import com.github.imdmk.spenttime.user.listener.UserLoadListener;
 import com.github.imdmk.spenttime.user.listener.UserSaveListener;
@@ -136,7 +135,6 @@ public class SpentTime {
             this.placeholderRegistry = new PlaceholderRegistry();
 
             Stream.of(
-                    new SpentTimeFormattedPlaceholder(plugin.getDescription()),
                     new SpentTimePlaceholder(plugin.getDescription())
             ).forEach(this.placeholderRegistry::register);
         }
