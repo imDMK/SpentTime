@@ -7,7 +7,7 @@ import eu.okaeri.configs.serdes.SerdesContext;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class ComponentStringTransformer extends BidirectionalTransformer<Component, String> {
+public class ComponentTransformer extends BidirectionalTransformer<Component, String> {
 
     @Override
     public GenericsPair<Component, String> getPair() {
