@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime;
 
-import com.github.imdmk.spenttime.command.argument.UserArgument;
+import com.github.imdmk.spenttime.user.argument.UserArgument;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;

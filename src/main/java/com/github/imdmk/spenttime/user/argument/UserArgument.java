@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.command.argument;
+package com.github.imdmk.spenttime.user.argument;
 
 import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.user.User;
