@@ -26,10 +26,10 @@ public class NotificationTransformer extends BidirectionalTransformer<Notificati
 
     @Override
     public Notification rightToLeft(@NonNull String data, @NonNull SerdesContext serdesContext) {
-        String[] argument = data.split(":");
+        String[] arguments = data.split(":");
 
-        NotificationType type = NotificationType.valueOf(argument[0]);
-        String message = this.replaceFirstSpace(argument[1]);
+        NotificationType type = NotificationType.valueOf(arguments[0]);
+        String message = this.replaceFirstSpace(arguments[1]);
 
         return new Notification(type, message);
     }
