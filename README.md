@@ -24,9 +24,8 @@ An efficient plugin for your time spent in the game with many features and confi
 
 # FAQ
 ### **Q: What are the available placeholder formats?**
-**A:** At the moment there are currently 2 placeholders available:
-* `%spent-time%` - Displays the value in milliseconds of the player's time spent.
-* `%spent-time-formatted%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.
+**A:** At the moment there is currently one placeholder available:
+* `%spent-time%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.
 
 #### **Q: What are the notification types?**
 **A:** CHAT, ACTIONBAR, TITLE, SUBTITLE, DISABLED
@@ -37,7 +36,7 @@ An efficient plugin for your time spent in the game with many features and confi
 ### **Q: What database types are supported by this plugin?**
 **A:** We currently support the following databases: SQLite, MYSQL, MARIADB
 
-#### **Q: Why doesn't my time in the top count immediately?**
+#### **Q: Why doesn't my time at the top count immediately?**
 **A:** This is specifically done to make the plugin efficient. The player's time updates when entering and exiting the server and there is an additional task that updates the spent time of all players. You can change its frequency in the configuration by changing `playerSpentTimeSaveDuration`.
 
 # Information
