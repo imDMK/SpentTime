@@ -81,8 +81,8 @@ public class SpentTime {
     public SpentTime(Plugin plugin) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         File dataFolder = plugin.getDataFolder();
-
         Logger logger = plugin.getLogger();
+
         this.server = plugin.getServer();
 
         /* Configuration */
