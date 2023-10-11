@@ -124,7 +124,7 @@ public class SpentTime {
             new UserCreateListener(this.userRepository, this.userManager, this.taskScheduler),
             new UserLoadListener(this.server, this.userManager),
             new UserSaveListener(this.userManager, this.userRepository, this.taskScheduler),
-            new UpdateListener(this.pluginConfiguration, this.notificationSender, updateService, this.taskScheduler)
+            new UpdateListener(this.logger, this.pluginConfiguration, this.notificationSender, updateService, this.taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
         /* Commands */
@@ -190,8 +190,8 @@ public class SpentTime {
     }
 
     private void closeGui(Player player) {
-        InventoryView inventoryView = player.getOpenInventory();
-        Inventory topInventory = inventoryView.getTopInventory();
+        InventoryView openInventory = player.getOpenInventory();
+        Inventory topInventory = openInventory.getTopInventory();
 
         if (!(topInventory.getHolder() instanceof BaseGui)) {
             return;

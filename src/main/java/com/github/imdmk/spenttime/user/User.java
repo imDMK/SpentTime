@@ -17,15 +17,14 @@ public class User {
     private String name;
 
     @DatabaseField(columnName = "spentTime")
-    private long spentTime;
+    private long spentTime = 0L;
 
     public User() {
     }
 
-    public User(UUID uuid, String name, long spentTime) {
+    public User(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
-        this.spentTime = spentTime;
     }
 
     public UUID getUuid() {

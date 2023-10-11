@@ -31,7 +31,7 @@ public class UserManager {
     }
 
     public User createUser(UUID uuid, String name) {
-        User user = new User(uuid, name, 0L);
+        User user = new User(uuid, name);
 
         this.addUser(user);
         this.userRepository.save(user);
