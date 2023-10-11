@@ -56,7 +56,6 @@ import java.util.stream.Stream;
 
 public class SpentTime {
 
-    private final Logger logger;
     private final Server server;
 
     private final PluginConfiguration pluginConfiguration;
@@ -83,24 +82,24 @@ public class SpentTime {
         Stopwatch stopwatch = Stopwatch.createStarted();
         File dataFolder = plugin.getDataFolder();
 
-        this.logger = plugin.getLogger();
+        Logger logger = plugin.getLogger();
         this.server = plugin.getServer();
 
         /* Configuration */
         this.pluginConfiguration = ConfigurationFactory.create(PluginConfiguration.class, new File(dataFolder, "configuration.yml"));
 
         /* Database */
-        this.databaseManager = new DatabaseManager(this.logger, dataFolder, this.pluginConfiguration.databaseSettings);
+        this.databaseManager = new DatabaseManager(logger, dataFolder, this.pluginConfiguration.databaseSettings);
 
         try {
             this.databaseManager.connect();
 
-            this.userRepository = new UserRepositoryImpl(this.logger, this.databaseManager.getConnectionSource());
+            this.userRepository = new UserRepositoryImpl(logger, this.databaseManager.getConnectionSource());
         }
         catch (SQLException sqlException) {
             this.userRepository = new UserEmptyRepositoryImpl();
 
-            this.logger.log(Level.SEVERE, "An error occurred while trying to initialize database. The plugin will run, but the functions will not work as expected. ", sqlException);
+            logger.log(Level.SEVERE, "An error occurred while trying to initialize database. The plugin will run, but the functions will not work as expected. ", sqlException);
         }
 
         this.userManager = new UserManager(this.userRepository);
@@ -124,7 +123,7 @@ public class SpentTime {
             new UserCreateListener(this.userRepository, this.userManager, this.taskScheduler),
             new UserLoadListener(this.server, this.userManager),
             new UserSaveListener(this.userManager, this.userRepository, this.taskScheduler),
-            new UpdateListener(this.logger, this.pluginConfiguration, this.notificationSender, updateService, this.taskScheduler)
+            new UpdateListener(logger, this.pluginConfiguration, this.notificationSender, updateService, this.taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
         /* Commands */
@@ -142,7 +141,7 @@ public class SpentTime {
         /* Metrics */
         this.metrics = new Metrics((JavaPlugin) plugin, 19362);
 
-        this.logger.info("Enabled plugin in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms.");
+        logger.info("Enabled plugin in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms.");
     }
 
     public void onDisable() {
@@ -163,8 +162,6 @@ public class SpentTime {
         }
 
         this.metrics.shutdown();
-
-        this.logger.info("GoodBye...");
     }
 
     private LiteCommands<CommandSender> registerLiteCommands() {
