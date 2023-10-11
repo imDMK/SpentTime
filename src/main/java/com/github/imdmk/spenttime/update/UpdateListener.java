@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 public class UpdateListener implements Listener {
 
     private static final String PREFIX = "<dark_gray>[<rainbow>SpentTime<dark_gray>]";
+
     private static final Notification UPDATE_AVAILABLE = new Notification(NotificationType.CHAT, PREFIX + " <yellow>A new version is available: {TAG}\n<yellow>Download it here: {URL}");
     private static final Notification UPDATE_EXCEPTION = new Notification(NotificationType.CHAT, PREFIX + "<red>An error occurred while checking for update: {MESSAGE}");
 

@@ -7,8 +7,6 @@ import com.github.imdmk.spenttime.util.PlayerUtil;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
-
 public class UserSpentTimeSaveTask implements Runnable {
 
     private final Server server;
@@ -24,15 +22,14 @@ public class UserSpentTimeSaveTask implements Runnable {
     @Override
     public void run() {
         for (Player player : this.server.getOnlinePlayers()) {
-            Optional<User> userOptional = this.userManager.getUser(player.getUniqueId());
-            if (userOptional.isEmpty()) {
-                return;
-            }
-
-            User user = userOptional.get();
-
-            user.setSpentTime(PlayerUtil.getSpentTime(player));
-            this.userRepository.save(user);
+            this.userManager.getUser(player.getUniqueId()).ifPresent(user -> this.saveSpentTime(player, user));
         }
+    }
+
+    private void saveSpentTime(Player player, User user) {
+        long spentTime = PlayerUtil.getSpentTime(player);
+
+        user.setSpentTime(spentTime);
+        this.userRepository.save(user);
     }
 }
