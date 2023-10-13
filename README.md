@@ -8,36 +8,64 @@
 [![PaperMC](https://img.shields.io/badge/Paper-004ee9.svg)](https://hangar.papermc.io/imDMK/SpentTime)
 [![bStats](https://img.shields.io/badge/bStats-00695c)](https://bstats.org/plugin/bukkit/SpentTime/19362)
 
-An efficient plugin for your time spent in the game with many features and configuration possibilities.
+### Information
+This is a plugin that allows you to check how much time a player has spent on the server.
+* **Performance-focused** - Minimizes the impact on server resources, allowing you to maintain high server performance.
+* **Simplicity of configuration** - Thanks to clear documentation, even people without advanced knowledge can easily adapt the plug-in to their own needs.
+* **Regularly Updated** - We update our plugin regularly, both fixing bugs and adding new features to ensure full compatibility with the latest versions of the game.
 
-# Features
-* Spent player time GUI (Customizable),
-* Configurable items in which top players spent time,
-* Ability to change the type of top players who spent time GUI,
-* Ability to decorate the top players spent time gui,
-* Possibility to set a custom number of players displayed in the spent time top,
-* Checking the time spent while the player is offline,
-* Resetting a player's spent time,
-* Reset spent time for all players on the server,
+### Features
+* Customizable top spent time player GUI,
+* Configurable items showing where top players spent their time,
+* Option to change the type of GUI displaying top players based on time spent,
+* Ability to customize the appearance of the top players spent time GUI,
+* Option to set a custom number of players displayed in the Top Spent Time list,
+* Offline time tracking for players,
+* Resetting spent time for individual players,
+* Resetting spent time for all players on the server,
 * [Placeholder API](https://github.com/PlaceholderAPI/PlaceholderAPI) support,
-* [Adventure](https://github.com/KyoriPowered/adventure) components support.
+* [Adventure components](https://github.com/KyoriPowered/adventure) support.
 
-# FAQ
-### **Q: What are the available placeholder formats?**
-**A:** At the moment there is currently one placeholder available:
+### Preview
+* ### Top spent time GUI
+![gif](assets/top.gif)
+
+* ### Checking your time spent
+![gif](assets/time.gif)
+
+* ### Resetting time spent
+![gif](assets/reset.gif)
+
+### Placeholder API Formats
 * `%spent-time%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.
 
-#### **Q: What are the notification types?**
-**A:** CHAT, ACTIONBAR, TITLE, SUBTITLE, DISABLED
+### Command permissions
+* `/spenttime` - **command.spenttime**
+* `/spenttime <target>` - **command.spenttime.other**
+* `/spenttime top` - **command.spenttime.top**
+* `/spenttime reset` - **command.spenttime.reset**
+* `/spenttime reset-all` - **command.spenttime.reset.all**
 
-### **Q: What are the types of top players who spend time gui?**
-**A:** STANDARD, PAGINATED
+### Notification types
+* `CHAT`
+* `ACTIONBAR`
+* `TITLE`
+* `SUBTITLE`
+* `DISABLED`
 
-### **Q: What database types are supported by this plugin?**
-**A:** We currently support the following databases: SQLite, MYSQL, MARIADB
+### Supported database types
+* `SQLITE`
+* `MYSQL`
+* `MARIADB`
 
-#### **Q: Why doesn't my time at the top count immediately?**
-**A:** This is specifically done to make the plugin efficient. The player's time updates when entering and exiting the server and there is an additional task that updates the spent time of all players. You can change its frequency in the configuration by changing `playerSpentTimeSaveDuration`.
+### What are the types of top players who spend time gui?
+* `STANDARD` - Standard Gui that should be used when the player list does not exceed 10
+* `PAGINATED` - A Gui with pages that allow you to move between pages through items
+* `SCROLLING` - A Gui that allows you to scroll through items
+* `DISABLED` - The list of players will be sent in the chat
 
-# Information
+### Why doesn't my time at the top count immediately?
+* This is specifically done to make the plugin efficient. The player's time updates when entering and exiting the server and there is an additional task that updates the spent time of all players. You can change its frequency in the configuration by changing `playerSpentTimeSaveDuration`.
+
+### Reporting issues
 If you have any suggestions or find a bug, please report it using [this](https://github.com/imDMK/SpentTime/issues) site.
