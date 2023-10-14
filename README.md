@@ -27,24 +27,31 @@ This is a plugin that allows you to check how much time a player has spent on th
 * [Adventure components](https://github.com/KyoriPowered/adventure) support.
 
 ### Preview
-* ### Top spent time GUI
+* #### Top spent time GUI
 ![gif](assets/top.gif)
 
-* ### Checking your time spent
+* #### Checking your time spent
 ![gif](assets/time.gif)
 
-* ### Resetting time spent
+* #### Resetting time spent
 ![gif](assets/reset.gif)
 
-### Placeholder API Formats
-* `%spent-time%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.
-
 ### Command permissions
-* `/spenttime` - **command.spenttime**
-* `/spenttime <target>` - **command.spenttime.other**
-* `/spenttime top` - **command.spenttime.top**
-* `/spenttime reset` - **command.spenttime.reset**
-* `/spenttime reset-all` - **command.spenttime.reset.all**
+| Command               | Permission                  |
+|:----------------------|:----------------------------|
+| `spenttime`           | command.spenttime           |
+| `spenttime <target>`  | command.spenttime.target    |
+| `spenttime top`       | command.spenttime.top       |              
+| `spenttime reset`     | command.spenttime.reset     |
+| `spenttime reset-all` | command.spenttime.reset.all |
+
+### Gui types
+| GuiType               | Description                                                               |
+|:----------------------|:--------------------------------------------------------------------------|
+| `STANDARD`            | Standard Gui that should be used when the player list does not exceed 10  |
+| `PAGINATED`           | A Gui with pages that allow you to move between pages through items       |
+| `SCROLLING`           | A Gui that allows you to scroll through items                             |              
+| `DISABLED`            | The list of players will be sent in the chat                              |
 
 ### Notification types
 * `CHAT`
@@ -58,11 +65,8 @@ This is a plugin that allows you to check how much time a player has spent on th
 * `MYSQL`
 * `MARIADB`
 
-### What are the types of top players who spend time gui?
-* `STANDARD` - Standard Gui that should be used when the player list does not exceed 10
-* `PAGINATED` - A Gui with pages that allow you to move between pages through items
-* `SCROLLING` - A Gui that allows you to scroll through items
-* `DISABLED` - The list of players will be sent in the chat
+### [Placeholder API](https://github.com/PlaceholderAPI/PlaceholderAPI) Formats
+* `%spent-time%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.
 
 ### Why doesn't my time at the top count immediately?
 * This is specifically done to make the plugin efficient. The player's time updates when entering and exiting the server and there is an additional task that updates the spent time of all players. You can change its frequency in the configuration by changing `playerSpentTimeSaveDuration`.
