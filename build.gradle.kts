@@ -45,7 +45,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    testImplementation("com.google.guava:guava-testlib:32.1.2-jre")
+    testImplementation("com.google.guava:guava-testlib:32.1.3-jre")
 }
 
 tasks.test {
