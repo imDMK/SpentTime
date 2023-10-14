@@ -25,7 +25,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.3")
 
-    implementation("dev.triumphteam:triumph-gui:3.1.5")
+    implementation("dev.triumphteam:triumph-gui:3.1.6")
 
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.0-beta.5")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.0-beta.5")
