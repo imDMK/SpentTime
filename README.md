@@ -42,7 +42,8 @@ This is a plugin that allows you to check how much time a player has spent on th
 |:----------------------|:----------------------------|
 | `spenttime`           | command.spenttime           |
 | `spenttime <target>`  | command.spenttime.target    |
-| `spenttime top`       | command.spenttime.top       |              
+| `spenttime top`       | command.spenttime.top       |          
+| `spenttime set`       | command.spenttime.set       |
 | `spenttime reset`     | command.spenttime.reset     |
 | `spenttime reset-all` | command.spenttime.reset.all |
 

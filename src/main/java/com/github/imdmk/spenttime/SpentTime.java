@@ -6,6 +6,7 @@ import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeResetAllCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeResetCommand;
+import com.github.imdmk.spenttime.command.implementation.SpentTimeSetCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeTopCommand;
 import com.github.imdmk.spenttime.configuration.ConfigurationFactory;
 import com.github.imdmk.spenttime.configuration.implementation.PluginConfiguration;
@@ -180,6 +181,7 @@ public class SpentTime {
                         new SpentTimeCommand(this.pluginConfiguration.notificationSettings, this.notificationSender),
                         new SpentTimeResetAllCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeResetCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
+                        new SpentTimeSetCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeTopCommand(this.pluginConfiguration.guiSettings, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.spentTimeTopGui)
                 )
 

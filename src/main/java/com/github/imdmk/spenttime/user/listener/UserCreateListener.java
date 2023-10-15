@@ -44,7 +44,7 @@ public class UserCreateListener implements Listener {
     }
 
     private boolean updateSpentTime(Player player, User user) {
-        long playerSpentTime = PlayerUtil.getSpentTime(player);
+        long playerSpentTime = PlayerUtil.getSpentTime(player).toMillis();
         long userSpentTime = user.getSpentTime();
 
         if (playerSpentTime == userSpentTime) {

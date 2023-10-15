@@ -29,7 +29,7 @@ public class SpentTimeCommand {
     @Execute(required = 0)
     @Permission("command.spenttime")
     void show(Player player) {
-        Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
+        Duration playerSpentTime = PlayerUtil.getSpentTime(player);
 
         Formatter formatter = new Formatter()
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(playerSpentTime));
@@ -38,13 +38,11 @@ public class SpentTimeCommand {
     }
 
     @Execute(required = 1)
-    @Permission("command.spenttime.other")
+    @Permission("command.spenttime.target")
     void showTarget(CommandSender sender, @Arg User target) {
-        Duration targetSpentTime = PlayerUtil.getSpentTimeDuration(target);
-
         Formatter formatter = new Formatter()
                 .placeholder("{PLAYER}", target.getName())
-                .placeholder("{TIME}", DurationUtil.toHumanReadable(targetSpentTime));
+                .placeholder("{TIME}", DurationUtil.toHumanReadable(target.getSpentTimeDuration()));
 
         this.notificationSender.send(sender, this.notificationSettings.targetSpentTime, formatter);
     }

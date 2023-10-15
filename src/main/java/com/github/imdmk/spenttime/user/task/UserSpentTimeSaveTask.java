@@ -27,9 +27,7 @@ public class UserSpentTimeSaveTask implements Runnable {
     }
 
     private void saveSpentTime(Player player, User user) {
-        long spentTime = PlayerUtil.getSpentTime(player);
-
-        user.setSpentTime(spentTime);
+        user.setSpentTime(PlayerUtil.getSpentTime(player));
         this.userRepository.save(user);
     }
 }

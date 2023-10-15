@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@Route(name = "spenttime")
+@Route(name = "spenttime top")
 public class SpentTimeTopCommand {
 
     private final GuiSettings guiSettings;
@@ -35,7 +35,7 @@ public class SpentTimeTopCommand {
     }
 
     @Async
-    @Execute(route = "top", required = 0)
+    @Execute(required = 0)
     @Permission("command.spenttime.top")
     void showTopSpentTime(Player player) {
         List<User> topUsers = this.userRepository.findByOrderSpentTime(this.guiSettings.querySize);

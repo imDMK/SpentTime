@@ -39,7 +39,7 @@ public class SpentTimePlaceholder extends PlaceholderExpansion {
             return null;
         }
 
-        Duration playerSpentTime = PlayerUtil.getSpentTimeDuration(player);
+        Duration playerSpentTime = PlayerUtil.getSpentTime(player);
         return DurationUtil.toHumanReadable(playerSpentTime);
     }
 }

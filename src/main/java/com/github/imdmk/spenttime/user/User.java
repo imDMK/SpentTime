@@ -51,6 +51,10 @@ public class User {
         this.spentTime = spentTime;
     }
 
+    public void setSpentTime(Duration spentTime) {
+        this.spentTime = spentTime.toMillis();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

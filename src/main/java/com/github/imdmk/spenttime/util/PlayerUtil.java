@@ -1,6 +1,5 @@
 package com.github.imdmk.spenttime.util;
 
-import com.github.imdmk.spenttime.user.User;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 
@@ -12,16 +11,14 @@ public class PlayerUtil {
         throw new UnsupportedOperationException("This is utility class.");
     }
 
-    public static Duration getSpentTimeDuration(User user) {
-        return Duration.ofMillis(user.getSpentTime());
-    }
-
-    public static Duration getSpentTimeDuration(OfflinePlayer player) {
+    public static Duration getSpentTime(OfflinePlayer player) {
         long secondsPlayed = player.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20;
         return Duration.ofSeconds(secondsPlayed);
     }
 
-    public static long getSpentTime(OfflinePlayer offlinePlayer) {
-        return getSpentTimeDuration(offlinePlayer).toMillis();
+    public static void setSpentTime(OfflinePlayer player, Duration time) {
+        int ticksPlayed = (int) DurationUtil.toTicks(time);
+
+        player.setStatistic(Statistic.PLAY_ONE_MINUTE, ticksPlayed);
     }
 }
