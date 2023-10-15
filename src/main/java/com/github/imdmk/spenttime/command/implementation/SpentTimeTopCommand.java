@@ -11,6 +11,7 @@ import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import dev.rollczi.litecommands.command.async.Async;
 import dev.rollczi.litecommands.command.execute.Execute;
+import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.route.Route;
 import org.bukkit.entity.Player;
 
@@ -35,6 +36,7 @@ public class SpentTimeTopCommand {
 
     @Async
     @Execute(route = "top", required = 0)
+    @Permission("command.spenttime.top")
     void showTopSpentTime(Player player) {
         List<User> topUsers = this.userRepository.findByOrderSpentTime(this.guiSettings.querySize);
 

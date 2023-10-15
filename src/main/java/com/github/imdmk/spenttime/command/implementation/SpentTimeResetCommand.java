@@ -11,6 +11,7 @@ import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.rollczi.litecommands.argument.Arg;
 import dev.rollczi.litecommands.argument.Name;
 import dev.rollczi.litecommands.command.execute.Execute;
+import dev.rollczi.litecommands.command.permission.Permission;
 import dev.rollczi.litecommands.command.route.Route;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -36,6 +37,7 @@ public class SpentTimeResetCommand {
     }
 
     @Execute(route = "reset", required = 1)
+    @Permission("command.spenttime.reset")
     void resetTime(CommandSender sender, @Arg @Name("target") User target) {
         if (sender instanceof Player player) {
             new ConfirmGui(this.taskScheduler)
@@ -54,6 +56,7 @@ public class SpentTimeResetCommand {
     }
 
     @Execute(route = "reset-all")
+    @Permission("command.spenttime.reset.all")
     void resetTimeAll(CommandSender sender) {
         if (sender instanceof Player player) {
             new ConfirmGui(this.taskScheduler)
@@ -81,7 +84,7 @@ public class SpentTimeResetCommand {
         Formatter formatter = new Formatter()
                 .placeholder("{PLAYER}", target.getName());
 
-        this.notificationSender.send(sender, this.notificationSettings.targetSpentTime, formatter);
+        this.notificationSender.send(sender, this.notificationSettings.targetSpentTimeHasBeenReset, formatter);
     }
 
     private void resetGlobalSpentTime(CommandSender sender) {

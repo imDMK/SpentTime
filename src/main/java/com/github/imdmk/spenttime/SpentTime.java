@@ -6,7 +6,6 @@ import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeResetCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeTopCommand;
-import com.github.imdmk.spenttime.command.implementation.editor.SpentTimeResetCommandEditor;
 import com.github.imdmk.spenttime.configuration.ConfigurationFactory;
 import com.github.imdmk.spenttime.configuration.implementation.PluginConfiguration;
 import com.github.imdmk.spenttime.database.DatabaseManager;
@@ -116,7 +115,7 @@ public class SpentTime {
         this.taskScheduler.runTimerAsync(new UserSpentTimeSaveTask(this.server, this.userRepository, this.userManager), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(this.pluginConfiguration.spentTimeSaveDelay));
 
         /* Guis */
-        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration.commandSettings, this.pluginConfiguration.notificationSettings, this.pluginConfiguration.guiSettings, this.pluginConfiguration.scrollingGuiSettings, this.pluginConfiguration.guiSettings.guiItemSettings, this.notificationSender, this.userRepository, this.taskScheduler);
+        this.spentTimeTopGui = new SpentTimeTopGui(this.server, this.pluginConfiguration.notificationSettings, this.pluginConfiguration.guiSettings, this.pluginConfiguration.scrollingGuiSettings, this.pluginConfiguration.guiSettings.guiItemSettings, this.notificationSender, this.userRepository, this.taskScheduler);
 
         /* Listeners */
         Stream.of(
@@ -180,8 +179,6 @@ public class SpentTime {
                         new SpentTimeResetCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeTopCommand(this.pluginConfiguration.guiSettings, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.spentTimeTopGui)
                 )
-
-                .commandEditor(SpentTimeResetCommand.class, new SpentTimeResetCommandEditor(this.pluginConfiguration.commandSettings))
 
                 .register();
     }

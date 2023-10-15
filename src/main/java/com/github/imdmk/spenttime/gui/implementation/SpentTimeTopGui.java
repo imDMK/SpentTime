@@ -1,6 +1,5 @@
 package com.github.imdmk.spenttime.gui.implementation;
 
-import com.github.imdmk.spenttime.command.settings.CommandSettings;
 import com.github.imdmk.spenttime.gui.settings.GuiItemSettings;
 import com.github.imdmk.spenttime.gui.settings.GuiSettings;
 import com.github.imdmk.spenttime.gui.settings.ScrollingGuiSettings;
@@ -29,7 +28,6 @@ import java.util.List;
 public class SpentTimeTopGui {
 
     private final Server server;
-    private final CommandSettings commandSettings;
     private final NotificationSettings notificationSettings;
     private final GuiSettings guiSettings;
     private final ScrollingGuiSettings scrollingGuiSettings;
@@ -38,9 +36,8 @@ public class SpentTimeTopGui {
     private final UserRepository userRepository;
     private final TaskScheduler taskScheduler;
 
-    public SpentTimeTopGui(Server server, CommandSettings commandSettings, NotificationSettings notificationSettings, GuiSettings guiSettings, ScrollingGuiSettings scrollingGuiSettings, GuiItemSettings guiItemSettings, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
+    public SpentTimeTopGui(Server server, NotificationSettings notificationSettings, GuiSettings guiSettings, ScrollingGuiSettings scrollingGuiSettings, GuiItemSettings guiItemSettings, NotificationSender notificationSender, UserRepository userRepository, TaskScheduler taskScheduler) {
         this.server = server;
-        this.commandSettings = commandSettings;
         this.notificationSettings = notificationSettings;
         this.guiSettings = guiSettings;
         this.scrollingGuiSettings = scrollingGuiSettings;
@@ -144,7 +141,7 @@ public class SpentTimeTopGui {
             case STANDARD -> Gui.gui();
             case PAGINATED -> Gui.paginated();
             case SCROLLING -> Gui.scrolling(this.scrollingGuiSettings.scrollType);
-            case DISABLED -> throw new IllegalArgumentException("");
+            case DISABLED -> throw new IllegalArgumentException("Disabled gui cannot be opened");
         };
     }
 
@@ -167,7 +164,7 @@ public class SpentTimeTopGui {
     }
 
     private boolean hasPermissionToReset(Player player) {
-        return player.hasPermission(this.commandSettings.spentTimeResetPermission);
+        return player.hasPermission("command.spenttime.reset");
     }
 }
 
