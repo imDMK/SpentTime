@@ -9,8 +9,8 @@ import java.util.List;
 public class ComponentUtil {
 
     private static final CharSequence LEGACY_CHAR = "§";
-    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
 
+    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private ComponentUtil() {
