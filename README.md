@@ -70,7 +70,7 @@ This is a plugin that allows you to check how much time a player has spent on th
 * `%spent-time%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.
 
 ### Why doesn't my time at the top count immediately?
-* This is specifically done to make the plugin efficient. The player's time updates when entering and exiting the server and there is an additional task that updates the spent time of all players. You can change its frequency in the configuration by changing `playerSpentTimeSaveDuration`.
+* This is specifically done to make the plugin efficient. The player's time updates when entering and exiting the server and there is an additional task that updates the spent time of all players. You can change its frequency in the configuration by changing `spentTimeSaveDelay`.
 
 ### Reporting issues
 If you have any suggestions or find a bug, please report it using [this](https://github.com/imDMK/SpentTime/issues) site.
