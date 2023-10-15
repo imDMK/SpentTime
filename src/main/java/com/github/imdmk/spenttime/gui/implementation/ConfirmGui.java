@@ -55,20 +55,13 @@ public class ConfirmGui {
                 .name(ComponentUtil.createItalic("<red>Cancel"))
                 .asGuiItem();
 
-        if (this.actionAfterCancel != null) {
-            cancelItem.setAction(this.actionAfterCancel);
-        }
+        this.setCloseAfterCancelAction(cancelItem, player);
 
         GuiItem confirmItem = ItemBuilder.from(Material.GREEN_CONCRETE)
                 .name(ComponentUtil.createItalic("<green>Confirm"))
                 .asGuiItem();
 
-        if (this.actionAfterConfirm != null) {
-            confirmItem.setAction(this.actionAfterConfirm);
-        }
-        else if (this.closeAfterCancel) {
-            confirmItem.setAction(event -> this.gui.close(player));
-        }
+        this.setCloseAfterConfirmAction(confirmItem);
 
         this.gui.getFiller().fillBorder(ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).asGuiItem());
 
@@ -79,5 +72,20 @@ public class ConfirmGui {
         this.gui.setItem(32, cancelItem);
 
         this.taskScheduler.runSync(() -> this.gui.open(player));
+    }
+
+    private void setCloseAfterConfirmAction(GuiItem guiItem) {
+        if (this.actionAfterConfirm != null) {
+            guiItem.setAction(this.actionAfterConfirm);
+        }
+    }
+
+    private void setCloseAfterCancelAction(GuiItem guiItem, Player player) {
+        if (this.actionAfterCancel != null) {
+            guiItem.setAction(this.actionAfterCancel);
+        }
+        else if (this.closeAfterCancel) {
+            guiItem.setAction(event -> this.gui.close(player));
+        }
     }
 }
