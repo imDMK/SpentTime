@@ -23,15 +23,15 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.3")
+    compileOnly("me.clip:placeholderapi:2.11.4")
 
-    implementation("dev.triumphteam:triumph-gui:3.1.5")
+    implementation("dev.triumphteam:triumph-gui:3.1.6")
 
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.0-beta.5")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.0-beta.5")
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.0-beta.5")
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
     implementation("dev.rollczi.litecommands:core:2.8.9")
@@ -42,10 +42,10 @@ dependencies {
     implementation("com.eternalcode:gitcheck:1.0.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    testImplementation("com.google.guava:guava-testlib:32.1.2-jre")
+    testImplementation("com.google.guava:guava-testlib:32.1.3-jre")
 }
 
 tasks.test {
