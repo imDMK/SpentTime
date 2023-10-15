@@ -1,5 +1,5 @@
 package com.github.imdmk.spenttime.database;
 
 public enum DatabaseMode {
-    SQLITE, MYSQL, MARIADB
+    SQLITE, MYSQL
 }
