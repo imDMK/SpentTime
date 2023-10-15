@@ -11,7 +11,7 @@
 ### Information
 This is a plugin that allows you to check how much time a player has spent on the server.
 * **Performance-focused** - Minimizes the impact on server resources, allowing you to maintain high server performance.
-* **Simplicity of configuration** - Thanks to clear documentation, even people without advanced knowledge can easily adapt the plug-in to their own needs.
+* **Simplicity of configuration** - Thanks to clear documentation, even people without advanced knowledge can easily adapt the plugin to their own needs.
 * **Regularly Updated** - We update our plugin regularly, both fixing bugs and adding new features to ensure full compatibility with the latest versions of the game.
 
 ### Features
@@ -19,7 +19,8 @@ This is a plugin that allows you to check how much time a player has spent on th
 * Configurable items showing where top players spent their time,
 * Option to change the type of GUI displaying top players based on time spent,
 * Ability to customize the appearance of the top players spent time GUI,
-* Option to set a custom number of players displayed in the Top Spent Time list,
+* Option to set a custom number of players displayed in the top spent time list,
+* Option to customize messages (ACTIONBAR, CHAT, etc.),
 * Offline time tracking for players,
 * Resetting spent time for individual players,
 * Resetting spent time for all players on the server,
