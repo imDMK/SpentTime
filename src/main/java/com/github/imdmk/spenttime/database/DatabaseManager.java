@@ -36,9 +36,7 @@ public class DatabaseManager {
         this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
         this.dataSource.addDataSourceProperty("useServerPrepStmts", true);
 
-        String databaseModeName = this.databaseSettings.databaseMode.name().toUpperCase();
-        DatabaseMode databaseMode = DatabaseMode.valueOf(databaseModeName);
-
+        DatabaseMode databaseMode = this.databaseSettings.databaseMode;
         switch (databaseMode) {
             case SQLITE -> {
                 this.dataSource.setDriverClassName("org.sqlite.JDBC");
@@ -55,12 +53,12 @@ public class DatabaseManager {
                 this.dataSource.setJdbcUrl("jdbc:mariadb://" + this.databaseSettings.hostname + ":" + this.databaseSettings.port + "/" + this.databaseSettings.database);
             }
 
-            default -> throw new IllegalStateException("Unknown database mode: " + databaseModeName);
+            default -> throw new IllegalStateException("Unknown database mode: " + databaseMode.name());
         }
 
         this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
 
-        this.logger.info("Connected to " + databaseModeName + " database.");
+        this.logger.info("Connected to " + databaseMode.name() + " database.");
     }
 
     public void close() {
