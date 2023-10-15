@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.time.Duration;
 import java.util.UUID;
 
 public class UserCreateListener implements Listener {
@@ -44,10 +45,10 @@ public class UserCreateListener implements Listener {
     }
 
     private boolean updateSpentTime(Player player, User user) {
-        long playerSpentTime = PlayerUtil.getSpentTime(player).toMillis();
-        long userSpentTime = user.getSpentTime();
+        Duration playerSpentTime = PlayerUtil.getSpentTime(player);
+        Duration userSpentTime = user.getSpentTimeDuration();
 
-        if (playerSpentTime == userSpentTime) {
+        if (playerSpentTime.equals(userSpentTime)) {
             return false;
         }
 
