@@ -65,7 +65,6 @@ This is a plugin that allows you to check how much time a player has spent on th
 ### Supported database types
 * `SQLITE`
 * `MYSQL`
-* `MARIADB`
 
 ### [Placeholder API](https://github.com/PlaceholderAPI/PlaceholderAPI) Formats
 * `%spent-time%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.

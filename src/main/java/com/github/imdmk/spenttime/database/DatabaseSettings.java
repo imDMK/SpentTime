@@ -7,7 +7,7 @@ public class DatabaseSettings extends OkaeriConfig {
 
     @Comment({
             "# Database mode",
-            "# Supported databases: SQLITE, MYSQL, MARIADB"
+            "# Supported databases: SQLITE, MYSQL"
     })
     public DatabaseMode databaseMode = DatabaseMode.SQLITE;
 
