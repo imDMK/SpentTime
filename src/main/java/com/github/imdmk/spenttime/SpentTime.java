@@ -6,7 +6,6 @@ import com.github.imdmk.spenttime.command.handler.UsageHandler;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeResetAllCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeResetCommand;
-import com.github.imdmk.spenttime.command.implementation.SpentTimeSetCommand;
 import com.github.imdmk.spenttime.command.implementation.SpentTimeTopCommand;
 import com.github.imdmk.spenttime.configuration.ConfigurationFactory;
 import com.github.imdmk.spenttime.configuration.implementation.PluginConfiguration;
