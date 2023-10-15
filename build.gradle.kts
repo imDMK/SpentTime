@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.github.imdmk"
-version = "1.0.4"
+version = "1.0.5"
 
 repositories {
     mavenCentral()
@@ -36,6 +36,7 @@ dependencies {
 
     implementation("dev.rollczi.litecommands:core:2.8.9")
     implementation("dev.rollczi.litecommands:bukkit-adventure:2.8.9")
+
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 
