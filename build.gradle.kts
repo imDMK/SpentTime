@@ -43,7 +43,7 @@ dependencies {
     implementation("com.eternalcode:gitcheck:1.0.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation(platform("org.junit:junit-bom:5.10.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     testImplementation("com.google.guava:guava-testlib:32.1.3-jre")
