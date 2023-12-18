@@ -32,7 +32,7 @@ dependencies {
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.0-beta.5")
 
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
+    implementation("net.kyori:adventure-text-minimessage:4.15.0")
 
     implementation("dev.rollczi.litecommands:core:2.8.9")
     implementation("dev.rollczi.litecommands:bukkit-adventure:2.8.9")
