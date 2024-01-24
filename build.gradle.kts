@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.5")
 
     implementation("dev.triumphteam:triumph-gui:3.1.7")
@@ -46,7 +46,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    testImplementation("com.google.guava:guava-testlib:32.1.3-jre")
+    testImplementation("com.google.guava:guava-testlib:33.0.0-jre")
 }
 
 tasks.test {
