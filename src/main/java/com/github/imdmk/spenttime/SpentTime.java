@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime;
 
+import com.github.imdmk.spenttime.command.argument.PlayerArgument;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
@@ -33,9 +34,7 @@ import com.github.imdmk.spenttime.user.task.UserSpentTimeSaveTask;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.bukkit.adventure.platform.LiteBukkitAdventurePlatformFactory;
-import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
-import dev.rollczi.litecommands.bukkit.tools.BukkitPlayerArgument;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.triumphteam.gui.guis.BaseGui;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
@@ -57,6 +56,7 @@ import java.util.stream.Stream;
 
 public class SpentTime {
 
+    private final Plugin plugin;
     private final Server server;
 
     private final PluginConfiguration pluginConfiguration;
@@ -85,6 +85,7 @@ public class SpentTime {
         File dataFolder = plugin.getDataFolder();
         Logger logger = plugin.getLogger();
 
+        this.plugin = plugin;
         this.server = plugin.getServer();
 
         /* Configuration */
@@ -157,7 +158,7 @@ public class SpentTime {
         }
 
         this.bukkitAudiences.close();
-        this.liteCommands.getPlatform().unregisterAll();
+        this.liteCommands.unregister();
 
         if (this.placeholderRegistry != null) {
             this.placeholderRegistry.unregisterAll();
@@ -167,25 +168,22 @@ public class SpentTime {
     }
 
     private LiteCommands<CommandSender> registerLiteCommands() {
-        return LiteBukkitAdventurePlatformFactory.builder(this.server, "SpentTime", false, this.bukkitAudiences, true)
-                .argument(Player.class, new BukkitPlayerArgument<>(this.server, this.pluginConfiguration.notificationSettings.playerNotFound))
+        return LiteBukkitFactory.builder("SpentTime", this.plugin, this.server)
+                .argument(Player.class, new PlayerArgument(this.server, this.pluginConfiguration.notificationSettings))
                 .argument(User.class, new UserArgument(this.pluginConfiguration.notificationSettings, this.userManager))
 
-                .contextualBind(Player.class, new BukkitOnlyPlayerContextual<>("Only player can use this command."))
+                .missingPermission(new MissingPermissionHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
+                .result(Notification.class, new NotificationHandler(this.notificationSender))
+                .invalidUsage(new UsageHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
 
-                .permissionHandler(new MissingPermissionHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
-                .resultHandler(Notification.class, new NotificationHandler(this.notificationSender))
-                .invalidUsageHandler(new UsageHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
-
-                .commandInstance(
+                .commands(
                         new SpentTimeCommand(this.pluginConfiguration.notificationSettings, this.notificationSender),
                         new SpentTimeResetAllCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeResetCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeSetCommand(this.server, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.taskScheduler),
                         new SpentTimeTopCommand(this.pluginConfiguration.guiSettings, this.pluginConfiguration.notificationSettings, this.userRepository, this.notificationSender, this.spentTimeTopGui)
                 )
-
-                .register();
+                .build();
     }
 
     private void closeGui(Player player) {

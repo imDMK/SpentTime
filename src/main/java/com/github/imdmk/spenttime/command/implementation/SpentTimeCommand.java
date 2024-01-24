@@ -6,16 +6,16 @@ import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.route.Route;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
 
-@Route(name = "spenttime")
+@Command(name = "spenttime")
 public class SpentTimeCommand {
 
     private final NotificationSettings notificationSettings;
@@ -26,7 +26,7 @@ public class SpentTimeCommand {
         this.notificationSender = notificationSender;
     }
 
-    @Execute(required = 0)
+    @Execute
     @Permission("command.spenttime")
     void show(Player player) {
         Duration playerSpentTime = PlayerUtil.getSpentTime(player);
@@ -37,7 +37,7 @@ public class SpentTimeCommand {
         this.notificationSender.send(player, this.notificationSettings.playerSpentTime, formatter);
     }
 
-    @Execute(required = 1)
+    @Execute
     @Permission("command.spenttime.target")
     void showTarget(CommandSender sender, @Arg User target) {
         Formatter formatter = new Formatter()
