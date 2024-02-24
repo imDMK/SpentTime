@@ -7,6 +7,7 @@ import com.github.imdmk.spenttime.scheduler.TaskScheduler;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.OfflinePlayer;
@@ -34,7 +35,7 @@ public class SpentTimeResetAllCommand {
     }
 
     @Execute
-    void resetGlobal(CommandSender sender) {
+    void resetGlobal(@Context CommandSender sender) {
         if (sender instanceof Player player) {
             this.showGui(player);
             return;

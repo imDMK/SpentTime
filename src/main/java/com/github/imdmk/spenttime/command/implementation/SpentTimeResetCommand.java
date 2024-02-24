@@ -10,6 +10,7 @@ import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.Server;
@@ -36,7 +37,7 @@ public class SpentTimeResetCommand {
     }
 
     @Execute
-    void reset(CommandSender sender, @Arg User target) {
+    void reset(@Context CommandSender sender, @Arg User target) {
         if (sender instanceof Player player) {
             this.showGui(player, target);
             return;

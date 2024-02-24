@@ -8,6 +8,7 @@ import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.command.CommandSender;
@@ -28,7 +29,7 @@ public class SpentTimeCommand {
 
     @Execute
     @Permission("command.spenttime")
-    void show(Player player) {
+    void show(@Context Player player) {
         Duration playerSpentTime = PlayerUtil.getSpentTime(player);
 
         Formatter formatter = new Formatter()
@@ -39,7 +40,7 @@ public class SpentTimeCommand {
 
     @Execute
     @Permission("command.spenttime.target")
-    void showTarget(CommandSender sender, @Arg User target) {
+    void showTarget(@Context CommandSender sender, @Arg User target) {
         Formatter formatter = new Formatter()
                 .placeholder("{PLAYER}", target.getName())
                 .placeholder("{TIME}", DurationUtil.toHumanReadable(target.getSpentTimeDuration()));

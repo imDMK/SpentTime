@@ -1,6 +1,7 @@
 package com.github.imdmk.spenttime;
 
 import com.github.imdmk.spenttime.command.argument.PlayerArgument;
+import com.github.imdmk.spenttime.command.contextual.PlayerContextual;
 import com.github.imdmk.spenttime.command.handler.MissingPermissionHandler;
 import com.github.imdmk.spenttime.command.handler.NotificationHandler;
 import com.github.imdmk.spenttime.command.handler.UsageHandler;
@@ -171,6 +172,8 @@ public class SpentTime {
         return LiteBukkitFactory.builder("SpentTime", this.plugin, this.server)
                 .argument(Player.class, new PlayerArgument(this.server, this.pluginConfiguration.notificationSettings))
                 .argument(User.class, new UserArgument(this.pluginConfiguration.notificationSettings, this.userManager))
+
+                .context(Player.class, new PlayerContextual())
 
                 .missingPermission(new MissingPermissionHandler(this.pluginConfiguration.notificationSettings, this.notificationSender))
                 .result(Notification.class, new NotificationHandler(this.notificationSender))

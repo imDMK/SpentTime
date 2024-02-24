@@ -10,6 +10,7 @@ import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.OfflinePlayer;
@@ -37,7 +38,7 @@ public class SpentTimeSetCommand {
 
     @Execute
     @Permission("command.spenttime.set")
-    void setTime(CommandSender sender, @Arg User target, @Arg Duration time) {
+    void setTime(@Context CommandSender sender, @Arg User target, @Arg Duration time) {
         this.taskScheduler.runAsync(() -> this.setSpentTime(target, time));
 
         Formatter formatter = new Formatter()
