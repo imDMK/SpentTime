@@ -3,8 +3,10 @@ package com.github.imdmk.spenttime.command.handler;
 import com.github.imdmk.spenttime.notification.NotificationSender;
 import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.text.Formatter;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.handle.InvalidUsageHandler;
+import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
+import dev.rollczi.litecommands.invalidusage.InvalidUsage;
+import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
+import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.schematic.Schematic;
 import org.bukkit.command.CommandSender;
 
@@ -19,22 +21,24 @@ public class UsageHandler implements InvalidUsageHandler<CommandSender> {
     }
 
     @Override
-    public void handle(CommandSender sender, LiteInvocation liteInvocation, Schematic schematic) {
+    public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> invalidUsage, ResultHandlerChain<CommandSender> resultHandlerChain) {
+        Schematic schematic = invalidUsage.getSchematic();
+
         if (schematic.isOnlyFirst()) {
             Formatter formatter = new Formatter()
                     .placeholder("{USAGE}", schematic.first());
 
-            this.notificationSender.send(sender, this.notificationSettings.invalidUsage, formatter);
+            this.notificationSender.send(invocation.sender(), this.notificationSettings.invalidUsage, formatter);
             return;
         }
 
-        this.notificationSender.send(sender, this.notificationSettings.invalidUsageFirst);
+        this.notificationSender.send(invocation.sender(), this.notificationSettings.invalidUsageFirst);
 
-        for (String schema : schematic.getSchematics()) {
+        for (String schema : schematic.all()) {
             Formatter formatter = new Formatter()
                     .placeholder("{USAGE}", schema);
 
-            this.notificationSender.send(sender, this.notificationSettings.invalidUsageList, formatter);
+            this.notificationSender.send(invocation.sender(), this.notificationSettings.invalidUsageList, formatter);
         }
     }
 }

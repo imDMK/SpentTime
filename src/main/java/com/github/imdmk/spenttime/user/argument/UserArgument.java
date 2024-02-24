@@ -3,17 +3,17 @@ package com.github.imdmk.spenttime.user.argument;
 import com.github.imdmk.spenttime.notification.configuration.NotificationSettings;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserManager;
-import dev.rollczi.litecommands.argument.ArgumentName;
-import dev.rollczi.litecommands.argument.simple.OneArgument;
-import dev.rollczi.litecommands.command.LiteInvocation;
-import dev.rollczi.litecommands.suggestion.Suggestion;
-import panda.std.Result;
+import dev.rollczi.litecommands.argument.Argument;
+import dev.rollczi.litecommands.argument.parser.ParseResult;
+import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
+import dev.rollczi.litecommands.invocation.Invocation;
+import dev.rollczi.litecommands.suggestion.SuggestionContext;
+import dev.rollczi.litecommands.suggestion.SuggestionResult;
+import org.bukkit.command.CommandSender;
 
-import java.util.List;
 import java.util.Optional;
 
-@ArgumentName("user")
-public class UserArgument implements OneArgument<User> {
+public class UserArgument extends  ArgumentResolver<CommandSender, User> {
 
     private final NotificationSettings notificationSettings;
     private final UserManager userManager;
@@ -24,15 +24,15 @@ public class UserArgument implements OneArgument<User> {
     }
 
     @Override
-    public Result<User, ?> parse(LiteInvocation liteInvocation, String argument) {
+    protected ParseResult<User> parse(Invocation<CommandSender> senderInvocation, Argument<User> context, String argument) {
         Optional<User> userOptional = this.userManager.getOrFindUser(argument);
 
-        return userOptional.map(Result::ok)
-                .orElseGet(() -> Result.error(this.notificationSettings.playerNotFound));
+        return userOptional.map(ParseResult::success)
+                .orElseGet(() -> ParseResult.failure(this.notificationSettings.playerNotFound));
     }
 
     @Override
-    public List<Suggestion> suggest(LiteInvocation invocation) {
-        return Suggestion.of(this.userManager.getNameUserCache());
+    public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<User> argument, SuggestionContext context) {
+        return SuggestionResult.of(this.userManager.getNameUserCache());
     }
 }

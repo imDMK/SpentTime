@@ -8,16 +8,17 @@ import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.ComponentUtil;
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.route.Route;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.Server;
 import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@Route(name = "spenttime reset")
+@Command(name = "spenttime reset")
 @Permission("command.spenttime.reset")
 public class SpentTimeResetCommand {
 
@@ -35,8 +36,8 @@ public class SpentTimeResetCommand {
         this.taskScheduler = taskScheduler;
     }
 
-    @Execute(required = 1)
-    void reset(CommandSender sender, @Arg User target) {
+    @Execute
+    void reset(@Context CommandSender sender, @Arg User target) {
         if (sender instanceof Player player) {
             this.showGui(player, target);
             return;

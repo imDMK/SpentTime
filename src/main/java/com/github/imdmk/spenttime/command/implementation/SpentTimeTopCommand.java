@@ -9,15 +9,16 @@ import com.github.imdmk.spenttime.text.Formatter;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.DurationUtil;
-import dev.rollczi.litecommands.command.async.Async;
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.route.Route;
+import dev.rollczi.litecommands.annotations.async.Async;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@Route(name = "spenttime top")
+@Command(name = "spenttime top")
 public class SpentTimeTopCommand {
 
     private final GuiSettings guiSettings;
@@ -35,9 +36,9 @@ public class SpentTimeTopCommand {
     }
 
     @Async
-    @Execute(required = 0)
+    @Execute
     @Permission("command.spenttime.top")
-    void showTopSpentTime(Player player) {
+    void showTopSpentTime(@Context Player player) {
         List<User> topUsers = this.userRepository.findByOrderSpentTime(this.guiSettings.querySize);
 
         if (topUsers.isEmpty()) {

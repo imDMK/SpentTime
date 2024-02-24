@@ -8,18 +8,18 @@ import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import com.github.imdmk.spenttime.util.PlayerUtil;
-import dev.rollczi.litecommands.argument.Arg;
-import dev.rollczi.litecommands.argument.Name;
-import dev.rollczi.litecommands.command.execute.Execute;
-import dev.rollczi.litecommands.command.permission.Permission;
-import dev.rollczi.litecommands.command.route.Route;
+import dev.rollczi.litecommands.annotations.argument.Arg;
+import dev.rollczi.litecommands.annotations.command.Command;
+import dev.rollczi.litecommands.annotations.context.Context;
+import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 
 import java.time.Duration;
 
-@Route(name = "spenttime set")
+@Command(name = "spenttime set")
 public class SpentTimeSetCommand {
 
     private final Server server;
@@ -38,7 +38,7 @@ public class SpentTimeSetCommand {
 
     @Execute
     @Permission("command.spenttime.set")
-    void setTime(CommandSender sender, @Arg User target, @Arg @Name("time") Duration time) {
+    void setTime(@Context CommandSender sender, @Arg User target, @Arg Duration time) {
         this.taskScheduler.runAsync(() -> this.setSpentTime(target, time));
 
         Formatter formatter = new Formatter()

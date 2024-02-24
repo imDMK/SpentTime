@@ -34,8 +34,8 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
 
-    implementation("dev.rollczi.litecommands:core:2.8.9")
-    implementation("dev.rollczi.litecommands:bukkit-adventure:2.8.9")
+    implementation("dev.rollczi:litecommands-bukkit:3.3.2")
+    implementation("dev.rollczi:litecommands-annotations:3.3.2")
 
     implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
