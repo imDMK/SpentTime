@@ -31,7 +31,7 @@ dependencies {
     implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.0-beta.5")
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.0-beta.5")
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
 
     implementation("dev.rollczi:litecommands-bukkit:3.3.2")
@@ -43,7 +43,7 @@ dependencies {
     implementation("com.eternalcode:gitcheck:1.0.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     testImplementation("com.google.guava:guava-testlib:33.0.0-jre")
