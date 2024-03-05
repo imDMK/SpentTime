@@ -1,24 +1,32 @@
 package com.github.imdmk.spenttime.util;
 
+import dev.rollczi.litecommands.time.DurationParser;
+import dev.rollczi.litecommands.time.TemporalAmountParser;
+
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 public class DurationUtil {
+
+    public static TemporalAmountParser<Duration> DATE_TIME_PARSER = new DurationParser()
+            .withUnit("s", ChronoUnit.SECONDS)
+            .withUnit("m", ChronoUnit.MINUTES)
+            .withUnit("h", ChronoUnit.HOURS)
+            .withUnit("d", ChronoUnit.DAYS)
+            .withUnit("w", ChronoUnit.WEEKS)
+            .withUnit("mo", ChronoUnit.MONTHS)
+            .withUnit("y", ChronoUnit.YEARS);
 
     private DurationUtil() {
         throw new UnsupportedOperationException("This is utility class.");
     }
 
     public static String toHumanReadable(Duration duration) {
-        Duration ofSeconds = Duration.ofSeconds(duration.toSeconds());
-
-        if (ofSeconds.isZero() || ofSeconds.isNegative()) {
+        if (duration.isNegative()) {
             return "<1s";
         }
 
-        return ofSeconds.toString()
-                .substring(2)
-                .replaceAll("(\\d[HMS])(?!$)", "$1 ")
-                .toLowerCase();
+        return DATE_TIME_PARSER.format(duration);
     }
 
     public static long toTicks(Duration duration) {
