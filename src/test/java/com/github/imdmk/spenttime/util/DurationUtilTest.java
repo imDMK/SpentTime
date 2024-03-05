@@ -10,26 +10,41 @@ public class DurationUtilTest {
 
     @Test
     void testHumanReadable() {
-        Duration negative = Duration.ZERO.minusDays(5L);
+        Duration negative = Duration.ZERO.minusDays(5);
         String negativeExcepted = "<1s";
         String negativeResult = DurationUtil.toHumanReadable(negative);
 
-        Duration ofSeconds = Duration.ofSeconds(5L);
+        Duration ofSeconds = Duration.ofSeconds(5);
         String secondsExcepted = "5s";
         String secondsResult = DurationUtil.toHumanReadable(ofSeconds);
 
-        Duration ofMinutes = Duration.ofMinutes(5L);
+        Duration ofMinutes = Duration.ofMinutes(5);
         String minutesExcepted = "5m";
         String minutesResult = DurationUtil.toHumanReadable(ofMinutes);
 
-        Duration ofHours = Duration.ofHours(10L);
+        Duration ofHours = Duration.ofHours(10);
         String hoursExcepted = "10h";
         String hoursResult = DurationUtil.toHumanReadable(ofHours);
+
+        Duration ofDays = Duration.ofDays(5);
+        String daysExcepted = "5d";
+        String daysResult = DurationUtil.toHumanReadable(ofDays);
+
+        Duration ofWeeks = Duration.ofDays(14);
+        String weeksExcepted = "2w";
+        String weeksResult = DurationUtil.toHumanReadable(ofWeeks);
+
+        Duration ofMonths = Duration.ofDays(60);
+        String monthsExcepted = "2mo";
+        String monthsResult = DurationUtil.toHumanReadable(ofMonths);
 
         assertEquals(negativeExcepted, negativeResult);
         assertEquals(secondsExcepted, secondsResult);
         assertEquals(minutesExcepted, minutesResult);
         assertEquals(hoursExcepted, hoursResult);
+        assertEquals(daysExcepted, daysResult);
+        assertEquals(weeksExcepted, weeksResult);
+        assertEquals(monthsExcepted, monthsResult);
     }
 
     @Test
