@@ -22,7 +22,7 @@ public class DurationUtil {
     }
 
     public static String toHumanReadable(Duration duration) {
-        if (duration.isNegative()) {
+        if (duration.isZero() || duration.isNegative()) {
             return "<1s";
         }
 
