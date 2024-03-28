@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Optional;
 
-public class UserArgument extends  ArgumentResolver<CommandSender, User> {
+public class UserArgument extends ArgumentResolver<CommandSender, User> {
 
     private final NotificationSettings notificationSettings;
     private final UserManager userManager;
