@@ -27,7 +27,7 @@ dependencies {
 
     implementation("dev.triumphteam:triumph-gui:3.1.7")
 
-    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.0-beta.5")
+    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.1")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.0-beta.5")
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.1")
 
