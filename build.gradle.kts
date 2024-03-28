@@ -27,8 +27,9 @@ dependencies {
 
     implementation("dev.triumphteam:triumph-gui:3.1.7")
 
-    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.0-beta.5")
-    implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.1")
+
+    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.1-beta.5")
+    implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.1-beta.5")
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.1")
 
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
@@ -46,7 +47,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    testImplementation("com.google.guava:guava-testlib:33.0.0-jre")
+    testImplementation("com.google.guava:guava-testlib:33.1.0-jre")
 }
 
 tasks.test {
