@@ -19,12 +19,13 @@ public class MissingPermissionHandler implements MissingPermissionsHandler<Comma
         this.notificationSender = notificationSender;
     }
 
-
     @Override
     public void handle(Invocation<CommandSender> invocation, MissingPermissions missingPermissions, ResultHandlerChain<CommandSender> resultHandlerChain) {
+        CommandSender sender = invocation.sender();
+
         Formatter formatter = new Formatter()
                 .placeholder("{PERMISSIONS}", missingPermissions.getPermissions());
 
-        this.notificationSender.send(invocation.sender(), this.notificationSettings.missingPermissions, formatter);
+        this.notificationSender.send(sender, this.notificationSettings.missingPermissions, formatter);
     }
 }
