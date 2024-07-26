@@ -22,19 +22,19 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.5")
 
-    implementation("dev.triumphteam:triumph-gui:3.1.7")
+    implementation("dev.triumphteam:triumph-gui:3.1.10")
 
-    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.1")
-    implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.1")
-    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.1")
+    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.2")
+    implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.2")
+    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.2")
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    implementation("net.kyori:adventure-text-minimessage:4.16.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
+    implementation("net.kyori:adventure-text-minimessage:4.17.0")
 
-    implementation("dev.rollczi:litecommands-bukkit:3.4.0")
+    implementation("dev.rollczi:litecommands-bukkit:3.4.2")
     implementation("dev.rollczi:litecommands-annotations:3.4.0")
 
     implementation("com.zaxxer:HikariCP:5.1.0")
@@ -49,17 +49,8 @@ dependencies {
     testImplementation("com.google.guava:guava-testlib:33.1.0-jre")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-}
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 bukkit {
@@ -76,6 +67,16 @@ checkstyle {
     toolVersion = "10.12.1"
 
     configFile = file("${rootDir}/checkstyle.xml")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs = listOf("-Xlint:deprecation", "-parameters")
+    options.encoding = "UTF-8"
+    options.release = 17
 }
 
 tasks.withType<ShadowJar> {
@@ -97,7 +98,6 @@ tasks.withType<ShadowJar> {
             "dev.triumphteam",
             "dev.rollczi",
             "com.eternalcode",
-            "com.google.gson",
             "com.j256",
             "com.zaxxer",
             "eu.okaeri",
