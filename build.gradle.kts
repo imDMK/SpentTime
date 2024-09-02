@@ -29,7 +29,7 @@ dependencies {
 
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.2")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.2")
-    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.2")
+    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.5")
 
     implementation("net.kyori:adventure-platform-bukkit:4.3.3")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
