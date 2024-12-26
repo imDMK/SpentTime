@@ -1,113 +1,54 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id("java-library")
-
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
     id("checkstyle")
 }
 
-group = "com.github.imdmk"
-version = "1.0.7"
+allprojects {
+    apply(plugin = "java-library")
+    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "checkstyle")
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
 
-    maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-    maven { url = uri("https://storehouse.okaeri.eu/repository/maven-public/") }
-    maven { url = uri("https://repo.panda-lang.org/releases") }
-    maven { url = uri("https://repo.eternalcode.pl/releases") }
-    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
-}
+        maven { url = uri("https://storehouse.okaeri.eu/repository/maven-public/") }
+        maven { url = uri("https://repo.panda-lang.org/releases") }
+        maven { url = uri("https://nexus.velocitypowered.com/repository/maven-public/")}
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots")}
+        maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")}
+    }
 
-dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.5")
+    dependencies {
+        implementation("com.zaxxer:HikariCP:6.2.1")
+        implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 
-    implementation("dev.triumphteam:triumph-gui:3.1.10")
+        implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.5")
+        implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.5")
 
-    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.2")
-    implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.2")
-    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.2")
+        testImplementation(platform("org.junit:junit-bom:5.10.2"))
+        testImplementation("org.junit.jupiter:junit-jupiter")
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
+        testImplementation("com.google.guava:guava-testlib:33.1.0-jre")
+    }
 
-    implementation("dev.rollczi:litecommands-bukkit:3.4.2")
-    implementation("dev.rollczi:litecommands-annotations:3.4.0")
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
 
-    implementation("com.zaxxer:HikariCP:5.1.0")
-    implementation("com.j256.ormlite:ormlite-jdbc:6.1")
+    checkstyle {
+        toolVersion = "10.21.0"
 
-    implementation("com.eternalcode:gitcheck:1.0.0")
-    implementation("org.bstats:bstats-bukkit:3.0.2")
+        configFile = file("${rootDir}/checkstyle.xml")
+    }
 
-    testImplementation(platform("org.junit:junit-bom:5.10.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    tasks.test {
+        useJUnitPlatform()
+    }
 
-    testImplementation("com.google.guava:guava-testlib:33.1.0-jre")
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-
-bukkit {
-    name = "SpentTime"
-    version = "${project.version}"
-    apiVersion = "1.17"
-    main = "com.github.imdmk.spenttime.SpentTimePlugin"
-    author = "DMK"
-    description = "An efficient plugin for your time spent in the game with many features and configuration possibilities."
-    website = "https://github.com/imDMK/SpentTime"
-}
-
-checkstyle {
-    toolVersion = "10.12.1"
-
-    configFile = file("${rootDir}/checkstyle.xml")
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<JavaCompile> {
-    options.compilerArgs = listOf("-Xlint:deprecation", "-parameters")
-    options.encoding = "UTF-8"
-    options.release = 17
-}
-
-tasks.withType<ShadowJar> {
-    archiveFileName.set("${project.name} v${project.version}.jar")
-
-    dependsOn("checkstyleMain")
-    dependsOn("checkstyleTest")
-    dependsOn("test")
-
-    exclude(
-            "org/intellij/lang/annotations/**",
-            "org/jetbrains/annotations/**",
-            "META-INF/**",
-    )
-
-    val libPrefix = "com.github.imdmk.spenttime.lib"
-
-    listOf(
-            "dev.triumphteam",
-            "dev.rollczi",
-            "com.eternalcode",
-            "com.j256",
-            "com.zaxxer",
-            "eu.okaeri",
-            "net.kyori",
-            "org.json",
-            "org.yaml",
-            "org.bstats",
-            "panda",
-            "javassist"
-    ).forEach { lib ->
-        relocate(lib, "$libPrefix.$lib")
+    tasks.withType<JavaCompile> {
+        options.compilerArgs = listOf("-Xlint:deprecation", "-parameters")
+        options.encoding = "UTF-8"
+        options.release = 17
     }
 }
