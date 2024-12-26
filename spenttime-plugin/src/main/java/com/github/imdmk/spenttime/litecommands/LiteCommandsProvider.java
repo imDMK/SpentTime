@@ -19,7 +19,7 @@ import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserCache;
 import com.github.imdmk.spenttime.user.UserService;
-import com.github.imdmk.spenttime.user.argument.UserArgument;
+import com.github.imdmk.spenttime.litecommands.argument.UserArgument;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
