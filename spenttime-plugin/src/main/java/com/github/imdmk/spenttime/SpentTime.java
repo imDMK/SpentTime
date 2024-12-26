@@ -108,9 +108,9 @@ public class SpentTime implements SpentTimeApi {
 
         /* Listeners */
         Stream.of(
-                new UserCreateController(this.userRepository, this.userService, this.userCache, bukkitPlayerSpentTimeService),
+                new UserCreateController(this.userRepository, this.userService, bukkitPlayerSpentTimeService),
                 new UserLoadController(this.server, this.userRepository),
-                new UserSaveController(this.userCache, this.userRepository, taskScheduler, bukkitPlayerSpentTimeService),
+                new UserSaveController(this.userCache, this.userRepository, bukkitPlayerSpentTimeService),
                 new UpdateController(logger, pluginConfiguration, notificationSender, updateService, taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
