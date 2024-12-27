@@ -35,7 +35,7 @@ bukkit {
     name = "SpentTime"
     version = "${project.version}"
     apiVersion = "1.17"
-    main = "com.github.imdmk.spenttime.plugin.SpentTimePlugin"
+    main = "com.github.imdmk.spenttime.SpentTimePlugin"
     author = "DMK (dominiks8318@gmail.com)"
     description = "An efficient plugin for calculating your time spent in the game with many features and configuration possibilities."
     website = "https://github.com/imDMK/SpentTime"
@@ -43,7 +43,7 @@ bukkit {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("${project.name} v${project.version}.jar")
+    archiveFileName.set("SpentTime v${project.version}.jar")
 
     dependsOn("checkstyleMain")
     dependsOn("checkstyleTest")
@@ -69,7 +69,6 @@ tasks.withType<ShadowJar> {
         "net.kyori",
         "org.bstats",
         "org.json",
-        "org.slf4j",
         "org.yaml",
         "org.checkerframework",
     ).forEach { lib ->

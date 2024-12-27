@@ -37,13 +37,13 @@ public class DaoUserRepositoryImpl implements UserRepository {
     public CompletableFuture<Optional<User>> findByUUID(UUID uuid) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                User user = this.userDao.queryBuilder()
+                Optional<User> userOptional = Optional.ofNullable(this.userDao.queryBuilder()
                         .where().eq("uuid", uuid)
-                        .queryForFirst();
+                        .queryForFirst());
 
-                this.userCache.put(user);
+                userOptional.ifPresent(this.userCache::put);
 
-                return Optional.ofNullable(user);
+                return userOptional;
             }
             catch (SQLException sqlException) {
                 throw new CompletionException(sqlException);
@@ -54,13 +54,13 @@ public class DaoUserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByName(String name) {
         try {
-            User user = this.userDao.queryBuilder()
+            Optional<User> userOptional = Optional.ofNullable(this.userDao.queryBuilder()
                     .where().eq("name", name)
-                    .queryForFirst();
+                    .queryForFirst());
 
-            this.userCache.put(user);
+            userOptional.ifPresent(this.userCache::put);
 
-            return Optional.ofNullable(user);
+            return userOptional;
         }
         catch (SQLException sqlException) {
             throw new CompletionException(sqlException);
@@ -101,11 +101,11 @@ public class DaoUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public CompletableFuture<Void> delete(UUID uuid) {
+    public CompletableFuture<Void> delete(User user) {
         return CompletableFuture.runAsync(() -> {
             try {
-                this.userDao.deleteById(uuid);
-                this.userCache.remove(uuid);
+                this.userDao.deleteById(user.getUuid());
+                this.userCache.remove(user);
             }
             catch (SQLException sqlException) {
                 throw new CompletionException(sqlException);

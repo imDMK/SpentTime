@@ -31,7 +31,7 @@ public class EmptyUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public CompletableFuture<Void> delete(UUID uuid) {
+    public CompletableFuture<Void> delete(User user) {
         return CompletableFuture.failedFuture(new UnsupportedOperationException());
     }
 

@@ -21,6 +21,11 @@ public class BukkitPlayerSpentTimeService {
         return Duration.ofSeconds(secondsPlayed);
     }
 
+    public Duration getSpentTime(UUID playerUuid) {
+        long secondsPlayed = this.server.getOfflinePlayer(playerUuid).getStatistic(Statistic.PLAY_ONE_MINUTE) / 20;
+        return Duration.ofSeconds(secondsPlayed);
+    }
+
     public void resetSpentTime(OfflinePlayer offlinePlayer) {
         offlinePlayer.setStatistic(Statistic.PLAY_ONE_MINUTE, 0);
     }

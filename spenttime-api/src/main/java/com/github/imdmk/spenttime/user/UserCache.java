@@ -23,10 +23,12 @@ public class UserCache {
 
     public void put(User user) {
         this.uuidUserCache.put(user.getUuid(), user);
+        this.nameUserCache.put(user.getName(), user);
     }
 
-    public void remove(UUID uuid) {
-        this.uuidUserCache.invalidate(uuid);
+    public void remove(User user) {
+        this.uuidUserCache.invalidate(user.getUuid());
+        this.nameUserCache.invalidate(user.getName());
     }
 
     public Optional<User> get(UUID uuid) {

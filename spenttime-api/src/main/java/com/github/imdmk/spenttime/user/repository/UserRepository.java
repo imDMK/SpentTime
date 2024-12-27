@@ -17,7 +17,7 @@ public interface UserRepository {
 
     CompletableFuture<User> save(User user);
 
-    CompletableFuture<Void> delete(UUID uuid);
+    CompletableFuture<Void> delete(User user);
 
     CompletableFuture<Void> resetGlobalSpentTime();
 }
