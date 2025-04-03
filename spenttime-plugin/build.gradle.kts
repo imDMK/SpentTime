@@ -27,7 +27,7 @@ dependencies {
     implementation("com.eternalcode:gitcheck:1.0.0")
     implementation("org.bstats:bstats-bukkit:3.1.0")
 
-    implementation("dev.rollczi:litecommands-bukkit:3.9.1")
+    implementation("dev.rollczi:litecommands-bukkit:3.9.7")
     implementation("dev.rollczi:litecommands-annotations:3.9.7")
 }
 
