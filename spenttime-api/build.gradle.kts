@@ -4,7 +4,7 @@ group = "com.github.imdmk.spenttime.api"
 version = "2.0.0"
 
 dependencies {
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 }
 
 tasks.withType<ShadowJar> {
