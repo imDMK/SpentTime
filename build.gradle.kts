@@ -23,7 +23,7 @@ allprojects {
         implementation("com.zaxxer:HikariCP:6.2.1")
         implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 
-        implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.5")
+        implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.8")
         implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.5")
 
         testImplementation(platform("org.junit:junit-bom:5.12.1"))
