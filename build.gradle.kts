@@ -29,7 +29,7 @@ allprojects {
         testImplementation(platform("org.junit:junit-bom:5.12.1"))
         testImplementation("org.junit.jupiter:junit-jupiter")
 
-        testImplementation("com.google.guava:guava-testlib:33.4.5-jre")
+        testImplementation("com.google.guava:guava-testlib:33.4.6-jre")
     }
 
     java {
