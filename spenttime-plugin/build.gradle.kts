@@ -21,7 +21,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
 
-    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.5")
+    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.8")
 
     implementation("dev.triumphteam:triumph-gui:3.1.11")
     implementation("com.eternalcode:gitcheck:1.0.0")
