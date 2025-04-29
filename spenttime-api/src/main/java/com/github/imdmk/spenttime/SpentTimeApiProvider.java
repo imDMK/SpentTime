@@ -22,7 +22,7 @@ public class SpentTimeApiProvider {
      */
     public synchronized static SpentTimeApi get() {
         if (SPENT_TIME_API == null) {
-            throw new IllegalStateException("TThe SpentTimeApi isn't registered.");
+            throw new IllegalStateException("The SpentTimeApi isn't registered.");
         }
 
         return SPENT_TIME_API;
