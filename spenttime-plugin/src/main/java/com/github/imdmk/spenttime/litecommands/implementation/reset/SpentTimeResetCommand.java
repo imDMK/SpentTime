@@ -1,15 +1,11 @@
-package com.github.imdmk.spenttime.litecommands.implementation;
+package com.github.imdmk.spenttime.litecommands.implementation.reset;
 
 import com.github.imdmk.spenttime.gui.ConfirmGui;
-import com.github.imdmk.spenttime.notification.Notification;
-import com.github.imdmk.spenttime.notification.NotificationFormatter;
-import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
-import com.github.imdmk.spenttime.scheduler.TaskScheduler;
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.message.MessageService;
+import com.github.imdmk.spenttime.task.TaskScheduler;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
-import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -22,18 +18,16 @@ import org.bukkit.entity.Player;
 @Permission("command.spenttime.reset")
 public class SpentTimeResetCommand {
 
-    private final NotificationSettings notificationSettings;
     private final UserRepository userRepository;
-    private final NotificationSender notificationSender;
+    private final MessageService messageService;
     private final TaskScheduler taskScheduler;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final BukkitSpentTimeService bukkitSpentTimeService;
 
-    public SpentTimeResetCommand(NotificationSettings notificationSettings, UserRepository userRepository, NotificationSender notificationSender, TaskScheduler taskScheduler, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
-        this.notificationSettings = notificationSettings;
+    public SpentTimeResetCommand(UserRepository userRepository, MessageService messageService, TaskScheduler taskScheduler, BukkitSpentTimeService bukkitSpentTimeService) {
         this.userRepository = userRepository;
-        this.notificationSender = notificationSender;
+        this.messageService = messageService;
         this.taskScheduler = taskScheduler;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+        this.bukkitSpentTimeService = bukkitSpentTimeService;
     }
 
     @Execute
@@ -48,7 +42,7 @@ public class SpentTimeResetCommand {
 
     private void showGui(Player player, User target) {
         new ConfirmGui(this.taskScheduler)
-                .create(ComponentUtil.createItalic("<red>Reset " + target.getName() + " player spent time?"))
+                .create("<red>Reset " + target.getName() + " player spent time?")
                 .afterConfirm(event -> {
                     player.closeInventory();
 
@@ -63,17 +57,19 @@ public class SpentTimeResetCommand {
 
         this.userRepository.save(target)
                 .thenAcceptAsync(updatedUser -> {
-                    this.bukkitPlayerSpentTimeService.resetSpentTime(target.getUuid());
+                    this.bukkitSpentTimeService.resetSpentTime(target.getUuid());
 
-                    Notification notification = new NotificationFormatter()
-                            .notification(this.notificationSettings.targetSpentTimeHasBeenReset)
+                    this.messageService.create()
+                            .viewer(sender)
+                            .notice(notice -> notice.targetSpentTimeHasBeenReset)
                             .placeholder("{PLAYER}", target.getName())
-                            .build();
-
-                    this.notificationSender.send(sender, notification);
+                            .send();
                 })
                 .exceptionally(throwable -> {
-                    this.notificationSender.send(sender, this.notificationSettings.targetSpentTimeResetError);
+                    this.messageService.create()
+                            .viewer(sender)
+                            .notice(notice -> notice.targetSpentTimeResetError)
+                            .send();
                     throw new RuntimeException(throwable);
                 });
     }

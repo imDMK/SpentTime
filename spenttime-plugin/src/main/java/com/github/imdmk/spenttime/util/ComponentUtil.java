@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ComponentUtil {
@@ -17,8 +18,16 @@ public class ComponentUtil {
         throw new UnsupportedOperationException("This is utility class.");
     }
 
-    public static Component createItalic(String text) {
+    public static Component notItalic(String text) {
         return MINI_MESSAGE.deserialize("<!italic>" + text);
+    }
+
+    public static List<Component> notItalic(String... text) {
+        return Arrays.stream(text).map(ComponentUtil::notItalic).toList();
+    }
+
+    public static List<Component> notItalic(List<String> texts) {
+        return texts.stream().map(ComponentUtil::notItalic).toList();
     }
 
     public static String serialize(Component component) {

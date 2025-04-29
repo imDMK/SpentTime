@@ -8,11 +8,11 @@ import org.bukkit.Statistic;
 import java.time.Duration;
 import java.util.UUID;
 
-public class BukkitPlayerSpentTimeService {
+public class BukkitSpentTimeService {
 
     private final Server server;
 
-    public BukkitPlayerSpentTimeService(Server server) {
+    public BukkitSpentTimeService(Server server) {
         this.server = server;
     }
 

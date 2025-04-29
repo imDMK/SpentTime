@@ -1,9 +1,10 @@
 package com.github.imdmk.spenttime.database;
 
-import eu.okaeri.configs.OkaeriConfig;
+import com.github.imdmk.spenttime.configuration.ConfigSection;
 import eu.okaeri.configs.annotation.Comment;
+import eu.okaeri.configs.serdes.OkaeriSerdesPack;
 
-public class DatabaseSettings extends OkaeriConfig {
+public class DatabaseConfiguration extends ConfigSection {
 
     @Comment({
             "# Database mode",
@@ -16,4 +17,14 @@ public class DatabaseSettings extends OkaeriConfig {
     public String username = "root";
     public String password = "ExamplePassword1101";
     public int port = 3306;
+
+    @Override
+    public OkaeriSerdesPack getSerdesPack() {
+        return registry -> {};
+    }
+
+    @Override
+    public String getFileName() {
+        return "databaseConfiguration.yml";
+    }
 }

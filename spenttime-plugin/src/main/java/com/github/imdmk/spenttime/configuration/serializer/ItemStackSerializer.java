@@ -28,7 +28,7 @@ public class ItemStackSerializer implements ObjectSerializer<ItemStack> {
         }
 
         if (itemStack instanceof Damageable damageable) {
-            if (damageable.getDamage() != 0) {
+            if (damageable.getDamage() > 0) {
                 data.add("durability", damageable.getDamage(), Short.class);
             }
         }
@@ -45,11 +45,10 @@ public class ItemStackSerializer implements ObjectSerializer<ItemStack> {
         int amount = Optional.ofNullable(data.get("amount", Integer.class)).orElse(1);
         short durability = Optional.ofNullable(data.get("durability", Short.class)).orElse((short) 0);
 
-        Optional<ItemMeta> itemMetaOptional = Optional.ofNullable(data.get("item-meta", ItemMeta.class));
-
         ItemStack itemStack = new ItemStack(material, amount);
 
-        itemMetaOptional.ifPresent(itemStack::setItemMeta);
+        Optional.ofNullable(data.get("item-meta", ItemMeta.class))
+                .ifPresent(itemStack::setItemMeta);
 
         if (itemStack.getItemMeta() instanceof Damageable damageable) {
             damageable.setDamage(durability);

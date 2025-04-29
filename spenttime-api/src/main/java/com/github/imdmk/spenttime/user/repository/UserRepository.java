@@ -11,9 +11,11 @@ public interface UserRepository {
 
     CompletableFuture<Optional<User>> findByUUID(UUID uuid);
 
-    Optional<User> findByName(String name);
+    CompletableFuture<Optional<User>> findByName(String name);
 
-    CompletableFuture<List<User>> findByOrderSpentTime(long limit);
+    Optional<User> findByNameDirect(String name);
+
+    CompletableFuture<List<User>> findTopUsersBySpentTime(long limit);
 
     CompletableFuture<User> save(User user);
 

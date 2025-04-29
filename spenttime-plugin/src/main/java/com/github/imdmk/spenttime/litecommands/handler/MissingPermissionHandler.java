@@ -1,9 +1,6 @@
 package com.github.imdmk.spenttime.litecommands.handler;
 
-import com.github.imdmk.spenttime.notification.Notification;
-import com.github.imdmk.spenttime.notification.NotificationFormatter;
-import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.message.MessageService;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.permission.MissingPermissions;
@@ -14,12 +11,10 @@ import java.util.List;
 
 public class MissingPermissionHandler implements MissingPermissionsHandler<CommandSender> {
 
-    private final NotificationSender notificationSender;
-    private final NotificationSettings notificationSettings;
+    private final MessageService messageService;
 
-    public MissingPermissionHandler(NotificationSender notificationSender, NotificationSettings notificationSettings) {
-        this.notificationSender = notificationSender;
-        this.notificationSettings = notificationSettings;
+    public MissingPermissionHandler(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @Override
@@ -27,11 +22,10 @@ public class MissingPermissionHandler implements MissingPermissionsHandler<Comma
         CommandSender sender = invocation.sender();
         List<String> permissions = missingPermissions.getPermissions();
 
-        Notification notification = new NotificationFormatter()
-                .notification(this.notificationSettings.missingPermissions)
-                .placeholder("{PERMISSIONS}", permissions)
-                .build();
-
-        this.notificationSender.send(sender, notification);
+        this.messageService.create()
+                .viewer(sender)
+                .notice(notice -> notice.missingPermissions)
+                .placeholder("{PERMISSIONS}", String.join(", ", permissions))
+                .send();
     }
 }

@@ -1,10 +1,7 @@
 package com.github.imdmk.spenttime.litecommands.implementation;
 
-import com.github.imdmk.spenttime.notification.Notification;
-import com.github.imdmk.spenttime.notification.NotificationFormatter;
-import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.message.MessageService;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -21,53 +18,44 @@ import java.time.Duration;
 @Command(name = "spenttime")
 public class SpentTimeCommand {
 
-    private final NotificationSettings notificationSettings;
-    private final NotificationSender notificationSender;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final MessageService messageService;
+    private final BukkitSpentTimeService bukkitSpentTimeService;
 
-    public SpentTimeCommand(NotificationSettings notificationSettings, NotificationSender notificationSender, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
-        this.notificationSettings = notificationSettings;
-        this.notificationSender = notificationSender;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+    public SpentTimeCommand(MessageService messageService, BukkitSpentTimeService bukkitSpentTimeService) {
+        this.messageService = messageService;
+        this.bukkitSpentTimeService = bukkitSpentTimeService;
     }
+
 
     @Execute
     @Permission("command.spenttime")
     void showSpentTime(@Context Player player) {
-        String playerSpentTime = DurationUtil.toHumanReadable(this.bukkitPlayerSpentTimeService.getSpentTime(player));
+        String playerSpentTime = DurationUtil.toHumanReadable(this.bukkitSpentTimeService.getSpentTime(player));
 
-        Notification notification = new NotificationFormatter()
-                .notification(this.notificationSettings.playerSpentTime)
+        this.messageService.create()
+                .viewer(player)
+                .notice(notice -> notice.playerSpentTime)
                 .placeholder("{TIME}", playerSpentTime)
-                .build();
-
-        this.notificationSender.send(player, notification);
+                .send();
     }
 
     @Async
     @Execute
     @Permission("command.spenttime.target")
     void showTarget(@Context CommandSender sender, @Arg User target) {
-        String targetName = target.getName();
         String targetSpentTime = DurationUtil.toHumanReadable(this.updateSpentTime(target));
 
-        Notification notification = new NotificationFormatter()
-                .notification(this.notificationSettings.targetSpentTime)
-                .placeholder("{PLAYER}", targetName)
+        this.messageService.create()
+                .viewer(sender)
+                .notice(notice -> notice.targetSpentTime)
+                .placeholder("{PLAYER}", target.getName())
                 .placeholder("{TIME}", targetSpentTime)
-                .build();
-
-        this.notificationSender.send(sender, notification);
+                .send();
     }
 
     private Duration updateSpentTime(User target) {
-        Duration playerSpentTime = this.bukkitPlayerSpentTimeService.getSpentTime(target.getUuid());
-        Duration userSpentTime = target.getSpentTimeDuration();
-
-        if (!playerSpentTime.equals(userSpentTime)) {
-            target.setSpentTime(playerSpentTime);
-        }
-
-        return playerSpentTime;
+        Duration spentTime = this.bukkitSpentTimeService.getSpentTime(target.getUuid());
+        target.setSpentTime(spentTime);
+        return spentTime;
     }
 }

@@ -1,10 +1,7 @@
 package com.github.imdmk.spenttime.litecommands.implementation;
 
-import com.github.imdmk.spenttime.notification.Notification;
-import com.github.imdmk.spenttime.notification.NotificationFormatter;
-import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.message.MessageService;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import com.github.imdmk.spenttime.util.DurationUtil;
@@ -21,16 +18,14 @@ import java.time.Duration;
 @Permission("command.spenttime.set")
 public class SpentTimeSetCommand {
 
-    private final NotificationSettings notificationSettings;
     private final UserRepository userRepository;
-    private final NotificationSender notificationSender;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final MessageService messageService;
+    private final BukkitSpentTimeService bukkitSpentTimeService;
 
-    public SpentTimeSetCommand(NotificationSettings notificationSettings, UserRepository userRepository, NotificationSender notificationSender, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
-        this.notificationSettings = notificationSettings;
+    public SpentTimeSetCommand(UserRepository userRepository, MessageService messageService, BukkitSpentTimeService bukkitSpentTimeService) {
         this.userRepository = userRepository;
-        this.notificationSender = notificationSender;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+        this.messageService = messageService;
+        this.bukkitSpentTimeService = bukkitSpentTimeService;
     }
 
     @Execute
@@ -39,18 +34,20 @@ public class SpentTimeSetCommand {
 
         this.userRepository.save(target)
                 .thenAcceptAsync(updatedUser -> {
-                    this.bukkitPlayerSpentTimeService.setSpentTime(target.getUuid(), time);
+                    this.bukkitSpentTimeService.setSpentTime(target.getUuid(), time);
 
-                    Notification notification = new NotificationFormatter()
-                            .notification(this.notificationSettings.targetSpentTimeHasBeenSet)
+                    this.messageService.create()
+                            .viewer(sender)
+                            .notice(notice -> notice.targetSpentTimeHasBeenSet)
                             .placeholder("{PLAYER}", target.getName())
                             .placeholder("{TIME}", DurationUtil.toHumanReadable(time))
-                            .build();
-
-                    this.notificationSender.send(sender, notification);
+                            .send();
                 })
                 .exceptionally(throwable -> {
-                    this.notificationSender.send(sender, this.notificationSettings.targetSpentTimeSetError);
+                    this.messageService.create()
+                            .viewer(sender)
+                            .notice(notice -> notice.targetSpentTimeSetError)
+                            .send();
                     throw new RuntimeException(throwable);
                 });
     }

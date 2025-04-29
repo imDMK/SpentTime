@@ -1,20 +1,31 @@
 package com.github.imdmk.spenttime;
 
-import com.github.imdmk.spenttime.configuration.ConfigurationFactory;
+import com.github.imdmk.spenttime.configuration.ConfigurationManager;
 import com.github.imdmk.spenttime.configuration.PluginConfiguration;
+import com.github.imdmk.spenttime.database.DatabaseConfiguration;
 import com.github.imdmk.spenttime.database.DatabaseService;
-import com.github.imdmk.spenttime.gui.SpentTimeTopGui;
-import com.github.imdmk.spenttime.litecommands.LiteCommandsProvider;
-import com.github.imdmk.spenttime.notification.NotificationSender;
+import com.github.imdmk.spenttime.gui.configuration.GuiConfiguration;
+import com.github.imdmk.spenttime.litecommands.argument.PlayerArgument;
+import com.github.imdmk.spenttime.litecommands.argument.UserArgument;
+import com.github.imdmk.spenttime.litecommands.contextual.PlayerContextual;
+import com.github.imdmk.spenttime.litecommands.handler.MissingPermissionHandler;
+import com.github.imdmk.spenttime.litecommands.handler.UsageHandler;
+import com.github.imdmk.spenttime.litecommands.implementation.SpentTimeCommand;
+import com.github.imdmk.spenttime.litecommands.implementation.SpentTimeSetCommand;
+import com.github.imdmk.spenttime.litecommands.implementation.SpentTimeTopCommand;
+import com.github.imdmk.spenttime.litecommands.implementation.reset.SpentTimeResetAllCommand;
+import com.github.imdmk.spenttime.litecommands.implementation.reset.SpentTimeResetCommand;
+import com.github.imdmk.spenttime.message.MessageConfiguration;
+import com.github.imdmk.spenttime.message.MessageService;
 import com.github.imdmk.spenttime.placeholder.PlaceholderRegistry;
 import com.github.imdmk.spenttime.placeholder.SpentTimePlaceholder;
-import com.github.imdmk.spenttime.scheduler.TaskScheduler;
-import com.github.imdmk.spenttime.scheduler.TaskSchedulerImpl;
+import com.github.imdmk.spenttime.scheduler.BukkitTaskScheduler;
+import com.github.imdmk.spenttime.task.TaskScheduler;
 import com.github.imdmk.spenttime.update.UpdateController;
 import com.github.imdmk.spenttime.update.UpdateService;
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
+import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserCache;
-import com.github.imdmk.spenttime.user.UserService;
 import com.github.imdmk.spenttime.user.controller.UserCreateController;
 import com.github.imdmk.spenttime.user.controller.UserLoadController;
 import com.github.imdmk.spenttime.user.controller.UserSaveController;
@@ -25,8 +36,10 @@ import com.github.imdmk.spenttime.user.task.UserSaveSpentTimeTask;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.triumphteam.gui.guis.BaseGui;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -45,13 +58,16 @@ import java.util.stream.Stream;
 
 public class SpentTime implements SpentTimeApi {
 
+    private final Plugin plugin;
     private final Server server;
+    private final Logger logger;
+
+    private ConfigurationManager configurationManager;
 
     private final DatabaseService databaseService;
 
     private final UserCache userCache;
     private UserRepository userRepository;
-    private final UserService userService;
 
     private final BukkitAudiences bukkitAudiences;
 
@@ -66,15 +82,21 @@ public class SpentTime implements SpentTimeApi {
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         File dataFolder = plugin.getDataFolder();
-        Logger logger = plugin.getLogger();
 
+        this.plugin = plugin;
         this.server = plugin.getServer();
+        this.logger = plugin.getLogger();
 
         /* Configuration */
-        PluginConfiguration pluginConfiguration = ConfigurationFactory.create(PluginConfiguration.class, new File(dataFolder, "configuration.yml"));
+        this.configurationManager = new ConfigurationManager();
+
+        PluginConfiguration pluginConfiguration = this.configurationManager.create(PluginConfiguration.class, dataFolder);
+        DatabaseConfiguration databaseConfiguration = this.configurationManager.create(DatabaseConfiguration.class, dataFolder);
+        MessageConfiguration messageConfiguration = this.configurationManager.create(MessageConfiguration.class, dataFolder);
+        GuiConfiguration guiConfiguration = this.configurationManager.create(GuiConfiguration.class, dataFolder);
 
         /* Database */
-        this.databaseService = new DatabaseService(logger, dataFolder, pluginConfiguration.databaseSettings);
+        this.databaseService = new DatabaseService(this.logger, dataFolder, databaseConfiguration);
 
         this.userCache = new UserCache();
 
@@ -86,51 +108,65 @@ public class SpentTime implements SpentTimeApi {
         catch (SQLException sqlException) {
             this.userRepository = new EmptyUserRepositoryImpl();
 
-            logger.log(Level.SEVERE, "An error occurred while trying to initialize database. The plugin will run, but the functions will not work as expected. ", sqlException);
+            this.logger.log(Level.SEVERE, "An error occurred while trying to initialize database. The plugin will run, but the functions will not work as expected. ", sqlException);
         }
 
-        this.userService = new UserService(this.userRepository, this.userCache);
-        BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService = new BukkitPlayerSpentTimeService(this.server);
+        BukkitSpentTimeService bukkitSpentTimeService = new BukkitSpentTimeService(this.server);
 
         /* Adventure */
         this.bukkitAudiences = BukkitAudiences.create(plugin);
-        NotificationSender notificationSender = new NotificationSender(this.bukkitAudiences);
+        MessageService messageService = new MessageService(messageConfiguration, this.bukkitAudiences, MiniMessage.miniMessage());
 
         /* Tasks */
-        TaskScheduler taskScheduler = new TaskSchedulerImpl(plugin, this.server);
-        taskScheduler.runTimerAsync(new UserSaveSpentTimeTask(this.server, this.userRepository, this.userCache, bukkitPlayerSpentTimeService), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(pluginConfiguration.spentTimeSaveDelay));
+        TaskScheduler taskScheduler = new BukkitTaskScheduler(plugin, this.server);
+        taskScheduler.runTimerAsync(new UserSaveSpentTimeTask(this.server, this.userRepository, this.userCache, bukkitSpentTimeService), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(pluginConfiguration.spentTimeSaveDelay));
 
         /* Guis */
-        SpentTimeTopGui spentTimeTopGui = new SpentTimeTopGui(this.server, pluginConfiguration.notificationSettings, pluginConfiguration.guiSettings, pluginConfiguration.scrollingGuiSettings, pluginConfiguration.guiSettings.guiItemSettings, notificationSender, this.userRepository, taskScheduler, bukkitPlayerSpentTimeService);
+        com.github.imdmk.spenttime.user.gui.SpentTimeTopGui spentTimeTopGui = new com.github.imdmk.spenttime.user.gui.SpentTimeTopGui(this.server, guiConfiguration.items, guiConfiguration.spentTimeTop, this.userRepository, messageService, taskScheduler, bukkitSpentTimeService);
 
         /* Update Service */
         UpdateService updateService = new UpdateService(plugin.getDescription());
 
         /* Listeners */
         Stream.of(
-                new UserCreateController(this.userRepository, this.userService, bukkitPlayerSpentTimeService),
-                new UserLoadController(this.server, this.userRepository),
-                new UserSaveController(this.userCache, this.userRepository, bukkitPlayerSpentTimeService),
-                new UpdateController(logger, pluginConfiguration, notificationSender, updateService, taskScheduler)
+                new UserCreateController(this.userRepository, bukkitSpentTimeService, this.logger),
+                new UserLoadController(this.server, this.userRepository, this.logger),
+                new UserSaveController(this.userCache, this.userRepository, bukkitSpentTimeService),
+                new UpdateController(this.logger, pluginConfiguration, messageService, updateService, taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
         /* Commands */
-        LiteCommandsProvider liteCommandsProvider = new LiteCommandsProvider(plugin, this.server, pluginConfiguration, this.userCache, this.userRepository, this.userService, notificationSender, taskScheduler, spentTimeTopGui, bukkitPlayerSpentTimeService);
-        this.liteCommands = liteCommandsProvider.register();
+        this.liteCommands = LiteBukkitFactory.builder("SpentTime", this.plugin, this.server)
+                .argument(Player.class, new PlayerArgument(this.server, messageConfiguration))
+                .argument(User.class, new UserArgument(this.userCache, this.userRepository, messageConfiguration))
+
+                .context(Player.class, new PlayerContextual())
+
+                .missingPermission(new MissingPermissionHandler(messageService))
+                .invalidUsage(new UsageHandler(messageService))
+
+                .commands(
+                        new SpentTimeCommand(messageService, bukkitSpentTimeService),
+                        new SpentTimeResetAllCommand(this.server, this.userRepository, messageService, taskScheduler, bukkitSpentTimeService),
+                        new SpentTimeResetCommand(this.userRepository, messageService, taskScheduler, bukkitSpentTimeService),
+                        new SpentTimeSetCommand(this.userRepository, messageService, bukkitSpentTimeService),
+                        new SpentTimeTopCommand(pluginConfiguration, this.userRepository, messageService, spentTimeTopGui)
+                )
+                .build();
 
         /* PlaceholderAPI */
         if (this.server.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.placeholderRegistry = new PlaceholderRegistry();
 
             Stream.of(
-                    new SpentTimePlaceholder(plugin.getDescription(), bukkitPlayerSpentTimeService)
+                    new SpentTimePlaceholder(plugin.getDescription(), bukkitSpentTimeService)
             ).forEach(this.placeholderRegistry::register);
         }
 
         /* Metrics */
         this.metrics = new Metrics(plugin, 19362);
 
-        logger.info("Enabled plugin in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms.");
+        this.logger.info("Enabled plugin in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms.");
     }
 
     public void onDisable() {
@@ -145,14 +181,23 @@ public class SpentTime implements SpentTimeApi {
             this.databaseService.close();
         }
 
-        this.bukkitAudiences.close();
-        this.liteCommands.unregister();
+        if (this.bukkitAudiences != null) {
+            this.bukkitAudiences.close();
+        }
+
+        if (this.liteCommands != null) {
+            this.liteCommands.unregister();
+        }
 
         if (this.placeholderRegistry != null) {
             this.placeholderRegistry.unregisterAll();
         }
 
-        this.metrics.shutdown();
+        if (this.metrics != null) {
+            this.metrics.shutdown();
+        }
+
+        this.logger.info("Successfully disabled plugin.");
     }
 
     private void closeGui(Player player) {
@@ -173,11 +218,6 @@ public class SpentTime implements SpentTimeApi {
     @Override
     public UserCache getUserCache() {
         return this.userCache;
-    }
-
-    @Override
-    public UserService getUserService() {
-        return this.userService;
     }
 
     @Override

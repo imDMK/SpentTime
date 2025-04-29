@@ -1,12 +1,11 @@
 package com.github.imdmk.spenttime.gui;
 
-import com.github.imdmk.spenttime.scheduler.TaskScheduler;
+import com.github.imdmk.spenttime.task.TaskScheduler;
 import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,9 +25,9 @@ public class ConfirmGui {
         this.taskScheduler = taskScheduler;
     }
 
-    public ConfirmGui create(Component title) {
+    public ConfirmGui create(String title) {
         this.gui = Gui.gui()
-                .title(title)
+                .title(ComponentUtil.notItalic(title))
                 .rows(6)
                 .disableAllInteractions()
                 .create();
@@ -52,13 +51,13 @@ public class ConfirmGui {
 
     public void open(Player player) {
         GuiItem cancelItem = ItemBuilder.from(Material.RED_CONCRETE)
-                .name(ComponentUtil.createItalic("<red>Cancel"))
+                .name(ComponentUtil.notItalic("<red>Cancel"))
                 .asGuiItem();
 
         this.setCloseAfterCancelAction(cancelItem, player);
 
         GuiItem confirmItem = ItemBuilder.from(Material.GREEN_CONCRETE)
-                .name(ComponentUtil.createItalic("<green>Confirm"))
+                .name(ComponentUtil.notItalic("<green>Confirm"))
                 .asGuiItem();
 
         this.setCloseAfterConfirmAction(confirmItem);

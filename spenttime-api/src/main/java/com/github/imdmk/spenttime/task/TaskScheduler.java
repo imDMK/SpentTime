@@ -1,4 +1,4 @@
-package com.github.imdmk.spenttime.scheduler;
+package com.github.imdmk.spenttime.task;
 
 public interface TaskScheduler {
 

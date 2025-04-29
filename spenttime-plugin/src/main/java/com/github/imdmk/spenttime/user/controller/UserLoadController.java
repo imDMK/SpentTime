@@ -9,15 +9,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserLoadController implements Listener {
 
     private final Server server;
     private final UserRepository userRepository;
+    private final Logger logger;
 
-    public UserLoadController(Server server, UserRepository userRepository) {
+    public UserLoadController(Server server, UserRepository userRepository, Logger logger) {
         this.server = server;
         this.userRepository = userRepository;
+        this.logger = logger;
     }
 
     @EventHandler
@@ -26,20 +30,27 @@ public class UserLoadController implements Listener {
             return;
         }
 
-        for (Player player : this.server.getOnlinePlayers()) {
-            UUID playerUuid = player.getUniqueId();
-            String playerName = player.getName();
+        this.server.getOnlinePlayers().forEach(this::loadOrCreateUser);
+    }
 
-            this.userRepository.findByUUID(playerUuid)
-                    .thenAcceptAsync(userOptional -> {
-                        if (userOptional.isEmpty()) {
-                            User user = new User(playerUuid, playerName);
-                            this.userRepository.save(user);
-                        }
-                    })
-                    .exceptionally(throwable -> {
-                        throw new RuntimeException(throwable);
-                    });
-        }
+    private void loadOrCreateUser(Player player) {
+        UUID uuid = player.getUniqueId();
+        String name = player.getName();
+
+        this.userRepository.findByUUID(uuid)
+                .thenAccept(optionalUser -> {
+                    if (optionalUser.isPresent()) {
+                        this.createUser(uuid, name);
+                    }
+                })
+                .exceptionally(throwable -> {
+                    this.logger.log(Level.SEVERE, "Failed to load user during server reload: " + name, throwable);
+                    return null;
+                });
+    }
+
+    private void createUser(UUID uuid, String name) {
+        User user = new User(uuid, name);
+        this.userRepository.save(user);
     }
 }

@@ -1,9 +1,6 @@
 package com.github.imdmk.spenttime.litecommands.handler;
 
-import com.github.imdmk.spenttime.notification.Notification;
-import com.github.imdmk.spenttime.notification.NotificationFormatter;
-import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.message.MessageService;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
 import dev.rollczi.litecommands.invalidusage.InvalidUsageHandler;
@@ -13,13 +10,12 @@ import org.bukkit.command.CommandSender;
 
 public class UsageHandler implements InvalidUsageHandler<CommandSender> {
 
-    private final NotificationSettings notificationSettings;
-    private final NotificationSender notificationSender;
+    private final MessageService messageService;
 
-    public UsageHandler(NotificationSettings notificationSettings, NotificationSender notificationSender) {
-        this.notificationSettings = notificationSettings;
-        this.notificationSender = notificationSender;
+    public UsageHandler(MessageService messageService) {
+        this.messageService = messageService;
     }
+
 
     @Override
     public void handle(Invocation<CommandSender> invocation, InvalidUsage<CommandSender> result, ResultHandlerChain<CommandSender> chain) {
@@ -27,24 +23,25 @@ public class UsageHandler implements InvalidUsageHandler<CommandSender> {
         Schematic schematic = result.getSchematic();
 
         if (schematic.isOnlyFirst()) {
-            Notification notification = new NotificationFormatter()
-                    .notification(this.notificationSettings.invalidUsage)
+            this.messageService.create()
+                    .viewer(sender)
+                    .notice(notice -> notice.invalidUsage)
                     .placeholder("{USAGE}", schematic.first())
-                    .build();
-
-            this.notificationSender.send(sender, notification);
+                    .send();
             return;
         }
 
-        this.notificationSender.send(sender, this.notificationSettings.invalidUsageFirst);
+        this.messageService.create()
+                .viewer(sender)
+                .notice(notice -> notice.invalidUsageFirst)
+                .send();
 
         for (String scheme : schematic.all()) {
-            Notification notification = new NotificationFormatter()
-                    .notification(this.notificationSettings.invalidUsageList)
+            this.messageService.create()
+                    .viewer(sender)
+                    .notice(notice -> notice.invalidUsageList)
                     .placeholder("{USAGE}", scheme)
-                    .build();
-
-            this.notificationSender.send(sender, notification);
+                    .send();
         }
     }
 }

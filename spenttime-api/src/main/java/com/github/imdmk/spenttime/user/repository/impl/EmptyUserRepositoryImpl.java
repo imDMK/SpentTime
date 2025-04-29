@@ -16,12 +16,17 @@ public class EmptyUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByName(String name) {
-        return Optional.empty();
+    public CompletableFuture<Optional<User>> findByName(String name) {
+        return CompletableFuture.failedFuture(new UnsupportedOperationException());
     }
 
     @Override
-    public CompletableFuture<List<User>> findByOrderSpentTime(long limit) {
+    public Optional<User> findByNameDirect(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompletableFuture<List<User>> findTopUsersBySpentTime(long limit) {
         return CompletableFuture.failedFuture(new UnsupportedOperationException());
     }
 

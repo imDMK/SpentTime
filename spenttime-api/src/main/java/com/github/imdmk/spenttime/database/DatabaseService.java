@@ -13,30 +13,29 @@ public class DatabaseService {
 
     private final Logger logger;
     private final File dataFolder;
-    private final DatabaseSettings databaseSettings;
+    private final DatabaseConfiguration databaseConfiguration;
 
     private HikariDataSource dataSource;
     private ConnectionSource connectionSource;
 
-    public DatabaseService(Logger logger, File dataFolder, DatabaseSettings databaseSettings) {
+    public DatabaseService(Logger logger, File dataFolder, DatabaseConfiguration databaseConfiguration) {
         this.logger = logger;
         this.dataFolder = dataFolder;
-        this.databaseSettings = databaseSettings;
+        this.databaseConfiguration = databaseConfiguration;
     }
 
-    public void connect() throws SQLException {
-        this.dataSource = new HikariDataSource();
+    public void connect() throws SQLException, IllegalStateException {
+        if (this.dataSource != null || this.connectionSource != null) {
+            throw new IllegalStateException("DatabaseService is already connected.");
+        }
 
-        this.dataSource.setMaximumPoolSize(5);
-        this.dataSource.setUsername(this.databaseSettings.username);
-        this.dataSource.setPassword(this.databaseSettings.password);
+        if (!this.dataFolder.exists() && !this.dataFolder.mkdirs()) {
+            throw new IllegalStateException("Unable to create data folder: " + this.dataFolder.getAbsolutePath());
+        }
 
-        this.dataSource.addDataSourceProperty("cachePrepStmts", true);
-        this.dataSource.addDataSourceProperty("prepStmtCacheSize", 250);
-        this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
-        this.dataSource.addDataSourceProperty("useServerPrepStmts", true);
+        this.dataSource = this.createHikariDataSource();
+        DatabaseMode databaseMode = this.databaseConfiguration.databaseMode;
 
-        DatabaseMode databaseMode = this.databaseSettings.databaseMode;
         switch (databaseMode) {
             case SQLITE -> {
                 this.dataSource.setDriverClassName("org.sqlite.JDBC");
@@ -45,25 +44,61 @@ public class DatabaseService {
 
             case MYSQL -> {
                 this.dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-                this.dataSource.setJdbcUrl("jdbc:mysql://" + this.databaseSettings.hostname + ":" + this.databaseSettings.port + "/" + this.databaseSettings.database);
+                this.dataSource.setJdbcUrl("jdbc:mysql://" + this.databaseConfiguration.hostname + ":" + this.databaseConfiguration.port + "/" + this.databaseConfiguration.database);
             }
 
             default -> throw new IllegalStateException("Unknown database mode: " + databaseMode.name());
         }
 
-        this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
+        try {
+            this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
 
-        this.logger.info("Connected to " + databaseMode.name() + " database.");
+            this.logger.info("Connected to " + databaseMode.name() + " database.");
+        }
+        catch (SQLException sqlException) {
+            this.logger.log(Level.SEVERE, "Failed to connect to database", sqlException);
+            this.dataSource.close(); // We're closing after exception, otherwise can cause a leak
+            this.dataSource = null;
+            throw sqlException;
+        }
+    }
+
+    private HikariDataSource createHikariDataSource() {
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setMaximumPoolSize(5);
+        dataSource.setUsername(this.databaseConfiguration.username);
+        dataSource.setPassword(this.databaseConfiguration.password);
+        dataSource.addDataSourceProperty("cachePrepStmts", true);
+        dataSource.addDataSourceProperty("prepStmtCacheSize", 250);
+        dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+        dataSource.addDataSourceProperty("useServerPrepStmts", true);
+        return dataSource;
     }
 
     public void close() {
+        if (this.dataSource == null || this.connectionSource == null) {
+            this.logger.warning("DatabaseService#close() called, but service was not connected.");
+            return;
+        }
+
         try {
-            this.dataSource.close();
             this.connectionSource.close();
         }
-        catch (Exception exception) {
-            this.logger.log(Level.SEVERE, "An error occurred while closing the database connection", exception);
+        catch (Exception e) {
+            this.logger.log(Level.SEVERE, "Failed to close ConnectionSource", e);
         }
+
+        try {
+            this.dataSource.close();
+        }
+        catch (Exception e) {
+            this.logger.log(Level.SEVERE, "Failed to close DataSource", e);
+        }
+
+        this.connectionSource = null;
+        this.dataSource = null;
+
+        this.logger.info("Database connection closed successfully.");
     }
 
     public ConnectionSource getConnectionSource() {

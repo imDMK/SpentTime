@@ -1,12 +1,10 @@
-package com.github.imdmk.spenttime.litecommands.implementation;
+package com.github.imdmk.spenttime.litecommands.implementation.reset;
 
 import com.github.imdmk.spenttime.gui.ConfirmGui;
-import com.github.imdmk.spenttime.notification.NotificationSender;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
-import com.github.imdmk.spenttime.scheduler.TaskScheduler;
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.message.MessageService;
+import com.github.imdmk.spenttime.task.TaskScheduler;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
-import com.github.imdmk.spenttime.util.ComponentUtil;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -21,19 +19,17 @@ import org.bukkit.entity.Player;
 public class SpentTimeResetAllCommand {
 
     private final Server server;
-    private final NotificationSettings notificationSettings;
     private final UserRepository userRepository;
-    private final NotificationSender notificationSender;
+    private final MessageService messageService;
     private final TaskScheduler taskScheduler;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final BukkitSpentTimeService bukkitSpentTimeService;
 
-    public SpentTimeResetAllCommand(Server server, NotificationSettings notificationSettings, UserRepository userRepository, NotificationSender notificationSender, TaskScheduler taskScheduler, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
+    public SpentTimeResetAllCommand(Server server, UserRepository userRepository, MessageService messageService, TaskScheduler taskScheduler, BukkitSpentTimeService bukkitSpentTimeService) {
         this.server = server;
-        this.notificationSettings = notificationSettings;
         this.userRepository = userRepository;
-        this.notificationSender = notificationSender;
+        this.messageService = messageService;
         this.taskScheduler = taskScheduler;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+        this.bukkitSpentTimeService = bukkitSpentTimeService;
     }
 
     @Execute
@@ -48,7 +44,7 @@ public class SpentTimeResetAllCommand {
 
     private void showGui(Player player) {
         new ConfirmGui(this.taskScheduler)
-                .create(ComponentUtil.createItalic("<red>Reset spent time of all users?"))
+                .create("<red>Reset spent time of all users?")
                 .afterConfirm(event -> {
                     player.closeInventory();
 
@@ -62,13 +58,19 @@ public class SpentTimeResetAllCommand {
         this.userRepository.resetGlobalSpentTime()
                 .thenAcceptAsync(v -> {
                     for (OfflinePlayer offlinePlayer : this.server.getOfflinePlayers()) {
-                        this.bukkitPlayerSpentTimeService.resetSpentTime(offlinePlayer);
+                        this.bukkitSpentTimeService.resetSpentTime(offlinePlayer);
                     }
 
-                    this.notificationSender.send(sender, this.notificationSettings.globalSpentTimeHasBeenReset);
+                    this.messageService.create()
+                            .viewer(sender)
+                            .notice(notice -> notice.globalSpentTimeHasBeenReset)
+                            .send();
                 })
                 .exceptionally(throwable -> {
-                    this.notificationSender.send(sender, this.notificationSettings.globalSpentTimeResetError);
+                    this.messageService.create()
+                            .viewer(sender)
+                            .notice(notice -> notice.globalSpentTimeResetError)
+                            .send();
                     throw new RuntimeException(throwable);
                 });
     }

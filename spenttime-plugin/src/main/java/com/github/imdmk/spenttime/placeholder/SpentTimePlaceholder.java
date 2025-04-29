@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.placeholder;
 
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -13,11 +13,11 @@ import java.time.Duration;
 public class SpentTimePlaceholder extends PlaceholderExpansion {
 
     private final PluginDescriptionFile pluginDescriptionFile;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final BukkitSpentTimeService bukkitSpentTimeService;
 
-    public SpentTimePlaceholder(PluginDescriptionFile pluginDescriptionFile, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
+    public SpentTimePlaceholder(PluginDescriptionFile pluginDescriptionFile, BukkitSpentTimeService bukkitSpentTimeService) {
         this.pluginDescriptionFile = pluginDescriptionFile;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+        this.bukkitSpentTimeService = bukkitSpentTimeService;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SpentTimePlaceholder extends PlaceholderExpansion {
             return null;
         }
 
-        Duration playerSpentTime = this.bukkitPlayerSpentTimeService.getSpentTime(player);
+        Duration playerSpentTime = this.bukkitSpentTimeService.getSpentTime(player);
         return DurationUtil.toHumanReadable(playerSpentTime);
     }
 }

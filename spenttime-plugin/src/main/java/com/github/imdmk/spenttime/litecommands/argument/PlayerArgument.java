@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.litecommands.argument;
 
-import com.github.imdmk.spenttime.notification.NotificationSettings;
+import com.github.imdmk.spenttime.message.MessageConfiguration;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
@@ -9,34 +9,31 @@ import dev.rollczi.litecommands.suggestion.SuggestionContext;
 import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+
+import java.util.Optional;
 
 public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
 
     private final Server server;
-    private final NotificationSettings notificationSettings;
+    private final MessageConfiguration messageConfiguration;
 
-    public PlayerArgument(Server server, NotificationSettings notificationSettings) {
+    public PlayerArgument(Server server, MessageConfiguration messageConfiguration) {
         this.server = server;
-        this.notificationSettings = notificationSettings;
+        this.messageConfiguration = messageConfiguration;
     }
 
     @Override
     protected ParseResult<Player> parse(Invocation<CommandSender> invocation, Argument<Player> context, String argument) {
-        Player player = this.server.getPlayer(argument);
-
-        if (player == null) {
-            return ParseResult.failure(this.notificationSettings.playerNotFound);
-        }
-
-        return ParseResult.success(player);
+        return Optional.ofNullable(this.server.getPlayer(argument))
+                .map(ParseResult::success)
+                .orElseGet(() -> ParseResult.failure(this.messageConfiguration.playerNotFound));
     }
 
     @Override
     public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<Player> argument, SuggestionContext context) {
         return this.server.getOnlinePlayers().stream()
-                .map(HumanEntity::getName)
+                .map(Player::getName)
                 .collect(SuggestionResult.collector());
     }
 }

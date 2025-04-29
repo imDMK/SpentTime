@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.user.task;
 
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserCache;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
@@ -12,24 +12,25 @@ public class UserSaveSpentTimeTask implements Runnable {
     private final Server server;
     private final UserCache userCache;
     private final UserRepository userRepository;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final BukkitSpentTimeService bukkitSpentTimeService;
 
-    public UserSaveSpentTimeTask(Server server, UserRepository userRepository, UserCache userCache, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
+    public UserSaveSpentTimeTask(Server server, UserRepository userRepository, UserCache userCache, BukkitSpentTimeService bukkitSpentTimeService) {
         this.server = server;
         this.userRepository = userRepository;
         this.userCache = userCache;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+        this.bukkitSpentTimeService = bukkitSpentTimeService;
     }
 
     @Override
     public void run() {
-        for (Player player : this.server.getOnlinePlayers()) {
-            this.userCache.get(player.getUniqueId()).ifPresent(user -> this.saveSpentTime(player, user));
-        }
+        this.server.getOnlinePlayers().forEach(this::saveSpentTime);
     }
 
-    private void saveSpentTime(Player player, User user) {
-        user.setSpentTime(this.bukkitPlayerSpentTimeService.getSpentTime(player));
+    private void saveSpentTime(Player player) {
+        User user = this.userCache.get(player.getUniqueId())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        user.setSpentTime(this.bukkitSpentTimeService.getSpentTime(player));
         this.userRepository.save(user);
     }
 }

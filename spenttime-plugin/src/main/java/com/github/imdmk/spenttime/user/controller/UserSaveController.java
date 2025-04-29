@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.user.controller;
 
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
+import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserCache;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
@@ -14,12 +14,12 @@ public class UserSaveController implements Listener {
 
     private final UserCache userCache;
     private final UserRepository userRepository;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final BukkitSpentTimeService bukkitSpentTimeService;
 
-    public UserSaveController(UserCache userCache, UserRepository userRepository, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
+    public UserSaveController(UserCache userCache, UserRepository userRepository, BukkitSpentTimeService bukkitSpentTimeService) {
         this.userCache = userCache;
         this.userRepository = userRepository;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+        this.bukkitSpentTimeService = bukkitSpentTimeService;
     }
 
     @EventHandler
@@ -29,7 +29,7 @@ public class UserSaveController implements Listener {
         User user = this.userCache.get(player.getUniqueId())
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
-        user.setSpentTime(this.bukkitPlayerSpentTimeService.getSpentTime(player));
+        user.setSpentTime(this.bukkitSpentTimeService.getSpentTime(player));
 
         this.userRepository.save(user);
     }
@@ -41,7 +41,7 @@ public class UserSaveController implements Listener {
         User user = this.userCache.get(player.getUniqueId())
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
-        user.setSpentTime(this.bukkitPlayerSpentTimeService.getSpentTime(player));
+        user.setSpentTime(this.bukkitSpentTimeService.getSpentTime(player));
 
         this.userRepository.save(user);
     }

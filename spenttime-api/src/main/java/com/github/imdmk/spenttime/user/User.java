@@ -1,30 +1,27 @@
 package com.github.imdmk.spenttime.user;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
-@DatabaseTable(tableName = "users")
 public class User {
 
-    @DatabaseField(columnName = "uuid", id = true)
-    private UUID uuid;
-
-    @DatabaseField(columnName = "name")
+    private final UUID uuid;
     private String name;
 
-    @DatabaseField(columnName = "spentTime")
     private long spentTime = 0L;
 
-    public User() {
-    }
+    private boolean needUpdate = false;
 
     public User(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
+    }
+
+    public User(UUID uuid, String name, long spentTime) {
+        this.uuid = uuid;
+        this.name = name;
+        this.spentTime = spentTime;
     }
 
     public UUID getUuid() {
@@ -43,7 +40,7 @@ public class User {
         return this.spentTime;
     }
 
-    public Duration getSpentTimeDuration() {
+    public Duration getSpentTimeAsDuration() {
         return Duration.ofMillis(this.spentTime);
     }
 
@@ -55,22 +52,36 @@ public class User {
         this.spentTime = spentTime.toMillis();
     }
 
+    public boolean needUpdate() {
+        return this.needUpdate;
+    }
+
+    public void setNeedUpdate(boolean needUpdate) {
+        this.needUpdate = needUpdate;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uuid=" + this.uuid +
+                ", name='" + this.name + '\'' +
+                ", spentTime=" + this.spentTime +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof User user)) {
             return false;
         }
-
-        User user = (User) o;
-        return this.spentTime == user.spentTime && Objects.equals(this.uuid, user.uuid) && Objects.equals(this.name, user.name);
+        return Objects.equals(this.uuid, user.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.uuid, this.name, this.spentTime);
+        return Objects.hash(this.uuid);
     }
 }
