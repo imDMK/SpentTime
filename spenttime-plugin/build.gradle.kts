@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":spenttime-api"))
 
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
+    implementation("net.kyori:adventure-text-minimessage:4.21.0")
 
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.5")
 
