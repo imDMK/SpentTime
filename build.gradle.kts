@@ -24,7 +24,7 @@ allprojects {
         implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 
         implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.5")
-        implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.5")
+        implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.8")
 
         testImplementation(platform("org.junit:junit-bom:5.12.1"))
         testImplementation("org.junit.jupiter:junit-jupiter")
