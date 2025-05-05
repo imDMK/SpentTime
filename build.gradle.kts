@@ -20,7 +20,7 @@ allprojects {
     }
 
     dependencies {
-        implementation("com.zaxxer:HikariCP:6.2.1")
+        implementation("com.zaxxer:HikariCP:6.3.0")
         implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 
         implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.5")
