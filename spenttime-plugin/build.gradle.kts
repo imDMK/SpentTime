@@ -23,7 +23,7 @@ dependencies {
 
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.5")
 
-    implementation("dev.triumphteam:triumph-gui:3.1.11")
+    implementation("dev.triumphteam:triumph-gui:3.1.12")
     implementation("com.eternalcode:gitcheck:1.0.0")
     implementation("org.bstats:bstats-bukkit:3.1.0")
 
