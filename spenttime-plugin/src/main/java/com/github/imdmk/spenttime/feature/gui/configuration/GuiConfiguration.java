@@ -105,6 +105,7 @@ public class GuiConfiguration extends ConfigSection {
 
         public boolean enabled = true;
 
+        @Comment("# List of available sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html")
         public Sound sound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
 
         public float volume = 1.1F;
