@@ -2,6 +2,7 @@ package com.github.imdmk.spenttime.user.repository.impl;
 
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,17 +12,17 @@ import java.util.concurrent.CompletableFuture;
 public class EmptyUserRepositoryImpl implements UserRepository {
 
     @Override
-    public CompletableFuture<Optional<User>> findByUUID(UUID uuid) {
+    public CompletableFuture<Optional<User>> findByUUID(@NotNull UUID uuid) {
         return CompletableFuture.failedFuture(new UnsupportedOperationException());
     }
 
     @Override
-    public CompletableFuture<Optional<User>> findByName(String name) {
+    public CompletableFuture<Optional<User>> findByName(@NotNull String name) {
         return CompletableFuture.failedFuture(new UnsupportedOperationException());
     }
 
     @Override
-    public Optional<User> findByNameDirect(String name) {
+    public Optional<User> findByNameDirect(@NotNull String name) {
         throw new UnsupportedOperationException();
     }
 
@@ -31,12 +32,12 @@ public class EmptyUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public CompletableFuture<User> save(User user) {
+    public CompletableFuture<User> save(@NotNull User user) {
         return CompletableFuture.failedFuture(new UnsupportedOperationException());
     }
 
     @Override
-    public CompletableFuture<Void> delete(User user) {
+    public CompletableFuture<Void> delete(@NotNull User user) {
         return CompletableFuture.failedFuture(new UnsupportedOperationException());
     }
 

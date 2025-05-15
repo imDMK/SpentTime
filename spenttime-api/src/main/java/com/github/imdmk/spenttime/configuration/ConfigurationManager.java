@@ -3,6 +3,7 @@ package com.github.imdmk.spenttime.configuration;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.exception.OkaeriException;
 import eu.okaeri.configs.yaml.snakeyaml.YamlSnakeYamlConfigurer;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -19,7 +20,7 @@ public final class ConfigurationManager {
 
     private final Set<ConfigSection> configs = new HashSet<>();
 
-    public <T extends ConfigSection> T create(Class<T> config, File dataFolder) {
+    public <T extends ConfigSection> T create(@NotNull Class<T> config, @NotNull File dataFolder) {
         T configFile = ConfigManager.create(config);
 
         YamlSnakeYamlConfigurer yamlSnakeYamlConfigurer = this.createYamlSnakeYamlConfigurer();
@@ -36,7 +37,7 @@ public final class ConfigurationManager {
         return configFile;
     }
 
-    private YamlSnakeYamlConfigurer createYamlSnakeYamlConfigurer() {
+    private @NotNull YamlSnakeYamlConfigurer createYamlSnakeYamlConfigurer() {
         LoaderOptions loaderOptions = new LoaderOptions();
         Constructor constructor = new Constructor(loaderOptions);
 
@@ -52,7 +53,7 @@ public final class ConfigurationManager {
         return new YamlSnakeYamlConfigurer(yaml);
     }
 
-    public CompletableFuture<Void> reloadAll() {
+    public @NotNull CompletableFuture<Void> reloadAll() {
         return CompletableFuture.runAsync(this::loadAll);
     }
 

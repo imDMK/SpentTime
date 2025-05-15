@@ -1,78 +1,42 @@
 package com.github.imdmk.spenttime.user.controller;
 
-import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
-import com.github.imdmk.spenttime.user.User;
-import com.github.imdmk.spenttime.user.repository.UserRepository;
+import com.github.imdmk.spenttime.user.UserService;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.time.Duration;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.bukkit.event.server.ServerLoadEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class UserCreateController implements Listener {
 
-    private final UserRepository userRepository;
-    private final BukkitSpentTimeService bukkitSpentTimeService;
-    private final Logger logger;
+    private final Server server;
+    private final UserService userService;
 
-    public UserCreateController(UserRepository userRepository, BukkitSpentTimeService bukkitSpentTimeService, Logger logger) {
-        this.userRepository = userRepository;
-        this.bukkitSpentTimeService = bukkitSpentTimeService;
-        this.logger = logger;
+    public UserCreateController(
+            @NotNull Server server,
+            @NotNull UserService userService
+    ) {
+        this.server = server;
+        this.userService = userService;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        UUID uuid = player.getUniqueId();
-        String name = player.getName();
-
-        this.userRepository.findByUUID(uuid)
-                .thenCompose(optionalUser -> {
-                    if (optionalUser.isEmpty()) {
-                        User newUser = new User(uuid, name);
-                        return this.userRepository.save(newUser);
-                    }
-
-                    User existingUser = optionalUser.get();
-                    if (this.updateUserData(existingUser, player)) {
-                        return this.userRepository.save(existingUser);
-                    }
-
-                    return CompletableFuture.completedFuture(null);
-                })
-                .exceptionally(ex -> {
-                    this.logger.log(Level.SEVERE, "Failed to process player join for " + name, ex);
-                    return null;
-                });
+        this.userService.findOrCreateUser(player);
     }
 
-    /**
-     * Updates the user object based on player data. Returns true if any data changed.
-     */
-    private boolean updateUserData(User user, Player player) {
-        boolean updated = false;
-
-        String playerName = player.getName();
-        Duration playerSpentTime = this.bukkitSpentTimeService.getSpentTime(player);
-
-        if (!playerName.equals(user.getName())) {
-            user.setName(playerName);
-            updated = true;
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onServerReload(ServerLoadEvent event) {
+        if (event.getType() != ServerLoadEvent.LoadType.RELOAD) {
+            return;
         }
 
-        if (!playerSpentTime.equals(user.getSpentTimeAsDuration())) {
-            user.setSpentTime(playerSpentTime);
-            updated = true;
-        }
-
-        return updated;
+        this.server.getOnlinePlayers().forEach(this.userService::findOrCreateUser);
     }
+
 }

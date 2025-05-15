@@ -8,6 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,6 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class DaoUserRepositoryImpl implements UserRepository {
+
+    private static final long ZERO_SPENT_TIME = 0L;
 
     private final Dao<UserWrapper, UUID> userDao;
     private final ExecutorService executor;
@@ -35,9 +38,8 @@ public class DaoUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public CompletableFuture<Optional<User>> findByUUID(UUID uuid) {
+    public CompletableFuture<Optional<User>> findByUUID(@NotNull UUID uuid) {
         Optional<User> cachedUser = this.userCache.get(uuid);
-
         if (cachedUser.isPresent()) {
             return CompletableFuture.completedFuture(cachedUser);
         }
@@ -60,9 +62,8 @@ public class DaoUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public CompletableFuture<Optional<User>> findByName(String name) {
+    public CompletableFuture<Optional<User>> findByName(@NotNull String name) {
         Optional<User> cachedUser = this.userCache.get(name);
-
         if (cachedUser.isPresent()) {
             return CompletableFuture.completedFuture(cachedUser);
         }
@@ -85,9 +86,8 @@ public class DaoUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByNameDirect(String name) {
+    public Optional<User> findByNameDirect(@NotNull String name) {
         Optional<User> cachedUser = this.userCache.get(name);
-
         if (cachedUser.isPresent()) {
             return cachedUser;
         }
@@ -111,10 +111,14 @@ public class DaoUserRepositoryImpl implements UserRepository {
     public CompletableFuture<List<User>> findTopUsersBySpentTime(long limit) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return this.userDao.queryBuilder()
+                List<User> users = this.userDao.queryBuilder()
                         .orderBy("spentTime", false)
                         .limit(limit).query()
-                        .stream().map(UserWrapper::toUser).toList();
+                        .stream().map(UserWrapper::toUser)
+                        .toList();
+
+                users.forEach(this.userCache::put);
+                return users;
             }
             catch (SQLException sqlException) {
                 throw new CompletionException(sqlException);
@@ -123,7 +127,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public CompletableFuture<User> save(User user) {
+    public CompletableFuture<User> save(@NotNull User user) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 UserWrapper wrapper = UserWrapper.from(user);
@@ -140,7 +144,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public CompletableFuture<Void> delete(User user) {
+    public CompletableFuture<Void> delete(@NotNull User user) {
         return CompletableFuture.runAsync(() -> {
             try {
                 this.userDao.deleteById(user.getUuid());
@@ -157,8 +161,10 @@ public class DaoUserRepositoryImpl implements UserRepository {
         return CompletableFuture.runAsync(() -> {
             try {
                 this.userDao.updateBuilder()
-                        .updateColumnValue("spentTime", 0L)
+                        .updateColumnValue("spentTime", ZERO_SPENT_TIME)
                         .update();
+
+                this.userCache.updateAll(user -> user.setSpentTime(ZERO_SPENT_TIME));
             }
             catch (SQLException sqlException) {
                 throw new CompletionException(sqlException);

@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
 
     implementation(project(":spenttime-api"))
@@ -21,7 +21,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
     implementation("net.kyori:adventure-text-minimessage:4.19.0")
 
-    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.8")
+    implementation("org.panda-lang.utilities:di:1.8.0")
 
     implementation("com.eternalcode:multification-bukkit:1.1.4")
     implementation("com.eternalcode:multification-okaeri:1.1.4")

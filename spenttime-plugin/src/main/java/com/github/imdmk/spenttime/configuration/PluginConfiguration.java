@@ -3,6 +3,8 @@ package com.github.imdmk.spenttime.configuration;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.Header;
 import eu.okaeri.configs.serdes.OkaeriSerdesPack;
+import eu.okaeri.configs.serdes.commons.SerdesCommons;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 
@@ -19,8 +21,11 @@ import java.time.Duration;
 })
 public class PluginConfiguration extends ConfigSection {
 
-    @Comment("# Check for plugin update after the administrator join to server?")
-    public boolean checkForUpdate = true;
+    @Comment("# Check for plugin update and send notification after administrator join to server?")
+    public boolean checkUpdate = true;
+
+    @Comment("# How often should the plugin check for updates? Recommended value: 1 day")
+    public Duration updateInterval = Duration.ofDays(1);
 
     @Comment({
             "# Specifies how often the player's spent time should be saved in the database",
@@ -37,12 +42,14 @@ public class PluginConfiguration extends ConfigSection {
     public int querySize = 10;
 
     @Override
-    public OkaeriSerdesPack getSerdesPack() {
-        return registry -> {};
+    public @NotNull OkaeriSerdesPack getSerdesPack() {
+        return registry -> {
+            registry.register(new SerdesCommons());
+        };
     }
 
     @Override
-    public String getFileName() {
+    public @NotNull String getFileName() {
         return "pluginConfiguration.yml";
     }
 }

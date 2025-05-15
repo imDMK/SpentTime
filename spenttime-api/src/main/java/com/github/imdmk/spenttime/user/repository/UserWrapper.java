@@ -3,6 +3,7 @@ package com.github.imdmk.spenttime.user.repository;
 import com.github.imdmk.spenttime.user.User;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -21,17 +22,17 @@ public class UserWrapper {
     public UserWrapper() {
     }
 
-    public UserWrapper(UUID uuid, String name, Long spentTime) {
+    public UserWrapper(@NotNull UUID uuid, @NotNull String name, @NotNull Long spentTime) {
         this.uuid = uuid;
         this.name = name;
         this.spentTime = spentTime;
     }
 
-    public static UserWrapper from(User user) {
+    public static UserWrapper from(@NotNull User user) {
         return new UserWrapper(user.getUuid(), user.getName(), user.getSpentTime());
     }
 
-    public User toUser() {
+    public @NotNull User toUser() {
         return new User(this.uuid, this.name, this.spentTime);
     }
 }

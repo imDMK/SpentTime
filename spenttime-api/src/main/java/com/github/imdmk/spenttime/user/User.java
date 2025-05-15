@@ -1,5 +1,7 @@
 package com.github.imdmk.spenttime.user;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,28 +13,26 @@ public class User {
 
     private long spentTime = 0L;
 
-    private boolean needUpdate = false;
-
-    public User(UUID uuid, String name) {
+    public User(@NotNull UUID uuid, @NotNull String name) {
         this.uuid = uuid;
         this.name = name;
     }
 
-    public User(UUID uuid, String name, long spentTime) {
+    public User(@NotNull UUID uuid, @NotNull String name, long spentTime) {
         this.uuid = uuid;
         this.name = name;
         this.spentTime = spentTime;
     }
 
-    public UUID getUuid() {
+    public @NotNull UUID getUuid() {
         return this.uuid;
     }
 
-    public String getName() {
+    public @NotNull String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
@@ -40,7 +40,7 @@ public class User {
         return this.spentTime;
     }
 
-    public Duration getSpentTimeAsDuration() {
+    public @NotNull Duration getSpentTimeAsDuration() {
         return Duration.ofMillis(this.spentTime);
     }
 
@@ -48,16 +48,8 @@ public class User {
         this.spentTime = spentTime;
     }
 
-    public void setSpentTime(Duration spentTime) {
+    public void setSpentTime(@NotNull Duration spentTime) {
         this.spentTime = spentTime.toMillis();
-    }
-
-    public boolean needUpdate() {
-        return this.needUpdate;
-    }
-
-    public void setNeedUpdate(boolean needUpdate) {
-        this.needUpdate = needUpdate;
     }
 
     @Override
@@ -74,9 +66,11 @@ public class User {
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof User user)) {
             return false;
         }
+
         return Objects.equals(this.uuid, user.uuid);
     }
 

@@ -1,140 +1,181 @@
 package com.github.imdmk.spenttime.user.gui;
 
-import com.github.imdmk.spenttime.gui.AbstractGui;
-import com.github.imdmk.spenttime.gui.ConfirmGui;
-import com.github.imdmk.spenttime.gui.configuration.item.GuiItemConfiguration;
-import com.github.imdmk.spenttime.message.MessageService;
+import com.github.imdmk.spenttime.feature.gui.AbstractGui;
+import com.github.imdmk.spenttime.feature.gui.GuiProvider;
+import com.github.imdmk.spenttime.feature.gui.ParameterizedGui;
+import com.github.imdmk.spenttime.feature.gui.configuration.GuiConfiguration;
+import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGui;
+import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGuiConfiguration;
+import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGui;
+import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGuiAction;
+import com.github.imdmk.spenttime.feature.message.MessageService;
 import com.github.imdmk.spenttime.shared.Formatter;
 import com.github.imdmk.spenttime.task.TaskScheduler;
-import com.github.imdmk.spenttime.user.BukkitSpentTimeService;
+import com.github.imdmk.spenttime.user.BukkitSpentTime;
 import com.github.imdmk.spenttime.user.User;
+import com.github.imdmk.spenttime.user.UserService;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
-import com.github.imdmk.spenttime.util.ComponentUtil;
 import com.github.imdmk.spenttime.util.DurationUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class SpentTimeTopGui extends AbstractGui {
+public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<List<User>> {
 
+    public static final String GUI_IDENTIFIER = "spenttimetop";
+
+    private final Logger logger;
     private final Server server;
-    private final GuiItemConfiguration itemConfig;
-    private final SpentTimeTopGuiConfiguration guiConfig;
+    private final UserService userService;
     private final UserRepository userRepository;
+    private final BukkitSpentTime bukkitSpentTime;
     private final MessageService messageService;
-    private final TaskScheduler taskScheduler;
-    private final BukkitSpentTimeService bukkitSpentTimeService;
+    private final GuiConfiguration guiConfiguration;
+    private final ItemGuiConfiguration itemConfiguration;
 
-    public SpentTimeTopGui(Server server, GuiItemConfiguration itemConfig, SpentTimeTopGuiConfiguration guiConfig, UserRepository userRepository, MessageService messageService, TaskScheduler taskScheduler, BukkitSpentTimeService bukkitSpentTimeService) {
-        super(itemConfig);
+    public SpentTimeTopGui(
+            @NotNull Logger logger,
+            @NotNull Server server,
+            @NotNull UserService userService,
+            @NotNull UserRepository userRepository,
+            @NotNull BukkitSpentTime bukkitSpentTime,
+            @NotNull MessageService messageService,
+            @NotNull TaskScheduler taskScheduler,
+            @NotNull GuiConfiguration guiConfiguration,
+            @NotNull ItemGuiConfiguration itemConfiguration
+    ) {
+        super(itemConfiguration, taskScheduler);
+        this.logger = logger;
         this.server = server;
-        this.itemConfig = itemConfig;
-        this.guiConfig = guiConfig;
+        this.userService = userService;
         this.userRepository = userRepository;
+        this.bukkitSpentTime = bukkitSpentTime;
         this.messageService = messageService;
-        this.taskScheduler = taskScheduler;
-        this.bukkitSpentTimeService = bukkitSpentTimeService;
+        this.guiConfiguration = guiConfiguration;
+        this.itemConfiguration = itemConfiguration;
     }
 
-    public void open(Player viewer, List<User> topUsers) {
-        BaseGui gui = this.createGuiBuilder(this.guiConfig.type)
-                .title(ComponentUtil.deserialize(this.guiConfig.title))
+    @Override
+    public @NotNull BaseGui createGui(@NotNull Player viewer, @NotNull List<User> topUsers) {
+        return this.createGuiBuilder(this.getConfig().type)
+                .title(this.getConfig().title)
                 .rows(6)
                 .disableAllInteractions()
                 .create();
+    }
 
-        if (this.itemConfig.fillBorder) {
-            gui.getFiller().fillBorder(this.itemConfig.borderItem.asGuiItem());
+    @Override
+    public void prepareBorderItems(@NotNull BaseGui gui) {
+        if (this.itemConfiguration.fillBorder) {
+            gui.getFiller().fillBorder(this.itemConfiguration.borderItem.asGuiItem());
         }
+    }
 
-        this.prepareNavigationItems(gui, viewer);
+    @Override
+    public void prepareNavigationItems(@NotNull BaseGui gui, @NotNull Player viewer, @NotNull List<User> topUsers) {
+        this.createExitItem(this.itemConfiguration.exitItem.slot(), exit -> gui.close(viewer)).forEach(gui::setItem);
 
+        if (gui instanceof PaginatedGui paginated) {
+            this.createNextPageItem(paginated, this.itemConfiguration.paginatedGui.nextPageItem.slot()).forEach(gui::setItem);
+            this.createPreviousPageItem(paginated, this.itemConfiguration.paginatedGui.previousPageItem.slot()).forEach(gui::setItem);
+        }
+    }
+
+    @Override
+    public void prepareItems(@NotNull BaseGui gui, @NotNull Player viewer, @NotNull List<User> topUsers) {
         for (int i = 0; i < topUsers.size(); i++) {
-            User topUser = topUsers.get(i);
-            int topUserPosition = i + 1;
+            User user = topUsers.get(i);
+            int position = i + 1;
 
-            gui.addItem(this.createUserItem(gui, viewer, topUser, topUserPosition, topUsers));
+            gui.addItem(this.createHeadItem(viewer, user, this.createFormatter(user, position), topUsers.size()));
         }
-
-        this.taskScheduler.runSync(() -> gui.open(viewer));
     }
 
-    private GuiItem createUserItem(BaseGui gui, Player viewer, User user, int userPosition, List<User> topUsers) {
-        OfflinePlayer userPlayer = this.server.getOfflinePlayer(user.getUuid());
-
-        Formatter formatter = new Formatter()
+    private Formatter createFormatter(User user, int position) {
+        return new Formatter()
                 .placeholder("{PLAYER}", user.getName())
-                .placeholder("{POSITION}", userPosition)
-                .placeholder("{TIME}", DurationUtil.toHumanReadable(user.getSpentTimeAsDuration()))
-                .placeholder("{CLICK}", this.guiConfig.headAdminClick.name());
-
-        ItemBuilder headItem = ItemBuilder.from(this.guiConfig.headItem.asItemStack())
-                .setSkullOwner(userPlayer);
-
-        if (viewer.hasPermission(this.guiConfig.permissionToResetSpentTime)) {
-            headItem.lore(ComponentUtil.deserialize(this.guiConfig.headLoreAdmin));
-        }
-
-        return headItem.asGuiItem(event -> {
-            if (event.getClick() != this.guiConfig.headAdminClick) {
-                return;
-            }
-
-            if (!viewer.hasPermission(this.guiConfig.permissionToResetSpentTime)) {
-                return;
-            }
-
-            new ConfirmGui(this.taskScheduler)
-                    .create("<red>Reset " + user.getName() + " player spent time?")
-                    .afterConfirm(e -> {
-                        gui.close(viewer);
-                        this.resetUserTime(viewer, userPlayer, user);
-                    })
-                    .afterCancel(e -> this.open(viewer, topUsers))
-                    .open(viewer);
-        });
+                .placeholder("{POSITION}", position)
+                .placeholder("{TIME}", DurationUtil.format(user.getSpentTimeAsDuration()))
+                .placeholder("{CLICK}", this.getConfig().headItemClick.name());
     }
 
-    private void resetUserTime(Player viewer, OfflinePlayer userPlayer, User user) {
-        user.setSpentTime(0L);
-        this.userRepository.save(user).thenAcceptAsync(updated -> {
-                    this.bukkitSpentTimeService.resetSpentTime(userPlayer);
+    private @NotNull GuiItem createHeadItem(@NotNull Player viewer, @NotNull User user, @NotNull Formatter formatter, int querySize) {
+        ItemGui headItem = this.getConfig().headItem.toBuilder()
+                .loreComponent(this.hasResetPermission(viewer) ? this.getConfig().headItem.lore() : this.getConfig().headItemAdminLore)
+                .build();
 
-                    this.messageService.create()
-                            .notice(notice -> notice.targetSpentTimeHasBeenReset)
-                            .placeholder("{PLAYER}", user.getName())
-                            .viewer(viewer)
-                            .send();
-                })
-                .exceptionally(throwable -> {
-                    this.messageService.create()
-                            .notice(notice -> notice.targetSpentTimeResetError)
-                            .viewer(viewer)
-                            .send();
-                    throw new RuntimeException(throwable);
+        return ItemBuilder.skull()
+                .owner(this.server.getOfflinePlayer(user.getUuid()))
+                .name(formatter.format(headItem.name()))
+                .lore(formatter.format(headItem.lore()))
+                .enchant(headItem.enchantments())
+                .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES)
+                .asGuiItem(event -> {
+                    if (event.getClick() != this.getConfig().headItemClick) {
+                        return;
+                    }
+
+                    if (!this.hasResetPermission(viewer)) {
+                        return;
+                    }
+
+                    this.openResetConfirmGui(viewer, user, querySize);
                 });
     }
 
-    private void prepareNavigationItems(BaseGui gui, Player viewer) {
-        if (gui instanceof PaginatedGui paginatedGui) {
-            GuiItem nextPageItem = this.createNextPageItem(paginatedGui);
-            GuiItem previousPageItem = this.createPreviousPageItem(paginatedGui);
+    private void openResetConfirmGui(@NotNull Player admin, @NotNull User target, int querySize) {
+        GuiProvider.openGui(
+                ConfirmationGui.GUI_IDENTIFIER,
+                admin,
+                ConfirmationGuiAction.builder()
+                        .onConfirm(player -> {
+                            target.setSpentTime(BukkitSpentTime.ZERO_SPENT_TIME);
+                            this.bukkitSpentTime.resetSpentTime(target.getUuid());
 
-            gui.setItem(this.itemConfig.nextPageItem.slot(), nextPageItem);
-            gui.setItem(this.itemConfig.previousPageItem.slot(), previousPageItem);
-        }
+                            this.userService.saveUser(target)
+                                    .thenCompose(user -> {
+                                        this.messageService.create()
+                                                .notice(notice -> notice.playerTimeReset)
+                                                .placeholder("{PLAYER}", user.getName())
+                                                .send();
 
-        GuiItem exitItem = this.createExitItem(close -> gui.close(viewer));
-        gui.setItem(this.itemConfig.exitItem.slot(), exitItem);
+                                        return this.userRepository.findTopUsersBySpentTime(querySize);
+                                    })
+                                    .thenAcceptAsync(newTopUsers -> GuiProvider.openGui(GUI_IDENTIFIER, admin, newTopUsers))
+                                    .exceptionally(throwable -> {
+                                        this.messageService.send(admin, notice -> notice.playerTimeResetError);
+                                        this.logger.log(Level.SEVERE, "An error occurred while trying to reset spent time", throwable);
+                                        return null;
+                                    });
+                        })
+                        .onCancel(player ->
+                                this.userRepository.findTopUsersBySpentTime(querySize)
+                                        .thenAcceptAsync(newTopUsers -> GuiProvider.openGui(GUI_IDENTIFIER, admin, newTopUsers))
+                        )
+                        .build()
+        );
     }
 
-    public SpentTimeTopGuiConfiguration getGuiConfig() {
-        return this.guiConfig;
+    private boolean hasResetPermission(@NotNull Player player) {
+        return player.hasPermission(this.getConfig().headItemPermissionReset);
+    }
+
+
+    private GuiConfiguration.SpentTimeTopGuiConfiguration getConfig() {
+        return this.guiConfiguration.spentTimeTopGui;
+    }
+
+    @Override
+    public @NotNull String getIdentifier() {
+        return GUI_IDENTIFIER;
     }
 }

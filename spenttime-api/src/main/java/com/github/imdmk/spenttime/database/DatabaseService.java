@@ -3,6 +3,8 @@ package com.github.imdmk.spenttime.database;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.zaxxer.hikari.HikariDataSource;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -18,7 +20,11 @@ public class DatabaseService {
     private HikariDataSource dataSource;
     private ConnectionSource connectionSource;
 
-    public DatabaseService(Logger logger, File dataFolder, DatabaseConfiguration databaseConfiguration) {
+    public DatabaseService(
+            @NotNull Logger logger,
+            @NotNull File dataFolder,
+            @NotNull DatabaseConfiguration databaseConfiguration
+    ) {
         this.logger = logger;
         this.dataFolder = dataFolder;
         this.databaseConfiguration = databaseConfiguration;
@@ -34,9 +40,9 @@ public class DatabaseService {
         }
 
         this.dataSource = this.createHikariDataSource();
-        DatabaseMode databaseMode = this.databaseConfiguration.databaseMode;
 
-        switch (databaseMode) {
+        DatabaseMode mode = this.databaseConfiguration.databaseMode;
+        switch (mode) {
             case SQLITE -> {
                 this.dataSource.setDriverClassName("org.sqlite.JDBC");
                 this.dataSource.setJdbcUrl("jdbc:sqlite:" + this.dataFolder + "/database.db");
@@ -47,13 +53,13 @@ public class DatabaseService {
                 this.dataSource.setJdbcUrl("jdbc:mysql://" + this.databaseConfiguration.hostname + ":" + this.databaseConfiguration.port + "/" + this.databaseConfiguration.database);
             }
 
-            default -> throw new IllegalStateException("Unknown database mode: " + databaseMode.name());
+            default -> throw new IllegalStateException("Unknown database mode: " + mode.name());
         }
 
         try {
             this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
 
-            this.logger.info("Connected to " + databaseMode.name() + " database.");
+            this.logger.info("Connected to " + mode.name() + " database.");
         }
         catch (SQLException sqlException) {
             this.logger.log(Level.SEVERE, "Failed to connect to database", sqlException);
@@ -63,7 +69,7 @@ public class DatabaseService {
         }
     }
 
-    private HikariDataSource createHikariDataSource() {
+    private @NotNull HikariDataSource createHikariDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setMaximumPoolSize(5);
         dataSource.setUsername(this.databaseConfiguration.username);
@@ -101,7 +107,7 @@ public class DatabaseService {
         this.logger.info("Database connection closed successfully.");
     }
 
-    public ConnectionSource getConnectionSource() {
+    public @Nullable ConnectionSource getConnectionSource() {
         return this.connectionSource;
     }
 }

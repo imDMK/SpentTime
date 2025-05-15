@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class UserCache {
 
@@ -42,6 +43,15 @@ public class UserCache {
 
     public Optional<User> get(String name) {
         return Optional.ofNullable(this.usersByName.asMap().get(name));
+    }
+
+    public void updateAll(Consumer<User> update) {
+        this.usersByUuid.asMap().values().forEach(update);
+    }
+
+    public void updateUserName(User user, String oldName) {
+        this.usersByName.invalidate(oldName);
+        this.usersByName.put(user.getName(), user);
     }
 
     public Collection<String> getUserNames() {

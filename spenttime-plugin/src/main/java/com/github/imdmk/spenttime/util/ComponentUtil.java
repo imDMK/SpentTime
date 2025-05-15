@@ -1,9 +1,11 @@
 package com.github.imdmk.spenttime.util;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +21,8 @@ public class ComponentUtil {
     }
 
     public static Component notItalic(String text) {
-        return MINI_MESSAGE.deserialize("<!italic>" + text);
+        return MINI_MESSAGE.deserialize(text)
+                .decoration(TextDecoration.ITALIC, false);
     }
 
     public static List<Component> notItalic(String... text) {
@@ -34,15 +37,22 @@ public class ComponentUtil {
         return MINI_MESSAGE.serialize(component);
     }
 
-    public static Component deserialize(String text) {
-        return text.contains(LEGACY_CHAR)
-                ? LEGACY_COMPONENT_SERIALIZER.deserialize(text)
-                : MINI_MESSAGE.deserialize(text);
+    public static Component text(String text) {
+        return MINI_MESSAGE.deserialize(text);
     }
 
-    public static List<Component> deserialize(List<String> strings) {
+    public static List<Component> text(String... texts) {
+        List<Component> components = new ArrayList<>();
+        for (String text : texts) {
+            components.add(MINI_MESSAGE.deserialize(text));
+        }
+
+        return components;
+    }
+
+    public static List<Component> text(List<String> strings) {
         return strings.stream()
-                .map(ComponentUtil::deserialize)
+                .map(ComponentUtil::text)
                 .toList();
     }
 }

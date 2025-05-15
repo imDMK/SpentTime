@@ -5,6 +5,7 @@ version = "2.0.0"
 
 dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("org.jetbrains:annotations:26.0.2")
 }
 
 tasks.withType<ShadowJar> {

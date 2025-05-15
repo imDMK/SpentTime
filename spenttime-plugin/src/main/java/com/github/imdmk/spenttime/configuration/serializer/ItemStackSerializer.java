@@ -8,19 +8,19 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class ItemStackSerializer implements ObjectSerializer<ItemStack> {
 
     @Override
-    public boolean supports(@NonNull Class<? super ItemStack> type) {
+    public boolean supports(@NotNull Class<? super ItemStack> type) {
         return ItemStack.class.isAssignableFrom(type);
     }
 
     @Override
-    public void serialize(@NonNull ItemStack itemStack, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
+    public void serialize(@NotNull ItemStack itemStack, @NotNull SerializationData data, @NotNull GenericsDeclaration generics) {
         data.add("material", itemStack.getType(), Material.class);
 
         if (itemStack.getAmount() > 1) {
@@ -39,7 +39,7 @@ public class ItemStackSerializer implements ObjectSerializer<ItemStack> {
     }
 
     @Override
-    public ItemStack deserialize(@NonNull DeserializationData data, @NonNull GenericsDeclaration generics) {
+    public ItemStack deserialize(@NotNull DeserializationData data, @NotNull GenericsDeclaration generics) {
         Material material = data.get("material", Material.class);
 
         int amount = Optional.ofNullable(data.get("amount", Integer.class)).orElse(1);

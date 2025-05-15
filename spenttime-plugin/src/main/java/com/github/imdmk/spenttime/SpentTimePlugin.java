@@ -4,6 +4,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SpentTimePlugin extends JavaPlugin {
 
+    /** bStats Metrics service ID for reporting plugin statistics */
+    public static final int METRICS_SERVICE_ID = 19362;
+
     private SpentTime spentTime;
 
     @Override
@@ -13,6 +16,8 @@ public class SpentTimePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.spentTime.onDisable();
+        if (this.spentTime != null) {
+            this.spentTime.disable();
+        }
     }
 }

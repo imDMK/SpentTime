@@ -21,7 +21,7 @@ public class DurationUtil {
         throw new UnsupportedOperationException("This is utility class.");
     }
 
-    public static String toHumanReadable(Duration duration) {
+    public static String format(Duration duration) {
         if (duration.isZero() || duration.isNegative()) {
             return "<1s";
         }

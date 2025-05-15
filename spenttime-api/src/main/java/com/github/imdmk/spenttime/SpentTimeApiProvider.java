@@ -1,5 +1,7 @@
 package com.github.imdmk.spenttime;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Static access point for the {@link SpentTimeApi}.
  * Acts as a global registry for the current instance.
@@ -34,7 +36,7 @@ public class SpentTimeApiProvider {
      * @param spentTimeApi the API instance to register
      * @throws IllegalStateException if already registered
      */
-    static synchronized void register(SpentTimeApi spentTimeApi) {
+    static synchronized void register(@NotNull SpentTimeApi spentTimeApi) {
         if (SPENT_TIME_API != null) {
             throw new IllegalStateException("The SpentTimeApi is already registered.");
         }
@@ -45,7 +47,7 @@ public class SpentTimeApiProvider {
     /**
      * Forces to register the {@link SpentTimeApi} instance.
      */
-    static void forceRegister(SpentTimeApi api) {
+    static void forceRegister(@NotNull SpentTimeApi api) {
         SPENT_TIME_API = api;
     }
 

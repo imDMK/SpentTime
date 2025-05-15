@@ -5,7 +5,7 @@ import eu.okaeri.configs.schema.GenericsPair;
 import eu.okaeri.configs.serdes.BidirectionalTransformer;
 import eu.okaeri.configs.serdes.SerdesContext;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class ComponentTransformer extends BidirectionalTransformer<Component, String> {
 
@@ -15,12 +15,12 @@ public class ComponentTransformer extends BidirectionalTransformer<Component, St
     }
 
     @Override
-    public String leftToRight(@NonNull Component component, @NonNull SerdesContext serdesContext) {
+    public String leftToRight(@NotNull Component component, @NotNull SerdesContext serdesContext) {
         return ComponentUtil.serialize(component);
     }
 
     @Override
-    public Component rightToLeft(@NonNull String data, @NonNull SerdesContext serdesContext) {
-        return ComponentUtil.deserialize(data);
+    public Component rightToLeft(@NotNull String data, @NotNull SerdesContext serdesContext) {
+        return ComponentUtil.text(data);
     }
 }

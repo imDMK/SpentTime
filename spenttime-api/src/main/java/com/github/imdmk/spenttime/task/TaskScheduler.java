@@ -1,12 +1,14 @@
 package com.github.imdmk.spenttime.task;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface TaskScheduler {
 
-    void runSync(Runnable runnable);
+    void runSync(@NotNull Runnable runnable);
 
-    void runAsync(Runnable runnable);
+    void runAsync(@NotNull Runnable runnable);
 
-    void runLaterAsync(Runnable runnable, long delay);
+    void runLaterAsync(@NotNull Runnable runnable, long delay);
 
-    void runTimerAsync(Runnable runnable, long delay, long period);
+    void runTimerAsync(@NotNull Runnable runnable, long delay, long period);
 }

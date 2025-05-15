@@ -2,6 +2,7 @@ package com.github.imdmk.spenttime;
 
 import com.github.imdmk.spenttime.user.UserCache;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Main API interface for accessing user-related components of the SpentTime module.
@@ -17,12 +18,12 @@ public interface SpentTimeApi {
      *
      * @return {@link UserCache} the user cache instance
      */
-    UserCache getUserCache();
+    @NotNull UserCache getUserCache();
 
     /**
      * Returns the user repository for data access operations.
      *
      * @return {@link UserRepository} the user repository
      */
-    UserRepository getUserRepository();
+    @NotNull UserRepository getUserRepository();
 }
