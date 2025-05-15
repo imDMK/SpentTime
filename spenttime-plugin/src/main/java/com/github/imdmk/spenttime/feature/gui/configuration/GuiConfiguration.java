@@ -4,6 +4,7 @@ import com.github.imdmk.spenttime.configuration.ConfigSection;
 import com.github.imdmk.spenttime.configuration.serializer.ComponentSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
 import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
+import com.github.imdmk.spenttime.configuration.serializer.SoundSerializer;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGui;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGuiConfiguration;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGuiSerializer;
@@ -14,6 +15,7 @@ import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.serdes.OkaeriSerdesPack;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 
@@ -97,6 +99,19 @@ public class GuiConfiguration extends ConfigSection {
 
     public ItemGuiConfiguration items = new ItemGuiConfiguration();
 
+    public GuiSoundConfiguration sound = new GuiSoundConfiguration();
+
+    public static class GuiSoundConfiguration extends OkaeriConfig {
+
+        public boolean enabled = true;
+
+        public Sound sound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+
+        public float volume = 1.1F;
+
+        public float pitch = 1F;
+    }
+
     @Override
     public @NotNull OkaeriSerdesPack getSerdesPack() {
         return registry -> {
@@ -104,6 +119,7 @@ public class GuiConfiguration extends ConfigSection {
             registry.register(new ItemMetaSerializer());
             registry.register(new ItemStackSerializer());
             registry.register(new ItemGuiSerializer());
+            registry.register(new SoundSerializer());
         };
     }
 

@@ -103,6 +103,11 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
         }
     }
 
+    @Override
+    public void defaultClickAction(@NotNull BaseGui gui, @NotNull Player viewer) {
+        this.playSoundIfEnabled(gui, viewer, this.guiConfiguration.sound);
+    }
+
     private Formatter createFormatter(User user, int position) {
         return new Formatter()
                 .placeholder("{PLAYER}", user.getName())

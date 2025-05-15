@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime.feature.gui;
 
+import com.github.imdmk.spenttime.feature.gui.configuration.GuiConfiguration;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGuiConfiguration;
 import com.github.imdmk.spenttime.gui.GuiType;
 import com.github.imdmk.spenttime.task.TaskScheduler;
@@ -9,6 +10,7 @@ import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +30,20 @@ public class AbstractGui {
     ) {
         this.config = Objects.requireNonNull(config, "item gui configuration cannot be null");
         this.taskScheduler = Objects.requireNonNull(taskScheduler, "task scheduler cannot be null");
+    }
+
+    protected void playSoundIfEnabled(BaseGui gui, Player player, GuiConfiguration.GuiSoundConfiguration soundConfiguration) {
+        if (!soundConfiguration.enabled) {
+            return;
+        }
+
+        gui.setDefaultClickAction(event -> {
+            if (event.getCurrentItem() == null) {
+                return;
+            }
+
+            player.playSound(player, soundConfiguration.sound, soundConfiguration.volume, soundConfiguration.pitch);
+        });
     }
 
     protected BaseGuiBuilder<?, ?> createGuiBuilder(@NotNull GuiType type) {

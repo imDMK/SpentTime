@@ -18,7 +18,7 @@ public class ItemGuiConfiguration extends OkaeriConfig {
 
     @Comment({"# Exit item", "# Set to -1 to disable"})
     public ItemGui exitItem = ItemGui.builder()
-            .material(Material.ARROW)
+            .material(Material.ACACIA_BUTTON)
             .name("<red>Quit")
             .lore(" ")
             .slot(49)
