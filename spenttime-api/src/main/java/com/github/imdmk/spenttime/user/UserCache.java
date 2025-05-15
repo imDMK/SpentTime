@@ -2,44 +2,134 @@ package com.github.imdmk.spenttime.user;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class UserCache {
 
-    private final Cache<UUID, User> uuidUserCache = Caffeine.newBuilder()
-            .expireAfterWrite(Duration.ofHours(12L))
-            .expireAfterAccess(Duration.ofHours(2L))
-            .build();
+    private static final Duration EXPIRE_AFTER_WRITE = Duration.ofHours(12);
+    private static final Duration EXPIRE_AFTER_ACCESS = Duration.ofHours(2);
 
-    private final Cache<String, User> nameUserCache = Caffeine.newBuilder()
-            .expireAfterWrite(Duration.ofHours(12L))
-            .expireAfterAccess(Duration.ofHours(2L))
-            .build();
+    private final Cache<UUID, User> cacheByUuid;
+    private final Cache<String, User> cacheByName;
 
-    public void put(User user) {
-        this.uuidUserCache.put(user.getUuid(), user);
-        this.nameUserCache.put(user.getName(), user);
+    /**
+     * Constructs a new {@code UserCache} instance with default expiration policies.
+     */
+    public UserCache() {
+        this.cacheByUuid = Caffeine.newBuilder()
+                .expireAfterWrite(EXPIRE_AFTER_WRITE)
+                .expireAfterAccess(EXPIRE_AFTER_ACCESS)
+                .build();
+
+        this.cacheByName = Caffeine.newBuilder()
+                .expireAfterWrite(EXPIRE_AFTER_WRITE)
+                .expireAfterAccess(EXPIRE_AFTER_ACCESS)
+                .build();
     }
 
-    public void remove(User user) {
-        this.uuidUserCache.invalidate(user.getUuid());
-        this.nameUserCache.invalidate(user.getName());
+    /**
+     * Adds or updates a user in the cache.
+     * The user is indexed by both UUID and name.
+     *
+     * @param user the user to add or update; must not be null
+     * @throws NullPointerException if user or any of its key properties are null
+     */
+    public void cacheUser(@NotNull User user) {
+        Objects.requireNonNull(user, "user cannot be null");
+
+        this.cacheByUuid.put(user.getUuid(), user);
+        this.cacheByName.put(user.getName(), user);
     }
 
-    public Optional<User> get(UUID uuid) {
-        return Optional.ofNullable(this.uuidUserCache.asMap().get(uuid));
+    /**
+     * Removes the specified user from the cache, by UUID and name.
+     *
+     * @param user the user to remove; must not be null
+     * @throws NullPointerException if user or any of its key properties are null
+     */
+    public void evictUser(@NotNull User user) {
+        Objects.requireNonNull(user, "user cannot be null");
+
+        this.cacheByUuid.invalidate(user.getUuid());
+        this.cacheByName.invalidate(user.getName());
     }
 
-    public Optional<User> get(String name) {
-        return Optional.ofNullable(this.nameUserCache.asMap().get(name));
+    /**
+     * Completely clears the cache of all users.
+     */
+    public void clearCache() {
+        this.cacheByUuid.invalidateAll();
+        this.cacheByName.invalidateAll();
     }
 
-    public Collection<String> getUserNames() {
-        return Collections.unmodifiableCollection(this.nameUserCache.asMap().keySet());
+    /**
+     * Retrieves a cached user by their UUID.
+     *
+     * @param uuid the UUID of the user; must not be null
+     * @return an {@link Optional} containing the user if found, or empty if not present
+     * @throws NullPointerException if uuid is null
+     */
+    @NotNull
+    public Optional<User> getUserByUuid(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+        return Optional.ofNullable(this.cacheByUuid.getIfPresent(uuid));
+    }
+
+    /**
+     * Retrieves a cached user by their name.
+     *
+     * @param name the exact username; must not be null
+     * @return an {@link Optional} containing the user if found, or empty if not present
+     * @throws NullPointerException if name is null
+     */
+    @NotNull
+    public Optional<User> getUserByName(@NotNull String name) {
+        Objects.requireNonNull(name, "name cannot be null");
+        return Optional.ofNullable(this.cacheByName.getIfPresent(name));
+    }
+
+    /**
+     * Applies the given update action to every cached user.
+     *
+     * @param updateAction the action to apply to each cached user; must not be null
+     * @throws NullPointerException if updateAction is null
+     */
+    public void forEachUser(@NotNull Consumer<User> updateAction) {
+        Objects.requireNonNull(updateAction, "updateAction cannot be null");
+        this.cacheByUuid.asMap().values().forEach(updateAction);
+    }
+
+    /**
+     * Updates the cached username mapping after the user has changed their name.
+     * Removes the old name mapping and adds the new one.
+     *
+     * @param user    the updated user; must not be null
+     * @param oldName the old name to remove; must not be null
+     * @throws NullPointerException if user or oldName is null
+     */
+    public void updateUserNameMapping(@NotNull User user, @NotNull String oldName) {
+        Objects.requireNonNull(user, "user cannot be null");
+        Objects.requireNonNull(oldName, "oldName cannot be null");
+
+        this.cacheByName.invalidate(oldName);
+        this.cacheByName.put(user.getName(), user);
+    }
+
+    /**
+     * Returns an unmodifiable collection of all cached usernames.
+     *
+     * @return an unmodifiable collection of cached usernames
+     */
+    @NotNull
+    public Collection<String> getAllCachedUserNames() {
+        return Collections.unmodifiableCollection(this.cacheByName.asMap().keySet());
     }
 }

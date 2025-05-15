@@ -1,18 +1,16 @@
 package com.github.imdmk.spenttime.configuration;
 
-import com.github.imdmk.spenttime.database.DatabaseSettings;
-import com.github.imdmk.spenttime.gui.settings.GuiSettings;
-import com.github.imdmk.spenttime.gui.settings.ScrollingGuiSettings;
-import com.github.imdmk.spenttime.notification.NotificationSettings;
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.Header;
+import eu.okaeri.configs.serdes.OkaeriSerdesPack;
+import eu.okaeri.configs.serdes.commons.SerdesCommons;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 
 @Header({
         "#",
-        "# Configuration file for the SpentTime plugin.",
+        "# A plugin configuration file for the SpentTime plugin.",
         "#",
         "# If you have a problem with plugin configuration, please create an issue on the project's github.",
         "# However, if you like the plugin, leave a star for the project on GitHub.",
@@ -21,10 +19,13 @@ import java.time.Duration;
         "# GitHub: https://github.com/imDMK/SpentTime",
         "#",
 })
-public class PluginConfiguration extends OkaeriConfig {
+public class PluginConfiguration extends ConfigSection {
 
-    @Comment("# Check for plugin update after the administrator join to server?")
-    public boolean checkForUpdate = true;
+    @Comment("# Check for plugin update and send notification after administrator join to server?")
+    public boolean checkUpdate = true;
+
+    @Comment("# How often should the plugin check for updates? Recommended value: 1 day")
+    public Duration updateInterval = Duration.ofDays(1);
 
     @Comment({
             "# Specifies how often the player's spent time should be saved in the database",
@@ -33,15 +34,22 @@ public class PluginConfiguration extends OkaeriConfig {
     })
     public Duration spentTimeSaveDelay = Duration.ofMinutes(10L);
 
-    @Comment({"#", "# Gui settings", "#"})
-    public GuiSettings guiSettings = new GuiSettings();
+    @Comment({
+            "# This determines how many players are to be displayed in the player top",
+            "# WARNING: Increasing this value may increase the consumption of database server resources",
+            "# Recommended value: 10"
+    })
+    public int querySize = 10;
 
-    @Comment({"#", "# Scrolling gui settings", "#"})
-    public ScrollingGuiSettings scrollingGuiSettings = new ScrollingGuiSettings();
+    @Override
+    public @NotNull OkaeriSerdesPack getSerdesPack() {
+        return registry -> {
+            registry.register(new SerdesCommons());
+        };
+    }
 
-    @Comment({"#", "# Database settings", "#"})
-    public DatabaseSettings databaseSettings = new DatabaseSettings();
-
-    @Comment({"#", "# Notification settings", "#"})
-    public NotificationSettings notificationSettings = new NotificationSettings();
+    @Override
+    public @NotNull String getFileName() {
+        return "pluginConfiguration.yml";
+    }
 }

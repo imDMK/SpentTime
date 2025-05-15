@@ -13,18 +13,20 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.21.5-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
 
     implementation(project(":spenttime-api"))
 
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
-    implementation("net.kyori:adventure-text-minimessage:4.17.0")
+    implementation("net.kyori:adventure-text-minimessage:4.19.0")
 
-    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.5")
+    implementation("com.eternalcode:multification-bukkit:1.1.4")
+    implementation("com.eternalcode:multification-okaeri:1.1.4")
+    implementation("com.eternalcode:gitcheck:1.0.0")
 
     implementation("dev.triumphteam:triumph-gui:3.1.11")
-    implementation("com.eternalcode:gitcheck:1.0.0")
+
     implementation("org.bstats:bstats-bukkit:3.1.0")
 
     implementation("dev.rollczi:litecommands-bukkit:3.9.7")
@@ -57,20 +59,20 @@ tasks.withType<ShadowJar> {
 
     val libPrefix = "com.github.imdmk.spenttime.plugin.lib"
     listOf(
-        "com.github.benmanes.caffeine",
-        "com.eternalcode.gitcheck",
-        "com.google.gson",
-        "com.google.errorprone",
-        "com.j256.ormlite",
-        "com.zaxxer.hikari",
-        "dev.rollczi.litecommands",
-        "dev.triumphteam.gui",
-        "eu.okaeri.configs",
+        "com.eternalcode",
+        "com.j256",
+        "com.github.benmanes",
         "net.kyori",
-        "org.bstats",
-        "org.json",
+        "dev.rollczi",
+        "dev.triumphteam",
+        "javassist",
         "org.yaml",
         "org.checkerframework",
+        "org.bstats",
+        "org.json",
+        "eu.okaeri",
+        "panda.std",
+        "panda.utilities",
     ).forEach { lib ->
         relocate(lib, "$libPrefix.$lib")
     }

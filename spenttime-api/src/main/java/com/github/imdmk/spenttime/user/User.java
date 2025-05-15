@@ -1,41 +1,38 @@
 package com.github.imdmk.spenttime.user;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
-@DatabaseTable(tableName = "users")
 public class User {
 
-    @DatabaseField(columnName = "uuid", id = true)
-    private UUID uuid;
-
-    @DatabaseField(columnName = "name")
+    private final UUID uuid;
     private String name;
 
-    @DatabaseField(columnName = "spentTime")
     private long spentTime = 0L;
 
-    public User() {
-    }
-
-    public User(UUID uuid, String name) {
+    public User(@NotNull UUID uuid, @NotNull String name) {
         this.uuid = uuid;
         this.name = name;
     }
 
-    public UUID getUuid() {
+    public User(@NotNull UUID uuid, @NotNull String name, long spentTime) {
+        this.uuid = uuid;
+        this.name = name;
+        this.spentTime = spentTime;
+    }
+
+    public @NotNull UUID getUuid() {
         return this.uuid;
     }
 
-    public String getName() {
+    public @NotNull String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
@@ -43,7 +40,7 @@ public class User {
         return this.spentTime;
     }
 
-    public Duration getSpentTimeDuration() {
+    public @NotNull Duration getSpentTimeAsDuration() {
         return Duration.ofMillis(this.spentTime);
     }
 
@@ -51,8 +48,17 @@ public class User {
         this.spentTime = spentTime;
     }
 
-    public void setSpentTime(Duration spentTime) {
+    public void setSpentTime(@NotNull Duration spentTime) {
         this.spentTime = spentTime.toMillis();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uuid=" + this.uuid +
+                ", name='" + this.name + '\'' +
+                ", spentTime=" + this.spentTime +
+                '}';
     }
 
     @Override
@@ -61,16 +67,15 @@ public class User {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof User user)) {
             return false;
         }
 
-        User user = (User) o;
-        return this.spentTime == user.spentTime && Objects.equals(this.uuid, user.uuid) && Objects.equals(this.name, user.name);
+        return Objects.equals(this.uuid, user.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.uuid, this.name, this.spentTime);
+        return Objects.hash(this.uuid);
     }
 }

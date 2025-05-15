@@ -1,48 +1,30 @@
 package com.github.imdmk.spenttime.user.controller;
 
-import com.github.imdmk.spenttime.user.BukkitPlayerSpentTimeService;
-import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserCache;
-import com.github.imdmk.spenttime.user.repository.UserRepository;
-import org.bukkit.entity.Player;
+import com.github.imdmk.spenttime.user.UserService;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class UserSaveController implements Listener {
 
     private final UserCache userCache;
-    private final UserRepository userRepository;
-    private final BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService;
+    private final UserService userService;
 
-    public UserSaveController(UserCache userCache, UserRepository userRepository, BukkitPlayerSpentTimeService bukkitPlayerSpentTimeService) {
-        this.userCache = userCache;
-        this.userRepository = userRepository;
-        this.bukkitPlayerSpentTimeService = bukkitPlayerSpentTimeService;
+    public UserSaveController(
+            @NotNull UserCache userCache,
+            @NotNull UserService userService
+    ) {
+        this.userCache = Objects.requireNonNull(userCache, "userCache cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-
-        User user = this.userCache.get(player.getUniqueId())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
-
-        user.setSpentTime(this.bukkitPlayerSpentTimeService.getSpentTime(player));
-
-        this.userRepository.save(user);
-    }
-
-    @EventHandler
-    public void onPlayerKick(PlayerKickEvent event) {
-        Player player = event.getPlayer();
-
-        User user = this.userCache.get(player.getUniqueId())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
-
-        user.setSpentTime(this.bukkitPlayerSpentTimeService.getSpentTime(player));
-
-        this.userRepository.save(user);
+        this.userCache.getUserByUuid(event.getPlayer().getUniqueId()).ifPresent(this.userService::saveUser);
     }
 }
