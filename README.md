@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/imDMK/SpentTime/actions/workflows/gradle.yml/badge.svg)](https://github.com/imDMK/SpentTime/actions/workflows/gradle.yml)
 ![JDK](https://img.shields.io/badge/JDK-1.17-blue.svg)
-![Supported versions](https://img.shields.io/badge/Minecraft-1.17--1.21.4-green.svg)
+![Supported versions](https://img.shields.io/badge/Minecraft-1.17--1.21.5-green.svg)
 [![SpigotMC](https://img.shields.io/badge/SpigotMC-yellow.svg)](https://www.spigotmc.org/resources/spenttime.111938/)
 [![Bukkit](https://img.shields.io/badge/Bukkit-blue.svg)](https://dev.bukkit.org/projects/spenttime)
 [![PaperMC](https://img.shields.io/badge/Paper-004ee9.svg)](https://hangar.papermc.io/imDMK/SpentTime)
@@ -47,21 +47,21 @@ This is a plugin that allows you to check how much time a player has spent on th
 | `spenttime set`       | command.spenttime.set       |
 | `spenttime reset`     | command.spenttime.reset     |
 | `spenttime reset-all` | command.spenttime.reset.all |
+| `spenttime reload`    | command.spenttime.reload    |
 
 ### Gui types
-| GuiType               | Description                                                               |
-|:----------------------|:--------------------------------------------------------------------------|
-| `STANDARD`            | Standard Gui that should be used when the player list does not exceed 10  |
-| `PAGINATED`           | A Gui with pages that allow you to move between pages through items       |
-| `SCROLLING`           | A Gui that allows you to scroll through items                             |              
-| `DISABLED`            | The list of players will be sent in the chat                              |
+| GuiType                | Description                                                              |
+|:-----------------------|:-------------------------------------------------------------------------|
+| `STANDARD`             | Standard Gui that should be used when the player list does not exceed 10 |
+| `PAGINATED`            | A Gui with pages that allow you to move between pages through items      |
+| `SCROLLING_VERTICAL`   | A Gui that allows you to scroll through items via vertical               |
+| `SCROLLING_HORIZONTAL` | A Gui that allows you to scroll through items via horizontal             |
 
 ### Notification types
 * `CHAT`
 * `ACTIONBAR`
 * `TITLE`
 * `SUBTITLE`
-* `DISABLED`
 
 ### Supported database types
 * `SQLITE`

@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 group = "com.github.imdmk.spenttime.api"
-version = "2.0.0"
+version = "2.0.1"
 
 dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
