@@ -1,6 +1,7 @@
 package com.github.imdmk.spenttime.configuration;
 
 import eu.okaeri.configs.ConfigManager;
+import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.exception.OkaeriException;
 import eu.okaeri.configs.yaml.snakeyaml.YamlSnakeYamlConfigurer;
 import org.jetbrains.annotations.NotNull;
@@ -12,22 +13,36 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ConfigurationManager {
 
-    private final Set<ConfigSection> configs = new HashSet<>();
+    private final Set<ConfigSection> configs = ConcurrentHashMap.newKeySet();
+
+    private final Logger logger;
+    private final ExecutorService executor;
+
+    public ConfigurationManager(@NotNull Logger logger) {
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.executor = Executors.newSingleThreadExecutor();
+    }
 
     public <T extends ConfigSection> T create(@NotNull Class<T> config, @NotNull File dataFolder) {
         T configFile = ConfigManager.create(config);
+        File file = new File(dataFolder, configFile.getFileName());
 
         YamlSnakeYamlConfigurer yamlSnakeYamlConfigurer = this.createYamlSnakeYamlConfigurer();
 
         configFile.withConfigurer(yamlSnakeYamlConfigurer);
         configFile.withSerdesPack(configFile.getSerdesPack());
-        configFile.withBindFile(new File(dataFolder, configFile.getFileName()));
+        configFile.withBindFile(file);
         configFile.withRemoveOrphans(true);
         configFile.saveDefaults();
         configFile.load(true);
@@ -54,17 +69,26 @@ public final class ConfigurationManager {
     }
 
     public @NotNull CompletableFuture<Void> reloadAll() {
-        return CompletableFuture.runAsync(this::loadAll);
+        return CompletableFuture.runAsync(this::loadAll, this.executor);
     }
 
     private void loadAll() {
-        for (ConfigSection config : this.configs) {
-            try {
-                config.load(true);
-            }
-            catch (OkaeriException exception) {
-                throw new ConfigurationLoadException(exception);
-            }
+        this.configs.forEach(this::load);
+    }
+
+    public void load(@NotNull OkaeriConfig config) {
+        try {
+            config.load(true);
+        }
+        catch (OkaeriException exception) {
+            this.logger.log(Level.SEVERE, "Failed to load config: " + config.getClass().getSimpleName(), exception);
+            throw new ConfigurationLoadException(exception);
         }
     }
+
+    public void shutdown() {
+        this.logger.info("Shutting down ConfigurationManager executor");
+        this.executor.shutdownNow();
+    }
+
 }

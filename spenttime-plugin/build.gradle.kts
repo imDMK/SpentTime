@@ -21,8 +21,6 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
     implementation("net.kyori:adventure-text-minimessage:4.19.0")
 
-    implementation("org.panda-lang.utilities:di:1.8.0")
-
     implementation("com.eternalcode:multification-bukkit:1.1.4")
     implementation("com.eternalcode:multification-okaeri:1.1.4")
     implementation("com.eternalcode:gitcheck:1.0.0")
@@ -61,20 +59,20 @@ tasks.withType<ShadowJar> {
 
     val libPrefix = "com.github.imdmk.spenttime.plugin.lib"
     listOf(
-        "com.github.benmanes.caffeine",
-        "com.eternalcode.gitcheck",
-        "com.google.gson",
-        "com.google.errorprone",
-        "com.j256.ormlite",
-        "com.zaxxer.hikari",
-        "dev.rollczi.litecommands",
-        "dev.triumphteam.gui",
-        "eu.okaeri.configs",
+        "com.eternalcode",
+        "com.j256",
+        "com.github.benmanes",
         "net.kyori",
-        "org.bstats",
-        "org.json",
+        "dev.rollczi",
+        "dev.triumphteam",
+        "javassist",
         "org.yaml",
         "org.checkerframework",
+        "org.bstats",
+        "org.json",
+        "eu.okaeri",
+        "panda.std",
+        "panda.utilities",
     ).forEach { lib ->
         relocate(lib, "$libPrefix.$lib")
     }

@@ -12,8 +12,8 @@ public class ItemGuiConfiguration extends OkaeriConfig {
     @Comment("# The item that is around the gui")
     public ItemGui borderItem = ItemGui.builder()
             .material(Material.GRAY_STAINED_GLASS_PANE)
-            .name(" ")
-            .lore(" ")
+            .name("<dark_gray>empty! what you looking for?")
+            .lore("")
             .build();
 
     @Comment({"# Exit item", "# Set to -1 to disable"})
@@ -32,7 +32,6 @@ public class ItemGuiConfiguration extends OkaeriConfig {
         public ItemGui previousPageItem = ItemGui.builder()
                 .material(Material.ARROW)
                 .name("<green>Previous page")
-                .lore(" ")
                 .slot(46)
                 .build();
 
@@ -40,7 +39,6 @@ public class ItemGuiConfiguration extends OkaeriConfig {
         public ItemGui noPreviousPageItem = ItemGui.builder()
                 .material(Material.BARRIER)
                 .name("<red>There is no previous page")
-                .lore(" ")
                 .build();
 
         @Comment({"# Next page item", "# Set to -1 to disable"})
@@ -54,7 +52,6 @@ public class ItemGuiConfiguration extends OkaeriConfig {
         public ItemGui noNextPageItem = ItemGui.builder()
                 .material(Material.BARRIER)
                 .name("<red>There is no next page")
-                .lore(" ")
                 .build();
 
     }

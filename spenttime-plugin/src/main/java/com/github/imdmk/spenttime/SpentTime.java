@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime;
 
+import com.eternalcode.multification.notice.Notice;
 import com.github.imdmk.spenttime.configuration.ConfigurationManager;
 import com.github.imdmk.spenttime.configuration.PluginConfiguration;
 import com.github.imdmk.spenttime.database.DatabaseConfiguration;
@@ -8,6 +9,9 @@ import com.github.imdmk.spenttime.feature.commands.builder.handler.MissingPermis
 import com.github.imdmk.spenttime.feature.commands.builder.handler.UsageHandler;
 import com.github.imdmk.spenttime.feature.commands.builder.player.PlayerArgument;
 import com.github.imdmk.spenttime.feature.commands.builder.player.PlayerContextual;
+import com.github.imdmk.spenttime.feature.commands.configuration.CommandConfiguration;
+import com.github.imdmk.spenttime.feature.commands.configuration.CommandConfigurator;
+import com.github.imdmk.spenttime.feature.commands.implementation.ReloadCommand;
 import com.github.imdmk.spenttime.feature.commands.implementation.ResetAllCommand;
 import com.github.imdmk.spenttime.feature.commands.implementation.ResetCommand;
 import com.github.imdmk.spenttime.feature.commands.implementation.SetCommand;
@@ -17,6 +21,7 @@ import com.github.imdmk.spenttime.feature.gui.GuiManager;
 import com.github.imdmk.spenttime.feature.gui.configuration.GuiConfiguration;
 import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGui;
 import com.github.imdmk.spenttime.feature.message.MessageConfiguration;
+import com.github.imdmk.spenttime.feature.message.MessageResultHandler;
 import com.github.imdmk.spenttime.feature.message.MessageService;
 import com.github.imdmk.spenttime.feature.placeholder.PlaceholderRegistry;
 import com.github.imdmk.spenttime.feature.placeholder.SpentTimePlaceholder;
@@ -89,12 +94,13 @@ class SpentTime implements SpentTimeApi {
         this.logger = plugin.getLogger();
 
         /* Configuration */
-        ConfigurationManager configurationManager = new ConfigurationManager();
+        ConfigurationManager configurationManager = new ConfigurationManager(this.logger);
 
         PluginConfiguration pluginConfiguration = configurationManager.create(PluginConfiguration.class, dataFolder);
         DatabaseConfiguration databaseConfiguration = configurationManager.create(DatabaseConfiguration.class, dataFolder);
         MessageConfiguration messageConfiguration = configurationManager.create(MessageConfiguration.class, dataFolder);
         GuiConfiguration guiConfiguration = configurationManager.create(GuiConfiguration.class, dataFolder);
+        CommandConfiguration commandConfiguration = configurationManager.create(CommandConfiguration.class, dataFolder);
 
         /* Database */
         this.databaseService = new DatabaseService(this.logger, dataFolder, databaseConfiguration);
@@ -144,17 +150,22 @@ class SpentTime implements SpentTimeApi {
                 .argument(User.class, new UserArgument(this.userCache, this.userRepository, messageConfiguration))
 
                 .context(Player.class, new PlayerContextual())
+                .result(Notice.class, new MessageResultHandler(this.messageService))
 
                 .missingPermission(new MissingPermissionHandler(this.messageService))
                 .invalidUsage(new UsageHandler(this.messageService))
 
                 .commands(
+                        new ReloadCommand(this.logger, configurationManager, this.messageService),
                         new TimeCommand(this.logger, userService, this.messageService, bukkitSpentTime),
                         new ResetAllCommand(this.logger, this.messageService, this.userRepository, bukkitSpentTime, guiManager),
                         new ResetCommand(this.logger, userService, this.messageService, guiManager),
                         new SetCommand(this.logger, userService, this.messageService, bukkitSpentTime),
                         new TopCommand(this.logger, pluginConfiguration, this.userRepository, this.messageService, guiManager)
                 )
+
+                .editorGlobal(new CommandConfigurator(this.logger, commandConfiguration))
+
                 .build();
 
         /* PlaceholderAPI */

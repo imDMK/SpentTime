@@ -27,7 +27,7 @@ public class GuiConfiguration extends ConfigSection {
 
         public Component title = ComponentUtil.text("<red>Spent Time users top list");
 
-        public GuiType type = GuiType.STANDARD;
+        public GuiType type = GuiType.PAGINATED;
 
         @Comment({
                 "# The head item name",
@@ -63,13 +63,13 @@ public class GuiConfiguration extends ConfigSection {
                 "# What type of button does the admin need to click to reset the player's spent time using the gui?",
                 "# ClickTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html"
         })
-        public ClickType headItemClickReset = ClickType.DOUBLE_CLICK;
+        public ClickType headItemClickReset = ClickType.SHIFT_RIGHT;
 
         @Comment({
                 "# What type of button does the admin need to click to force refresh the player's spent time using the gui?",
                 "# ClickTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html"
         })
-        public ClickType headItemClickRefresh = ClickType.SHIFT_LEFT;
+        public ClickType headItemClickRefresh = ClickType.DOUBLE_CLICK;
 
         public String headItemPermissionReset = "spenttime.reset.gui";
     }

@@ -10,6 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class MessageConfiguration extends ConfigSection {
 
+    @Comment("# Sent when successfully reloaded all plugin configuration files")
+    public Notice reload = Notice.chat("<green>The plugin configuration files has been reloaded. May note that not all functions are reloaded.");
+
+    @Comment("# Sent when there an error occurred while trying to load plugin configuration file")
+    public Notice reloadError = Notice.chat("<red>Failed to reload plugin configuration files. Please see the console.");
+
     @Comment({
             "# Sent to the player with their own spent time",
             "# {TIME} - The spent player time"
@@ -21,7 +27,7 @@ public class MessageConfiguration extends ConfigSection {
             "# {PLAYER} - Target player name",
             "# {TIME} - Target spent time"
     })
-    public Notice otherPlayerSpentTime = Notice.chat("<gray>Player <green>{PLAYER} has spent <red>{TIME} on the server<dark_gray>.");
+    public Notice otherPlayerSpentTime = Notice.chat("<gray>Player <red>{PLAYER} <gray>has spent <green>{TIME} <gray>on the server<dark_gray>.");
 
     @Comment("# Sent when there are no top players to display")
     public Notice topListEmpty = Notice.chat("<red>The top spent time is empty<dark_gray>.");
