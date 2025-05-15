@@ -19,8 +19,7 @@ public class UserWrapper {
     @DatabaseField(columnName = "spentTime", canBeNull = false)
     private Long spentTime;
 
-    public UserWrapper() {
-    }
+    public UserWrapper() {}
 
     public UserWrapper(@NotNull UUID uuid, @NotNull String name, @NotNull Long spentTime) {
         this.uuid = uuid;

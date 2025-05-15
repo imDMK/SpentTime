@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,10 +33,10 @@ public class SetCommand {
             @NotNull MessageService messageService,
             @NotNull BukkitSpentTime bukkitSpentTime
     ) {
-        this.logger = logger;
-        this.userService = userService;
-        this.messageService = messageService;
-        this.bukkitSpentTime = bukkitSpentTime;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
+        this.messageService = Objects.requireNonNull(messageService, "messageService cannot be null");
+        this.bukkitSpentTime = Objects.requireNonNull(bukkitSpentTime, "bukkitSpentTime cannot be null");
     }
 
     @Execute

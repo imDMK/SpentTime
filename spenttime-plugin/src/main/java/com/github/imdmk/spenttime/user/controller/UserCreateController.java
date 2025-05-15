@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class UserCreateController implements Listener {
 
     private final Server server;
@@ -19,8 +21,8 @@ public class UserCreateController implements Listener {
             @NotNull Server server,
             @NotNull UserService userService
     ) {
-        this.server = server;
-        this.userService = userService;
+        this.server = Objects.requireNonNull(server, "server cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

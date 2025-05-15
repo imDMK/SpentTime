@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
@@ -20,8 +21,8 @@ public class PlayerArgument extends ArgumentResolver<CommandSender, Player> {
     private final MessageConfiguration messageConfiguration;
 
     public PlayerArgument(@NotNull Server server, @NotNull MessageConfiguration messageConfiguration) {
-        this.server = server;
-        this.messageConfiguration = messageConfiguration;
+        this.server = Objects.requireNonNull(server, "server cannot be null");
+        this.messageConfiguration = Objects.requireNonNull(messageConfiguration, "messageConfiguration cannot be null");
     }
 
     @Override

@@ -6,14 +6,16 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public final class BukkitTaskScheduler implements TaskScheduler {
 
     private final Plugin plugin;
     private final BukkitScheduler scheduler;
 
     public BukkitTaskScheduler(@NotNull Plugin plugin, @NotNull Server server) {
-        this.plugin = plugin;
-        this.scheduler = server.getScheduler();
+        this.plugin = Objects.requireNonNull(plugin, "plugin cannot be null");
+        this.scheduler = Objects.requireNonNull(server.getScheduler(), "server scheduler cannot be null");
     }
 
     @Override

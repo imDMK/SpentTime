@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.feature.commands.implementation;
 
-import com.github.imdmk.spenttime.feature.gui.GuiProvider;
+import com.github.imdmk.spenttime.feature.gui.GuiManager;
 import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGui;
 import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGuiAction;
 import com.github.imdmk.spenttime.feature.message.MessageService;
@@ -15,6 +15,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,23 +23,24 @@ import java.util.logging.Logger;
 @Permission("command.spenttime.reset.all")
 public class ResetAllCommand {
 
-    private static final long ZERO_TIME = 0L;
-
     private final Logger logger;
     private final MessageService messageService;
     private final UserRepository userRepository;
     private final BukkitSpentTime bukkitSpentTime;
+    private final GuiManager guiManager;
 
     public ResetAllCommand(
             @NotNull Logger logger,
             @NotNull MessageService messageService,
             @NotNull UserRepository userRepository,
-            @NotNull BukkitSpentTime bukkitSpentTime
+            @NotNull BukkitSpentTime bukkitSpentTime,
+            @NotNull GuiManager guiManager
     ) {
-        this.logger = logger;
-        this.messageService = messageService;
-        this.userRepository = userRepository;
-        this.bukkitSpentTime = bukkitSpentTime;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.messageService = Objects.requireNonNull(messageService, "messageService cannot be null");
+        this.userRepository = Objects.requireNonNull(userRepository, "userRepository cannot be null");
+        this.bukkitSpentTime = Objects.requireNonNull(bukkitSpentTime, "bukkitSpentTime cannot be null");
+        this.guiManager = Objects.requireNonNull(guiManager, "guiManager cannot be null");
     }
 
     @Execute
@@ -65,7 +67,7 @@ public class ResetAllCommand {
     }
 
     private void openConfirmGui(@NotNull Player viewer) {
-        GuiProvider.openGui(
+        this.guiManager.openGui(
                 ConfirmationGui.GUI_IDENTIFIER,
                 viewer,
                 ConfirmationGuiAction.builder()

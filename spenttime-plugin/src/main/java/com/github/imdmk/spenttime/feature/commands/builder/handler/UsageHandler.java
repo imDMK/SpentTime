@@ -9,12 +9,14 @@ import dev.rollczi.litecommands.schematic.Schematic;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class UsageHandler implements InvalidUsageHandler<CommandSender> {
 
     private final MessageService messageService;
 
     public UsageHandler(@NotNull MessageService messageService) {
-        this.messageService = messageService;
+        this.messageService = Objects.requireNonNull(messageService, "message service cannot be null");
     }
 
     @Override

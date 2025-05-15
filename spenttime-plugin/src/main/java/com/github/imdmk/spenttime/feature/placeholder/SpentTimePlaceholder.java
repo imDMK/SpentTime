@@ -8,14 +8,16 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class SpentTimePlaceholder extends PlaceholderExpansion {
 
     private final PluginDescriptionFile pluginDescriptionFile;
-    private final BukkitSpentTime bukkitBukkitSpentTime;
+    private final BukkitSpentTime bukkitSpentTime;
 
-    public SpentTimePlaceholder(@NotNull PluginDescriptionFile pluginDescriptionFile, @NotNull BukkitSpentTime bukkitBukkitSpentTime) {
-        this.pluginDescriptionFile = pluginDescriptionFile;
-        this.bukkitBukkitSpentTime = bukkitBukkitSpentTime;
+    public SpentTimePlaceholder(@NotNull PluginDescriptionFile pluginDescriptionFile, @NotNull BukkitSpentTime bukkitSpentTime) {
+        this.pluginDescriptionFile = Objects.requireNonNull(pluginDescriptionFile, "pluginDescriptionFile cannot be null");
+        this.bukkitSpentTime = Objects.requireNonNull(bukkitSpentTime, "bukkitSpentTime cannot be null");
     }
 
     @Override
@@ -35,6 +37,6 @@ public class SpentTimePlaceholder extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onRequest(@NotNull OfflinePlayer player, @NotNull String params) {
-        return DurationUtil.format(this.bukkitBukkitSpentTime.getSpentTime(player));
+        return DurationUtil.format(this.bukkitSpentTime.getSpentTime(player));
     }
 }

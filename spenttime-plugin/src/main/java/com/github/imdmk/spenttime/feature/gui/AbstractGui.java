@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class AbstractGui {
@@ -25,8 +26,8 @@ public class AbstractGui {
             @NotNull ItemGuiConfiguration config,
             @NotNull TaskScheduler taskScheduler
     ) {
-        this.config = config;
-        this.taskScheduler = taskScheduler;
+        this.config = Objects.requireNonNull(config, "item gui configuration cannot be null");
+        this.taskScheduler = Objects.requireNonNull(taskScheduler, "task scheduler cannot be null");
     }
 
     protected BaseGuiBuilder<?, ?> createGuiBuilder(@NotNull GuiType type) {

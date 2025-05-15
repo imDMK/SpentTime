@@ -9,6 +9,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public class UpdateService {
 
@@ -20,9 +21,9 @@ public class UpdateService {
 
     private Instant latestCheck;
 
-    public UpdateService(@NotNull PluginConfiguration pluginConfiguration, @NotNull PluginDescriptionFile pluginDescriptionFile) {
-        this.pluginConfiguration = pluginConfiguration;
-        this.pluginDescriptionFile = pluginDescriptionFile;
+    public UpdateService(@NotNull PluginConfiguration pluginConfiguration, @NotNull PluginDescriptionFile descriptionFile) {
+        this.pluginConfiguration = Objects.requireNonNull(pluginConfiguration, "pluginConfiguration cannot be null");
+        this.pluginDescriptionFile = Objects.requireNonNull(descriptionFile, "pluginDescriptionFile cannot be null");
     }
 
     public @NotNull GitCheckResult check() {

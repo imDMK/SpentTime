@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,9 +26,9 @@ public class DatabaseService {
             @NotNull File dataFolder,
             @NotNull DatabaseConfiguration databaseConfiguration
     ) {
-        this.logger = logger;
-        this.dataFolder = dataFolder;
-        this.databaseConfiguration = databaseConfiguration;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.dataFolder = Objects.requireNonNull(dataFolder, "dataFolder cannot be null");
+        this.databaseConfiguration = Objects.requireNonNull(databaseConfiguration, "databaseConfiguration cannot be null");
     }
 
     public void connect() throws SQLException, IllegalStateException {

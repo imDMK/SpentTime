@@ -8,12 +8,14 @@ import dev.rollczi.litecommands.permission.MissingPermissionsHandler;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class MissingPermissionHandler implements MissingPermissionsHandler<CommandSender> {
 
     private final MessageService messageService;
 
     public MissingPermissionHandler(@NotNull MessageService messageService) {
-        this.messageService = messageService;
+        this.messageService = Objects.requireNonNull(messageService, "message service cannot be null");
     }
 
     @Override

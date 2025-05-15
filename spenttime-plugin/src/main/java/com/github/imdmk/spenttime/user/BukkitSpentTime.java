@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -23,7 +24,7 @@ public class BukkitSpentTime {
     private final Server server;
 
     public BukkitSpentTime(@NotNull Server server) {
-        this.server = server;
+        this.server = Objects.requireNonNull(server, "server cannot be null");
     }
 
     public Duration getSpentTime(UUID uuid) {

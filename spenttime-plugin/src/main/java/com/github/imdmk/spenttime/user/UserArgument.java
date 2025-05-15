@@ -11,6 +11,8 @@ import dev.rollczi.litecommands.suggestion.SuggestionResult;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class UserArgument extends ArgumentResolver<CommandSender, User> {
 
     private final UserCache userCache;
@@ -22,9 +24,9 @@ public class UserArgument extends ArgumentResolver<CommandSender, User> {
             @NotNull UserRepository userRepository,
             @NotNull MessageConfiguration messageConfiguration
     ) {
-        this.userCache = userCache;
-        this.userRepository = userRepository;
-        this.messageConfiguration = messageConfiguration;
+        this.userCache = Objects.requireNonNull(userCache, "userCache cannot be null");
+        this.userRepository = Objects.requireNonNull(userRepository, "userRepository cannot be null");
+        this.messageConfiguration = Objects.requireNonNull(messageConfiguration, "messageConfiguration cannot be null");
     }
 
     @Override
@@ -36,6 +38,6 @@ public class UserArgument extends ArgumentResolver<CommandSender, User> {
 
     @Override
     public SuggestionResult suggest(Invocation<CommandSender> invocation, Argument<User> argument, SuggestionContext context) {
-        return SuggestionResult.of(this.userCache.getUserNames());
+        return SuggestionResult.of(this.userCache.getAllCachedUserNames());
     }
 }

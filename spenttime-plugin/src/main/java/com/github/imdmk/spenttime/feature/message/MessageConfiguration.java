@@ -29,17 +29,6 @@ public class MessageConfiguration extends ConfigSection {
     @Comment("# Sent when querying top list fails")
     public Notice topListQueryError = Notice.chat("<red>An error occurred while querying top spent time<dark_gray>.");
 
-    @Comment("# Sent when the top GUI is disabled and the top list is shown in chat")
-    public Notice topListHeader = Notice.chat("<green>Top 10 players who spent the most time on the server<dark_gray>:");
-
-    @Comment({
-            "# A line in the top list shown in chat (when GUI is disabled)",
-            "# {POSITION} - Player's position in the list",
-            "# {PLAYER} - Player name",
-            "# {TIME} - Player spent time"
-    })
-    public Notice topListEntry = Notice.chat("<dark_gray>- <green>{POSITION} Player {PLAYER}<dark_gray>: <red>{TIME}");
-
     @Comment({
             "# Sent when a specific player's time has been reset",
             "# {PLAYER} - The player name"

@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
@@ -32,10 +33,10 @@ public class TimeCommand {
             @NotNull MessageService messageService,
             @NotNull BukkitSpentTime bukkitSpentTime
     ) {
-        this.logger = logger;
-        this.userService = userService;
-        this.messageService = messageService;
-        this.bukkitSpentTime = bukkitSpentTime;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
+        this.messageService = Objects.requireNonNull(messageService, "messageService cannot be null");
+        this.bukkitSpentTime = Objects.requireNonNull(bukkitSpentTime, "bukkitSpentTime cannot be null");
     }
 
     @Execute

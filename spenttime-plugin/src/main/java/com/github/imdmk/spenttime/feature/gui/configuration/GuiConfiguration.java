@@ -1,6 +1,9 @@
 package com.github.imdmk.spenttime.feature.gui.configuration;
 
 import com.github.imdmk.spenttime.configuration.ConfigSection;
+import com.github.imdmk.spenttime.configuration.serializer.ComponentSerializer;
+import com.github.imdmk.spenttime.configuration.serializer.ItemMetaSerializer;
+import com.github.imdmk.spenttime.configuration.serializer.ItemStackSerializer;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGui;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGuiConfiguration;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGuiSerializer;
@@ -22,7 +25,7 @@ public class GuiConfiguration extends ConfigSection {
 
     public static class SpentTimeTopGuiConfiguration extends OkaeriConfig {
 
-        public Component title = ComponentUtil.text("<red>");
+        public Component title = ComponentUtil.text("<red>Spent Time users top list");
 
         public GuiType type = GuiType.STANDARD;
 
@@ -52,15 +55,21 @@ public class GuiConfiguration extends ConfigSection {
                 "",
                 "<green>The player has spent <red>{TIME} <green>on the server<dark_gray>.",
                 "",
-                "<red>Click {CLICK} <gray>to <red>reset {PLAYER} <gray>spent time."
+                "<gray>Click <green>{CLICK_REFRESH} <gray>to force <green>refresh <gray>spent time.",
+                "<gray>Click <red>{CLICK_RESET} <gray>to <red>reset {PLAYER} <gray>spent time."
         );
 
         @Comment({
                 "# What type of button does the admin need to click to reset the player's spent time using the gui?",
-                "# When the admin clicks a different button than the set one, nothing will happen",
                 "# ClickTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html"
         })
-        public ClickType headItemClick = ClickType.SHIFT_RIGHT;
+        public ClickType headItemClickReset = ClickType.DOUBLE_CLICK;
+
+        @Comment({
+                "# What type of button does the admin need to click to force refresh the player's spent time using the gui?",
+                "# ClickTypes: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html"
+        })
+        public ClickType headItemClickRefresh = ClickType.SHIFT_LEFT;
 
         public String headItemPermissionReset = "spenttime.reset.gui";
     }
@@ -91,6 +100,9 @@ public class GuiConfiguration extends ConfigSection {
     @Override
     public @NotNull OkaeriSerdesPack getSerdesPack() {
         return registry -> {
+            registry.register(new ComponentSerializer());
+            registry.register(new ItemMetaSerializer());
+            registry.register(new ItemStackSerializer());
             registry.register(new ItemGuiSerializer());
         };
     }

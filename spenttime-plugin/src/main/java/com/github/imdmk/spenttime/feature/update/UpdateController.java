@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,11 +39,11 @@ public class UpdateController implements Listener {
     private final TaskScheduler taskScheduler;
 
     public UpdateController(Logger logger, PluginConfiguration pluginConfiguration, MessageService messageService, UpdateService updateService, TaskScheduler taskScheduler) {
-        this.logger = logger;
-        this.pluginConfiguration = pluginConfiguration;
-        this.messageService = messageService;
-        this.updateService = updateService;
-        this.taskScheduler = taskScheduler;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.pluginConfiguration = Objects.requireNonNull(pluginConfiguration, "pluginConfiguration cannot be null");
+        this.messageService = Objects.requireNonNull(messageService, "messageService cannot be null");
+        this.updateService = Objects.requireNonNull(updateService, "updateService cannot be null");
+        this.taskScheduler = Objects.requireNonNull(taskScheduler, "taskScheduler cannot be null");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

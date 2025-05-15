@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -25,10 +26,10 @@ public class UserService {
             @NotNull UserCache userCache,
             @NotNull BukkitSpentTime bukkitSpentTime
     ) {
-        this.logger = logger;
-        this.userRepository = userRepository;
-        this.userCache = userCache;
-        this.bukkitSpentTime = bukkitSpentTime;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.userRepository = Objects.requireNonNull(userRepository, "userRepository cannot be null");
+        this.userCache = Objects.requireNonNull(userCache, "userCache cannot be null");
+        this.bukkitSpentTime = Objects.requireNonNull(bukkitSpentTime, "bukkitSpentTime cannot be null");
     }
 
     public CompletableFuture<User> findOrCreateUser(@NotNull Player player) {
@@ -42,6 +43,16 @@ public class UserService {
                 )
                 .exceptionally(throwable -> {
                     this.logger.log(Level.SEVERE, "Failed to load user: " + name, throwable);
+                    return null;
+                });
+    }
+
+    public void setSpentTime(@NotNull User user, Duration duration) {
+        user.setSpentTime(duration);
+        this.bukkitSpentTime.setSpentTime(user.getUuid(), duration);
+        this.saveUser(user)
+                .exceptionally(throwable -> {
+                    this.logger.log(Level.SEVERE, "An error occurred while setting spent time: " + user, throwable);
                     return null;
                 });
     }
@@ -60,7 +71,7 @@ public class UserService {
         String oldName = user.getName();
         if (!newName.equals(oldName)) {
             user.setName(newName);
-            this.userCache.updateUserName(user, oldName);
+            this.userCache.updateUserNameMapping(user, oldName);
             updated = true;
         }
 

@@ -12,6 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class MessageService extends BukkitMultification<MessageConfiguration> {
 
     private final MessageConfiguration messageConfiguration;
@@ -23,9 +25,9 @@ public class MessageService extends BukkitMultification<MessageConfiguration> {
             @NotNull AudienceProvider audienceProvider,
             @NotNull MiniMessage miniMessage
     ) {
-        this.messageConfiguration = messageConfiguration;
-        this.audienceProvider = audienceProvider;
-        this.miniMessage = miniMessage;
+        this.messageConfiguration = Objects.requireNonNull(messageConfiguration, "messageConfiguration cannot be null");
+        this.audienceProvider = Objects.requireNonNull(audienceProvider, "audienceProvider cannot be null");
+        this.miniMessage = Objects.requireNonNull(miniMessage, "miniMessage cannot be null");
     }
 
     @Override
@@ -51,5 +53,9 @@ public class MessageService extends BukkitMultification<MessageConfiguration> {
 
     public void send(CommandSender sender, NoticeProvider<MessageConfiguration> notice) {
         this.create().viewer(sender).notice(notice).send();
+    }
+
+    public void close() {
+        this.audienceProvider.close();
     }
 }

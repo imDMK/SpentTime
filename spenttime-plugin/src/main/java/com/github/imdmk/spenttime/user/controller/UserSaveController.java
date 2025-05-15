@@ -8,6 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class UserSaveController implements Listener {
 
     private final UserCache userCache;
@@ -17,12 +19,12 @@ public class UserSaveController implements Listener {
             @NotNull UserCache userCache,
             @NotNull UserService userService
     ) {
-        this.userCache = userCache;
-        this.userService = userService;
+        this.userCache = Objects.requireNonNull(userCache, "userCache cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        this.userCache.get(event.getPlayer().getUniqueId()).ifPresent(this.userService::saveUser);
+        this.userCache.getUserByUuid(event.getPlayer().getUniqueId()).ifPresent(this.userService::saveUser);
     }
 }

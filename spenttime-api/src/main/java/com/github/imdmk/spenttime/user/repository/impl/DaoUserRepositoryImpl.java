@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -30,6 +31,9 @@ public class DaoUserRepositoryImpl implements UserRepository {
     private final UserCache userCache;
 
     public DaoUserRepositoryImpl(ConnectionSource connectionSource, UserCache userCache) throws SQLException {
+        Objects.requireNonNull(connectionSource, "connectionSource cannot be null");
+        Objects.requireNonNull(userCache, "userCache cannot be null");
+
         this.userDao = DaoManager.createDao(connectionSource, UserWrapper.class);
         this.userCache = userCache;
         this.executor = Executors.newCachedThreadPool();
@@ -39,7 +43,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
 
     @Override
     public CompletableFuture<Optional<User>> findByUUID(@NotNull UUID uuid) {
-        Optional<User> cachedUser = this.userCache.get(uuid);
+        Optional<User> cachedUser = this.userCache.getUserByUuid(uuid);
         if (cachedUser.isPresent()) {
             return CompletableFuture.completedFuture(cachedUser);
         }
@@ -51,7 +55,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
                         .queryForFirst())
                         .map(UserWrapper::toUser);
 
-                userOptional.ifPresent(this.userCache::put);
+                userOptional.ifPresent(this.userCache::cacheUser);
 
                 return userOptional;
             }
@@ -63,7 +67,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
 
     @Override
     public CompletableFuture<Optional<User>> findByName(@NotNull String name) {
-        Optional<User> cachedUser = this.userCache.get(name);
+        Optional<User> cachedUser = this.userCache.getUserByName(name);
         if (cachedUser.isPresent()) {
             return CompletableFuture.completedFuture(cachedUser);
         }
@@ -75,7 +79,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
                         .queryForFirst())
                         .map(UserWrapper::toUser);;
 
-                userOptional.ifPresent(this.userCache::put);
+                userOptional.ifPresent(this.userCache::cacheUser);
 
                 return userOptional;
             }
@@ -87,7 +91,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findByNameDirect(@NotNull String name) {
-        Optional<User> cachedUser = this.userCache.get(name);
+        Optional<User> cachedUser = this.userCache.getUserByName(name);
         if (cachedUser.isPresent()) {
             return cachedUser;
         }
@@ -98,7 +102,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
                 .queryForFirst())
                 .map(UserWrapper::toUser);
 
-            userOptional.ifPresent(this.userCache::put);
+            userOptional.ifPresent(this.userCache::cacheUser);
 
             return userOptional;
         }
@@ -117,7 +121,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
                         .stream().map(UserWrapper::toUser)
                         .toList();
 
-                users.forEach(this.userCache::put);
+                users.forEach(this.userCache::cacheUser);
                 return users;
             }
             catch (SQLException sqlException) {
@@ -133,7 +137,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
                 UserWrapper wrapper = UserWrapper.from(user);
 
                 this.userDao.createOrUpdate(wrapper);
-                this.userCache.put(user);
+                this.userCache.cacheUser(user);
 
                 return user;
             }
@@ -148,7 +152,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
         return CompletableFuture.runAsync(() -> {
             try {
                 this.userDao.deleteById(user.getUuid());
-                this.userCache.remove(user);
+                this.userCache.evictUser(user);
             }
             catch (SQLException sqlException) {
                 throw new CompletionException(sqlException);
@@ -164,7 +168,7 @@ public class DaoUserRepositoryImpl implements UserRepository {
                         .updateColumnValue("spentTime", ZERO_SPENT_TIME)
                         .update();
 
-                this.userCache.updateAll(user -> user.setSpentTime(ZERO_SPENT_TIME));
+                this.userCache.forEachUser(user -> user.setSpentTime(ZERO_SPENT_TIME));
             }
             catch (SQLException sqlException) {
                 throw new CompletionException(sqlException);

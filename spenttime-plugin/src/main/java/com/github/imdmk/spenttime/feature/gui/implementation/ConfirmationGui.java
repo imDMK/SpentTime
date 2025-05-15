@@ -12,6 +12,8 @@ import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class ConfirmationGui extends AbstractGui implements ParameterizedGui<ConfirmationGuiAction> {
 
     public static final String GUI_IDENTIFIER = "confirmation";
@@ -25,8 +27,8 @@ public class ConfirmationGui extends AbstractGui implements ParameterizedGui<Con
             @NotNull TaskScheduler taskScheduler
     ) {
         super(itemConfiguration, taskScheduler);
-        this.guiConfiguration = guiConfiguration;
-        this.itemConfiguration = itemConfiguration;
+        this.guiConfiguration = Objects.requireNonNull(guiConfiguration, "guiConfiguration cannot be null");
+        this.itemConfiguration = Objects.requireNonNull(itemConfiguration, "guiItemConfiguration cannot be null");
     }
 
     @Override

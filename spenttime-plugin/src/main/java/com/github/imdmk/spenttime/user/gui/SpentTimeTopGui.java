@@ -1,7 +1,7 @@
 package com.github.imdmk.spenttime.user.gui;
 
 import com.github.imdmk.spenttime.feature.gui.AbstractGui;
-import com.github.imdmk.spenttime.feature.gui.GuiProvider;
+import com.github.imdmk.spenttime.feature.gui.GuiManager;
 import com.github.imdmk.spenttime.feature.gui.ParameterizedGui;
 import com.github.imdmk.spenttime.feature.gui.configuration.GuiConfiguration;
 import com.github.imdmk.spenttime.feature.gui.configuration.item.ItemGui;
@@ -11,7 +11,6 @@ import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGuiActi
 import com.github.imdmk.spenttime.feature.message.MessageService;
 import com.github.imdmk.spenttime.shared.Formatter;
 import com.github.imdmk.spenttime.task.TaskScheduler;
-import com.github.imdmk.spenttime.user.BukkitSpentTime;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserService;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
@@ -22,10 +21,13 @@ import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,34 +37,35 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
 
     private final Logger logger;
     private final Server server;
-    private final UserService userService;
-    private final UserRepository userRepository;
-    private final BukkitSpentTime bukkitSpentTime;
-    private final MessageService messageService;
     private final GuiConfiguration guiConfiguration;
     private final ItemGuiConfiguration itemConfiguration;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    private final MessageService messageService;
+    private final GuiManager guiManager;
 
     public SpentTimeTopGui(
             @NotNull Logger logger,
             @NotNull Server server,
+            @NotNull GuiConfiguration guiConfiguration,
+            @NotNull ItemGuiConfiguration itemConfiguration,
             @NotNull UserService userService,
             @NotNull UserRepository userRepository,
-            @NotNull BukkitSpentTime bukkitSpentTime,
             @NotNull MessageService messageService,
-            @NotNull TaskScheduler taskScheduler,
-            @NotNull GuiConfiguration guiConfiguration,
-            @NotNull ItemGuiConfiguration itemConfiguration
+            @NotNull GuiManager guiManager,
+            @NotNull TaskScheduler taskScheduler
     ) {
         super(itemConfiguration, taskScheduler);
-        this.logger = logger;
-        this.server = server;
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.bukkitSpentTime = bukkitSpentTime;
-        this.messageService = messageService;
-        this.guiConfiguration = guiConfiguration;
-        this.itemConfiguration = itemConfiguration;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.server = Objects.requireNonNull(server, "server cannot be null");
+        this.guiConfiguration = Objects.requireNonNull(guiConfiguration, "guiConfiguration cannot be null");
+        this.itemConfiguration = Objects.requireNonNull(itemConfiguration, "guiItemConfiguration cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
+        this.userRepository = Objects.requireNonNull(userRepository, "userRepository cannot be null");
+        this.messageService = Objects.requireNonNull(messageService, "messageService cannot be null");
+        this.guiManager = Objects.requireNonNull(guiManager, "guiManager cannot be null");
     }
+
 
     @Override
     public @NotNull BaseGui createGui(@NotNull Player viewer, @NotNull List<User> topUsers) {
@@ -105,12 +108,13 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
                 .placeholder("{PLAYER}", user.getName())
                 .placeholder("{POSITION}", position)
                 .placeholder("{TIME}", DurationUtil.format(user.getSpentTimeAsDuration()))
-                .placeholder("{CLICK}", this.getConfig().headItemClick.name());
+                .placeholder("{CLICK_REFRESH}", this.getConfig().headItemClickRefresh.name())
+                .placeholder("{CLICK_RESET}", this.getConfig().headItemClickReset.name());
     }
 
     private @NotNull GuiItem createHeadItem(@NotNull Player viewer, @NotNull User user, @NotNull Formatter formatter, int querySize) {
         ItemGui headItem = this.getConfig().headItem.toBuilder()
-                .loreComponent(this.hasResetPermission(viewer) ? this.getConfig().headItem.lore() : this.getConfig().headItemAdminLore)
+                .loreComponent(this.hasResetPermission(viewer) ? this.getConfig().headItemAdminLore : this.getConfig().headItem.lore())
                 .build();
 
         return ItemBuilder.skull()
@@ -120,26 +124,37 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
                 .enchant(headItem.enchantments())
                 .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES)
                 .asGuiItem(event -> {
-                    if (event.getClick() != this.getConfig().headItemClick) {
-                        return;
-                    }
+                    ClickType type = event.getClick();
 
                     if (!this.hasResetPermission(viewer)) {
                         return;
                     }
 
-                    this.openResetConfirmGui(viewer, user, querySize);
+                    if (type == this.getConfig().headItemClickRefresh) {
+                        this.forceRefreshSpentTime(viewer, user, querySize);
+                    }
+                    else if (type == this.getConfig().headItemClickReset) {
+                        this.openResetConfirmGui(viewer, user, querySize);
+                    }
                 });
     }
 
+    private void forceRefreshSpentTime(@NotNull Player admin, @NotNull User target, int querySize) {
+        boolean updated = this.userService.updateUser(admin, target);
+
+        if (updated) {
+            this.userRepository.findTopUsersBySpentTime(querySize)
+                    .thenAccept(newTopUsers -> this.guiManager.openGui(GUI_IDENTIFIER, admin, newTopUsers));
+        }
+    }
+
     private void openResetConfirmGui(@NotNull Player admin, @NotNull User target, int querySize) {
-        GuiProvider.openGui(
+        this.guiManager.openGui(
                 ConfirmationGui.GUI_IDENTIFIER,
                 admin,
                 ConfirmationGuiAction.builder()
                         .onConfirm(player -> {
-                            target.setSpentTime(BukkitSpentTime.ZERO_SPENT_TIME);
-                            this.bukkitSpentTime.resetSpentTime(target.getUuid());
+                            this.userService.setSpentTime(target, Duration.ZERO);
 
                             this.userService.saveUser(target)
                                     .thenCompose(user -> {
@@ -150,7 +165,7 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
 
                                         return this.userRepository.findTopUsersBySpentTime(querySize);
                                     })
-                                    .thenAcceptAsync(newTopUsers -> GuiProvider.openGui(GUI_IDENTIFIER, admin, newTopUsers))
+                                    .thenAccept(newTopUsers -> this.guiManager.openGui(GUI_IDENTIFIER, admin, newTopUsers))
                                     .exceptionally(throwable -> {
                                         this.messageService.send(admin, notice -> notice.playerTimeResetError);
                                         this.logger.log(Level.SEVERE, "An error occurred while trying to reset spent time", throwable);
@@ -159,7 +174,7 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
                         })
                         .onCancel(player ->
                                 this.userRepository.findTopUsersBySpentTime(querySize)
-                                        .thenAcceptAsync(newTopUsers -> GuiProvider.openGui(GUI_IDENTIFIER, admin, newTopUsers))
+                                        .thenAccept(newTopUsers -> this.guiManager.openGui(GUI_IDENTIFIER, admin, newTopUsers))
                         )
                         .build()
         );

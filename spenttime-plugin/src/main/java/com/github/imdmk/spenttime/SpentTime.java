@@ -13,8 +13,9 @@ import com.github.imdmk.spenttime.feature.commands.implementation.ResetCommand;
 import com.github.imdmk.spenttime.feature.commands.implementation.SetCommand;
 import com.github.imdmk.spenttime.feature.commands.implementation.TimeCommand;
 import com.github.imdmk.spenttime.feature.commands.implementation.TopCommand;
-import com.github.imdmk.spenttime.feature.gui.GuiProvider;
+import com.github.imdmk.spenttime.feature.gui.GuiManager;
 import com.github.imdmk.spenttime.feature.gui.configuration.GuiConfiguration;
+import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGui;
 import com.github.imdmk.spenttime.feature.message.MessageConfiguration;
 import com.github.imdmk.spenttime.feature.message.MessageService;
 import com.github.imdmk.spenttime.feature.placeholder.PlaceholderRegistry;
@@ -70,7 +71,7 @@ class SpentTime implements SpentTimeApi {
     private final UserCache userCache;
     private UserRepository userRepository;
 
-    private final BukkitAudiences bukkitAudiences;
+    private final MessageService messageService;
 
     private final LiteCommands<CommandSender> liteCommands;
 
@@ -112,30 +113,29 @@ class SpentTime implements SpentTimeApi {
         }
 
         BukkitSpentTime bukkitSpentTime = new BukkitSpentTime(this.server);
-        UserService userService = new UserService(this.logger, this.userRepository, this.userCache, bukkitSpentTime);
 
-        /* Adventure */
-        this.bukkitAudiences = BukkitAudiences.create(plugin);
-        MessageService messageService = new MessageService(messageConfiguration, this.bukkitAudiences, MiniMessage.miniMessage());
+        /* Services */
+        UserService userService = new UserService(this.logger, this.userRepository, this.userCache, bukkitSpentTime);
+        UpdateService updateService = new UpdateService(pluginConfiguration, plugin.getDescription());
+        this.messageService = new MessageService(messageConfiguration, BukkitAudiences.create(plugin), MiniMessage.miniMessage());
 
         /* Tasks */
         TaskScheduler taskScheduler = new BukkitTaskScheduler(plugin, this.server);
         taskScheduler.runTimerAsync(new UserSaveTask(this.server, this.userCache, userService), DurationUtil.toTicks(Duration.ofMinutes(1)), DurationUtil.toTicks(pluginConfiguration.spentTimeSaveDelay));
 
         /* Guis */
-        GuiProvider.registerGui(
-                new SpentTimeTopGui(this.logger, this.server, userService, this.userRepository, bukkitSpentTime, messageService, taskScheduler, guiConfiguration, guiConfiguration.items)
-        );
-
-        /* Update Service */
-        UpdateService updateService = new UpdateService(pluginConfiguration, plugin.getDescription());
+        GuiManager guiManager = new GuiManager(taskScheduler);
+        Stream.of(
+                new ConfirmationGui(guiConfiguration, guiConfiguration.items, taskScheduler),
+                new SpentTimeTopGui(this.logger, this.server, guiConfiguration, guiConfiguration.items, userService, this.userRepository, this.messageService, guiManager, taskScheduler)
+        ).forEach(guiManager::registerGui);
 
         /* Listeners */
         Stream.of(
                 new UserCreateController(this.server, userService),
                 new UserSaveController(this.userCache, userService),
                 new UserUpdateController(this.userCache, userService),
-                new UpdateController(this.logger, pluginConfiguration, messageService, updateService, taskScheduler)
+                new UpdateController(this.logger, pluginConfiguration, this.messageService, updateService, taskScheduler)
         ).forEach(listener -> this.server.getPluginManager().registerEvents(listener, plugin));
 
         /* Commands */
@@ -145,15 +145,15 @@ class SpentTime implements SpentTimeApi {
 
                 .context(Player.class, new PlayerContextual())
 
-                .missingPermission(new MissingPermissionHandler(messageService))
-                .invalidUsage(new UsageHandler(messageService))
+                .missingPermission(new MissingPermissionHandler(this.messageService))
+                .invalidUsage(new UsageHandler(this.messageService))
 
                 .commands(
-                        new TimeCommand(this.logger, userService, messageService, bukkitSpentTime),
-                        new ResetAllCommand(this.logger, messageService, this.userRepository, bukkitSpentTime),
-                        new ResetCommand(this.logger, userService, bukkitSpentTime, messageService),
-                        new SetCommand(this.logger, userService, messageService, bukkitSpentTime),
-                        new TopCommand(pluginConfiguration, this.userRepository, messageService)
+                        new TimeCommand(this.logger, userService, this.messageService, bukkitSpentTime),
+                        new ResetAllCommand(this.logger, this.messageService, this.userRepository, bukkitSpentTime, guiManager),
+                        new ResetCommand(this.logger, userService, this.messageService, guiManager),
+                        new SetCommand(this.logger, userService, this.messageService, bukkitSpentTime),
+                        new TopCommand(this.logger, pluginConfiguration, this.userRepository, this.messageService, guiManager)
                 )
                 .build();
 
@@ -181,7 +181,7 @@ class SpentTime implements SpentTimeApi {
         }
 
         this.databaseService.close();
-        this.bukkitAudiences.close();
+        this.messageService.close();
         this.liteCommands.unregister();
 
         if (this.placeholderRegistry != null) {
@@ -212,7 +212,7 @@ class SpentTime implements SpentTimeApi {
      * Saves player data if present in cache.
      */
     void saveUser(@NotNull Player player) {
-        this.userCache.get(player.getUniqueId())
+        this.userCache.getUserByUuid(player.getUniqueId())
                 .ifPresent(user -> this.userRepository.save(user)
                 .exceptionally(throwable -> {
                     this.logger.log(Level.SEVERE, "Failed to save user data", throwable);

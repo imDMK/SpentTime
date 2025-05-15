@@ -3,17 +3,13 @@ package com.github.imdmk.spenttime.util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ComponentUtil {
+public final class ComponentUtil {
 
-    private static final CharSequence LEGACY_CHAR = "§";
-
-    private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private ComponentUtil() {

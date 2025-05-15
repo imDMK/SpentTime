@@ -6,6 +6,8 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class UserSaveTask implements Runnable {
 
     private final Server server;
@@ -13,9 +15,9 @@ public class UserSaveTask implements Runnable {
     private final UserService userService;
 
     public UserSaveTask(Server server, UserCache userCache, UserService userService) {
-        this.server = server;
-        this.userCache = userCache;
-        this.userService = userService;
+        this.server = Objects.requireNonNull(server, "server cannot be null");
+        this.userCache = Objects.requireNonNull(userCache, "userCache cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
     }
 
     @Override
@@ -24,6 +26,6 @@ public class UserSaveTask implements Runnable {
     }
 
     private void updateUser(@NotNull Player player) {
-        this.userCache.get(player.getUniqueId()).ifPresent(user -> this.userService.updateUser(player, user));
+        this.userCache.getUserByUuid(player.getUniqueId()).ifPresent(user -> this.userService.updateUser(player, user));
     }
 }

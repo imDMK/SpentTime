@@ -6,7 +6,7 @@ import dev.rollczi.litecommands.time.TemporalAmountParser;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-public class DurationUtil {
+public final class DurationUtil {
 
     public static TemporalAmountParser<Duration> DATE_TIME_PARSER = new DurationParser()
             .withUnit("s", ChronoUnit.SECONDS)

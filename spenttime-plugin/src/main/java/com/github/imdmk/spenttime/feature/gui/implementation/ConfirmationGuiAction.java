@@ -12,6 +12,8 @@ public final class ConfirmationGuiAction {
     private final Consumer<Player> onCancel;
 
     private ConfirmationGuiAction(@NotNull Builder builder) {
+        Objects.requireNonNull(builder, "Builder cannot be null");
+
         this.onConfirm = builder.onConfirm;
         this.onCancel = builder.onCancel;
     }

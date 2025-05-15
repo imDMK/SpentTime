@@ -1,14 +1,12 @@
 package com.github.imdmk.spenttime.feature.commands.implementation;
 
-import com.github.imdmk.spenttime.feature.gui.GuiProvider;
+import com.github.imdmk.spenttime.feature.gui.GuiManager;
 import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGui;
 import com.github.imdmk.spenttime.feature.gui.implementation.ConfirmationGuiAction;
 import com.github.imdmk.spenttime.feature.message.MessageService;
-import com.github.imdmk.spenttime.user.BukkitSpentTime;
 import com.github.imdmk.spenttime.user.User;
 import com.github.imdmk.spenttime.user.UserService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
-import dev.rollczi.litecommands.annotations.async.Async;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
@@ -18,6 +16,8 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,22 +27,21 @@ public class ResetCommand {
 
     private final Logger logger;
     private final UserService userService;
-    private final BukkitSpentTime bukkitSpentTime;
     private final MessageService messageService;
+    private final GuiManager guiManager;
 
     public ResetCommand(
             @NotNull Logger logger,
             @NotNull UserService userService,
-            @NotNull BukkitSpentTime bukkitSpentTime,
-            @NotNull MessageService messageService
+            @NotNull MessageService messageService,
+            @NotNull GuiManager guiManager
     ) {
-        this.logger = logger;
-        this.userService = userService;
-        this.bukkitSpentTime = bukkitSpentTime;
-        this.messageService = messageService;
+        this.logger = Objects.requireNonNull(logger, "logger cannot be null");
+        this.userService = Objects.requireNonNull(userService, "userService cannot be null");
+        this.messageService = Objects.requireNonNull(messageService, "messageService cannot be null");
+        this.guiManager = Objects.requireNonNull(guiManager, "guiManager cannot be null");
     }
 
-    @Async
     @Execute
     void resetTime(@Context CommandSender sender, @Arg User target) {
         if (sender instanceof Player player) {
@@ -54,17 +53,15 @@ public class ResetCommand {
     }
 
     private void resetSpentTime(@NotNull CommandSender sender, @NotNull User target) {
-        target.setSpentTime(BukkitSpentTime.ZERO_SPENT_TIME);
+        this.userService.setSpentTime(target, Duration.ZERO);
 
         this.userService.saveUser(target)
-                .thenAcceptAsync(user -> {
-                    this.bukkitSpentTime.resetSpentTime(target.getUuid());
-                    this.messageService.create()
-                            .viewer(sender)
-                            .notice(notice -> notice.playerTimeReset)
-                            .placeholder("{PLAYER}", target.getName())
-                            .send();
-                })
+                .thenAccept(user -> this.messageService.create()
+                        .viewer(sender)
+                        .notice(notice -> notice.playerTimeReset)
+                        .placeholder("{PLAYER}", target.getName())
+                        .send()
+                )
                 .exceptionally(throwable -> {
                     this.logger.log(Level.SEVERE, "An error occurred while trying to reset target's spent time", throwable);
                     this.messageService.send(sender, notice -> notice.playerTimeResetError);
@@ -73,7 +70,7 @@ public class ResetCommand {
     }
 
     private void openConfirmGui(@NotNull Player viewer, @NotNull User target) {
-        GuiProvider.openGui(
+        this.guiManager.openGui(
                 ConfirmationGui.GUI_IDENTIFIER,
                 viewer,
                 ConfirmationGuiAction.builder()
