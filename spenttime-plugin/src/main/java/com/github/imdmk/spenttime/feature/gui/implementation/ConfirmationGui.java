@@ -65,6 +65,11 @@ public class ConfirmationGui extends AbstractGui implements ParameterizedGui<Con
     }
 
     @Override
+    public void defaultClickAction(@NotNull BaseGui gui, @NotNull Player viewer) {
+        this.playSoundIfEnabled(gui, viewer, this.guiConfiguration.sound);
+    }
+
+    @Override
     public @NotNull String getIdentifier() {
         return GUI_IDENTIFIER;
     }

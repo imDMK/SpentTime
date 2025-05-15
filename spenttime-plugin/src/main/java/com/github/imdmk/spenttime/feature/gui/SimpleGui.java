@@ -13,6 +13,8 @@ public interface SimpleGui extends IdentifiableGui {
 
     default void prepareNavigationItems(@NotNull BaseGui gui, @NotNull Player viewer) {}
 
+    default void defaultClickAction(@NotNull BaseGui gui, @NotNull Player viewer) {}
+
     void prepareItems(@NotNull BaseGui gui, @NotNull Player viewer);
 
     default void open(@NotNull Player viewer) {
@@ -21,6 +23,7 @@ public interface SimpleGui extends IdentifiableGui {
         this.prepareBorderItems(gui);
         this.prepareItems(gui, viewer);
         this.prepareNavigationItems(gui, viewer);
+        this.defaultClickAction(gui, viewer);
 
         gui.open(viewer);
     }

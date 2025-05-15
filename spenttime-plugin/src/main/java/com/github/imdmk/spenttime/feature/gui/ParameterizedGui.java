@@ -13,6 +13,8 @@ public interface ParameterizedGui<T> extends IdentifiableGui {
 
     default void prepareNavigationItems(@NotNull BaseGui gui, @NotNull Player viewer, @NotNull T parameter) {}
 
+    default void defaultClickAction(@NotNull BaseGui gui, @NotNull Player viewer) {}
+
     void prepareItems(@NotNull BaseGui gui, @NotNull Player viewer, @NotNull T parameter);
 
     default void open(@NotNull Player viewer, @NotNull T parameter) {
@@ -21,6 +23,7 @@ public interface ParameterizedGui<T> extends IdentifiableGui {
         this.prepareBorderItems(gui);
         this.prepareItems(gui, viewer, parameter);
         this.prepareNavigationItems(gui, viewer, parameter);
+        this.defaultClickAction(gui, viewer);
 
         gui.open(viewer);
     }
