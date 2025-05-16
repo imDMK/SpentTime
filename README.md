@@ -1,4 +1,4 @@
-# SpentTime
+# ⏳ SpentTime
 
 [![Build Status](https://github.com/imDMK/SpentTime/actions/workflows/gradle.yml/badge.svg)](https://github.com/imDMK/SpentTime/actions/workflows/gradle.yml)
 ![JDK](https://img.shields.io/badge/JDK-1.17-blue.svg)
@@ -9,69 +9,100 @@
 [![Modrinth](https://img.shields.io/badge/Modrinth-1bd96a.svg)](https://modrinth.com/plugin/spenttime)
 [![bStats](https://img.shields.io/badge/bStats-00695c)](https://bstats.org/plugin/bukkit/SpentTime/19362)
 
-### Information
-This is a plugin that allows you to check how much time a player has spent on the server.
-* **Performance-focused** - Minimizes the impact on server resources, allowing you to maintain high server performance.
-* **Simplicity of configuration** - Thanks to clear documentation, even people without advanced knowledge can easily adapt the plugin to their own needs.
-* **Regularly Updated** - We update our plugin regularly, both fixing bugs and adding new features to ensure full compatibility with the latest versions of the game.
+> **Track it. Visualize it. Control it.**
+>
+> SpentTime is a powerful and ultra-efficient plugin that allows players to check their playtime and compare it with others — all in a stunning, fully customizable GUI.
 
-### Features
-* Customizable top spent time player GUI,
-* Configurable items showing where top players spent their time,
-* Option to change the type of GUI displaying top players based on time spent,
-* Ability to customize the appearance of the top players spent time GUI,
-* Option to set a custom number of players displayed in the top spent time list,
-* Option to customize messages (ACTIONBAR, CHAT, etc.),
-* Offline time tracking for players,
-* Resetting spent time for individual players,
-* Resetting spent time for all players on the server,
-* [Placeholder API](https://github.com/PlaceholderAPI/PlaceholderAPI) support,
-* [Adventure components](https://github.com/KyoriPowered/adventure) support.
+---
 
-### Preview
-* #### Top spent time GUI
-![gif](assets/top.gif)
+### ✨ Key Features
+- 🧠 **Highly optimized** – Zero-lag performance, even on large servers.
+- 🎨 **Fully customizable GUIs** – Design the look and feel to fit your server's style.
+- 🔢 **Live top-time rankings** – View top active players in multiple display modes.
+- 🔧 **Offline time tracking** – Keeps tracking even when you're offline.
+- 🛠️ **Placeholders & Adventure support** – Seamless integration with popular libraries.
+- 🔁 **Reset & edit support** – Adjust playtimes or wipe all data easily.
+- 💬 **Flexible notifications** – Chat, ActionBar, Title or Subtitle? Your choice.
+- 🧩 **Multiple GUI types** – Paginated, scrolling horizontal/vertical, and more.
+- 💾 **Supports SQLite & MySQL** – Your data, your way.
 
-* #### Checking your time spent
-![gif](assets/time.gif)
+---
 
-* #### Resetting time spent
-![gif](assets/reset.gif)
+### 🖼️ Preview
 
-### Command permissions
+#### 🏆 Top Spent Time GUI  
+![Top GUI](assets/top.gif)
+
+#### ⌛ Checking Your Time  
+![Check Time](assets/time.gif)
+
+#### 🧹 Resetting Time  
+![Reset Time](assets/reset.gif)
+
+---
+
+### 🔐 Command Permissions
+
 | Command               | Permission                  |
-|:----------------------|:----------------------------|
-| `spenttime`           | command.spenttime           |
-| `spenttime <target>`  | command.spenttime.target    |
-| `spenttime top`       | command.spenttime.top       |          
-| `spenttime set`       | command.spenttime.set       |
-| `spenttime reset`     | command.spenttime.reset     |
-| `spenttime reset-all` | command.spenttime.reset.all |
-| `spenttime reload`    | command.spenttime.reload    |
+|----------------------|-----------------------------|
+| `/spenttime`          | `command.spenttime`          |
+| `/spenttime <target>` | `command.spenttime.target`   |
+| `/spenttime top`      | `command.spenttime.top`      |          
+| `/spenttime set`      | `command.spenttime.set`      |
+| `/spenttime reset`    | `command.spenttime.reset`    |
+| `/spenttime reset-all`| `command.spenttime.reset.all`|
+| `/spenttime reload`   | `command.spenttime.reload`   |
 
-### Gui types
-| GuiType                | Description                                                              |
-|:-----------------------|:-------------------------------------------------------------------------|
-| `STANDARD`             | Standard Gui that should be used when the player list does not exceed 10 |
-| `PAGINATED`            | A Gui with pages that allow you to move between pages through items      |
-| `SCROLLING_VERTICAL`   | A Gui that allows you to scroll through items via vertical               |
-| `SCROLLING_HORIZONTAL` | A Gui that allows you to scroll through items via horizontal             |
+---
 
-### Notification types
-* `CHAT`
-* `ACTIONBAR`
-* `TITLE`
-* `SUBTITLE`
+### 🖥️ GUI Types
 
-### Supported database types
-* `SQLITE`
-* `MYSQL`
+| Type                  | Description                                                       |
+|-----------------------|-------------------------------------------------------------------|
+| `STANDARD`            | Basic GUI (recommended if less than 10 players in ranking)        |
+| `PAGINATED`           | Multi-page GUI with item navigation                               |
+| `SCROLLING_VERTICAL`  | Scroll through entries vertically                                 |
+| `SCROLLING_HORIZONTAL`| Scroll through entries horizontally                               |
 
-### [Placeholder API](https://github.com/PlaceholderAPI/PlaceholderAPI) Formats
-* `%spent-time%` - Displays the converted value in human-readable (e.g. 10h 30m) of the player's spent time.
+---
 
-### Why doesn't my time at the top count immediately?
-* This is specifically done to make the plugin efficient. The player's time updates when entering and exiting the server and there is an additional task that updates the spent time of all players. You can change its frequency in the configuration by changing `spentTimeSaveDelay`.
+### 🔔 Notification Types
 
-### Reporting issues
-If you have any suggestions or find a bug, please report it using [this](https://github.com/imDMK/SpentTime/issues) site.
+- `CHAT`  
+- `ACTIONBAR`  
+- `TITLE`  
+- `SUBTITLE`  
+
+---
+
+### 🗃️ Supported Databases
+
+- `SQLITE`  
+- `MYSQL`  
+
+---
+
+### 🧩 PlaceholderAPI
+
+| Placeholder       | Description                                |
+|-------------------|--------------------------------------------|
+| `%spent-time%`    | Displays player's playtime in readable format (e.g., `10h 35m`) |
+
+---
+
+### ❓ Why isn’t my time updated instantly?
+
+To maximize performance, time is updated on player join/leave and periodically via a background task. You can configure the frequency in `spentTimeSaveDelay`.
+
+---
+
+### 💡 Feedback & Support
+
+Have a suggestion, found a bug, or want to contribute?  
+👉 [Open an issue here](https://github.com/imDMK/SpentTime/issues)
+
+---
+
+### ⭐ Like the plugin?
+
+If you enjoy using SpentTime, consider leaving a positive review or star on [SpigotMC](https://www.spigotmc.org/resources/spenttime.111938/) or [GitHub](https://github.com/imDMK/SpentTime) — it really helps!
