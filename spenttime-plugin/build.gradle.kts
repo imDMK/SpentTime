@@ -18,7 +18,7 @@ dependencies {
 
     implementation(project(":spenttime-api"))
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
     implementation("net.kyori:adventure-text-minimessage:4.19.0")
 
     implementation("com.eternalcode:multification-bukkit:1.1.4")
