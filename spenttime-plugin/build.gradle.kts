@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.imdmk.spenttime.plugin"
-version = "2.0.2"
+version = "2.0.3"
 
 repositories {
     maven { url = uri("https://repo.eternalcode.pl/releases") }
