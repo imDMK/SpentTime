@@ -15,16 +15,13 @@ public class UserSaveController implements Listener {
     private final UserCache userCache;
     private final UserService userService;
 
-    public UserSaveController(
-            @NotNull UserCache userCache,
-            @NotNull UserService userService
-    ) {
+    public UserSaveController(@NotNull UserCache userCache, @NotNull UserService userService) {
         this.userCache = Objects.requireNonNull(userCache, "userCache cannot be null");
         this.userService = Objects.requireNonNull(userService, "userService cannot be null");
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    public void onPlayerQuit(final PlayerQuitEvent event) {
         this.userCache.getUserByUuid(event.getPlayer().getUniqueId()).ifPresent(this.userService::saveUser);
     }
 }

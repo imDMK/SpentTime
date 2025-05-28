@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-@DatabaseTable(tableName = "users")
+@DatabaseTable(tableName = "spent_time_users")
 public class UserWrapper {
 
     @DatabaseField(columnName = "uuid", id = true, canBeNull = false)

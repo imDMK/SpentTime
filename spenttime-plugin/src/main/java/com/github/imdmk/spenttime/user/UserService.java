@@ -1,7 +1,8 @@
 package com.github.imdmk.spenttime.user;
 
+import com.github.imdmk.spenttime.infrastructure.BukkitSpentTime;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +14,13 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Service layer responsible for managing user data,
+ * including synchronization with Bukkit statistics and repository persistence.
+ * <p>
+ * Provides high-level operations to find, update, create and store {@link User} entities.
+ * </p>
+ */
 public class UserService {
 
     private final Logger logger;
@@ -20,6 +28,14 @@ public class UserService {
     private final UserCache userCache;
     private final BukkitSpentTime bukkitSpentTime;
 
+    /**
+     * Constructs the UserService with required dependencies.
+     *
+     * @param logger           the logger for error reporting
+     * @param userRepository   the repository for persistent user storage
+     * @param userCache        the in-memory user cache
+     * @param bukkitSpentTime  the API for reading/writing Bukkit spent time stats
+     */
     public UserService(
             @NotNull Logger logger,
             @NotNull UserRepository userRepository,
@@ -32,10 +48,14 @@ public class UserService {
         this.bukkitSpentTime = Objects.requireNonNull(bukkitSpentTime, "bukkitSpentTime cannot be null");
     }
 
-    public CompletableFuture<User> findOrCreateUser(@NotNull Player player) {
-        UUID uuid = player.getUniqueId();
-        String name = player.getName();
-
+    /**
+     * Retrieves a user by UUID or creates a new one if not present in the repository.
+     *
+     * @param uuid the UUID of the player
+     * @param name the name of the player
+     * @return a future resolving to the existing or newly created user
+     */
+    public CompletableFuture<User> findOrCreateUser(@NotNull UUID uuid, @NotNull String name) {
         return this.userRepository.findByUUID(uuid)
                 .thenCompose(optionalUser -> optionalUser
                         .map(CompletableFuture::completedFuture)
@@ -47,9 +67,16 @@ public class UserService {
                 });
     }
 
-    public void setSpentTime(@NotNull User user, Duration duration) {
+    /**
+     * Updates the spent time of a user and synchronizes it with Bukkit statistics.
+     *
+     * @param user     the user to update
+     * @param duration the new spent time
+     */
+    public void setSpentTime(@NotNull User user, @NotNull Duration duration) {
         user.setSpentTime(duration);
         this.bukkitSpentTime.setSpentTime(user.getUuid(), duration);
+
         this.saveUser(user)
                 .exceptionally(throwable -> {
                     this.logger.log(Level.SEVERE, "An error occurred while setting spent time: " + user, throwable);
@@ -57,19 +84,36 @@ public class UserService {
                 });
     }
 
-    public boolean updateUser(@NotNull Player player, @NotNull User user) {
+    /**
+     * Updates user data based on the given player and saves it if modified.
+     *
+     * @param player the player providing current data
+     * @param user   the user to update
+     * @return true if user data was changed
+     */
+    public boolean updateUser(@NotNull OfflinePlayer player, @NotNull User user) {
         return this.updateUserData(player, user, this::saveUser);
     }
 
     /**
-     * Updates the user object based on player data. Returns true if any data changed.
+     * Updates user fields based on the current player state (name, spent time).
+     *
+     * @param player     the Bukkit player
+     * @param user       the user to update
+     * @param ifUpdated  optional callback if the user was modified
+     * @return true if the user was modified
      */
-    public boolean updateUserData(@NotNull Player player, @NotNull User user, @Nullable Consumer<User> ifUpdated) {
+    public boolean updateUserData(
+            @NotNull OfflinePlayer player,
+            @NotNull User user,
+            @Nullable Consumer<User> ifUpdated
+    ) {
         boolean updated = false;
 
         String newName = player.getName();
         String oldName = user.getName();
-        if (!newName.equals(oldName)) {
+
+        if (newName != null && !newName.equals(oldName)) {
             user.setName(newName);
             this.userCache.updateUserNameMapping(user, oldName);
             updated = true;
@@ -88,6 +132,13 @@ public class UserService {
         return updated;
     }
 
+    /**
+     * Persists a user to the repository.
+     *
+     * @param user the user to save
+     * @return a future resolving to the saved user
+     * @throws RuntimeException if an error occurs during saving
+     */
     public CompletableFuture<User> saveUser(@NotNull User user) {
         return this.userRepository.save(user)
                 .exceptionally(throwable -> {
