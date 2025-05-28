@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 group = "com.github.imdmk.spenttime.api"
-version = "2.0.3"
+version = "2.0.4"
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT")
