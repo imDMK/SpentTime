@@ -14,7 +14,7 @@ public class UserSaveTask implements Runnable {
     private final UserCache userCache;
     private final UserService userService;
 
-    public UserSaveTask(Server server, UserCache userCache, UserService userService) {
+    public UserSaveTask(@NotNull Server server, @NotNull UserCache userCache, @NotNull UserService userService) {
         this.server = Objects.requireNonNull(server, "server cannot be null");
         this.userCache = Objects.requireNonNull(userCache, "userCache cannot be null");
         this.userService = Objects.requireNonNull(userService, "userService cannot be null");

@@ -1,5 +1,6 @@
 package com.github.imdmk.spenttime.task;
 
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +18,7 @@ public interface TaskScheduler {
      * @param runnable the task to run synchronously; must not be null
      * @throws NullPointerException if runnable is null
      */
-    void runSync(@NotNull Runnable runnable);
+    BukkitTask runSync(@NotNull Runnable runnable);
 
     /**
      * Executes the given {@link Runnable} asynchronously on a separate thread as soon as possible.
@@ -25,7 +26,7 @@ public interface TaskScheduler {
      * @param runnable the task to run asynchronously; must not be null
      * @throws NullPointerException if runnable is null
      */
-    void runAsync(@NotNull Runnable runnable);
+    BukkitTask runAsync(@NotNull Runnable runnable);
 
     /**
      * Executes the given {@link Runnable} asynchronously after the specified delay.
@@ -35,17 +36,54 @@ public interface TaskScheduler {
      * @param delay    the delay before executing the task, in implementation-specific units (e.g. ticks)
      * @throws NullPointerException if runnable is null
      */
-    void runLaterAsync(@NotNull Runnable runnable, long delay);
+    BukkitTask runLaterAsync(@NotNull Runnable runnable, long delay);
+
+    /**
+     * Executes the given {@link Runnable} repeatedly on a timer synchronously,
+     * starting after the initial delay and repeating with the specified period.
+     * The delay and period units depend on the implementation (e.g., server ticks or milliseconds).
+     *
+     * @param runnable the task to run synchronously on a timer; must not be null
+     * @param delay    the initial delay before first execution, in implementation-specific units
+     * @param period   the period between later executions, in implementation-specific units
+     * @throws NullPointerException if runnable is null
+     */
+    BukkitTask runTimerSync(@NotNull Runnable runnable, long delay, long period);
 
     /**
      * Executes the given {@link Runnable} repeatedly on a timer asynchronously,
      * starting after the initial delay and repeating with the specified period.
-     * The delay and period units depend on the implementation (e.g. server ticks or milliseconds).
+     * The delay and period units depend on the implementation (e.g., server ticks or milliseconds).
      *
      * @param runnable the task to run asynchronously on a timer; must not be null
      * @param delay    the initial delay before first execution, in implementation-specific units
-     * @param period   the period between subsequent executions, in implementation-specific units
+     * @param period   the period between later executions, in implementation-specific units
      * @throws NullPointerException if runnable is null
      */
-    void runTimerAsync(@NotNull Runnable runnable, long delay, long period);
+    BukkitTask runTimerAsync(@NotNull Runnable runnable, long delay, long period);
+
+    /**
+     * Cancels a scheduled task identified by its task ID.
+     * <p>
+     * If the task with the specified ID is currently scheduled or running, it will be cancelled,
+     * preventing any future executions of the task. If no task with the given ID exists or
+     * it has already completed or been cancelled, this method has no effect.
+     * </p>
+     *
+     * @param taskId the unique identifier of the scheduled task to cancel
+     */
+    void cancelTask(int taskId);
+
+    /**
+     * Shuts down the scheduler and cancels all pending asynchronous tasks.
+     * <p>
+     * This method should be called during plugin disable or application shutdown
+     * to ensure that no background tasks continue running after the application stops.
+     * After calling this method, the scheduler should reject any new tasks.
+     * </p>
+     *
+     * @implNote Implementations should ensure proper termination of all internal executor services
+     *           or scheduling mechanisms to prevent resource leaks or thread hangs.
+     */
+    void shutdown();
 }

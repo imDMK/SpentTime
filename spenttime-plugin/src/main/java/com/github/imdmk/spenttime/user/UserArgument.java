@@ -1,6 +1,6 @@
 package com.github.imdmk.spenttime.user;
 
-import com.github.imdmk.spenttime.feature.message.MessageConfiguration;
+import com.github.imdmk.spenttime.infrastructure.message.MessageConfiguration;
 import com.github.imdmk.spenttime.user.repository.UserRepository;
 import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;

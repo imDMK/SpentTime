@@ -16,8 +16,6 @@ public class SpentTimePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (this.spentTime != null) {
-            this.spentTime.disable();
-        }
+        this.spentTime.disable();
     }
 }

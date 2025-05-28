@@ -43,15 +43,17 @@
 
 ### 🔐 Command Permissions
 
-| Command               | Permission                  |
-|----------------------|-----------------------------|
-| `/spenttime`          | `command.spenttime`          |
-| `/spenttime <target>` | `command.spenttime.target`   |
-| `/spenttime top`      | `command.spenttime.top`      |          
-| `/spenttime set`      | `command.spenttime.set`      |
-| `/spenttime reset`    | `command.spenttime.reset`    |
-| `/spenttime reset-all`| `command.spenttime.reset.all`|
-| `/spenttime reload`   | `command.spenttime.reload`   |
+| Command                     | Permission                    |
+|-----------------------------|-------------------------------|
+| `/spenttime`                | `command.spenttime`           |
+| `/spenttime <target>`       | `command.spenttime.target`    |
+| `/spenttime top`            | `command.spenttime.top`       |          
+| `/spenttime set`            | `command.spenttime.set`       |
+| `/spenttime reset`          | `command.spenttime.reset`     |
+| `/spenttime reset-all`      | `command.spenttime.reset.all` |
+| `/spenttime reload`         | `command.spenttime.reload`    |
+| `/spenttime migrate`        | `command.spenttime.migrate`   |
+| `/spenttime migrate cancel` | `command.spenttime.migrate`   |
 
 ---
 

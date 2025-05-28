@@ -14,36 +14,58 @@ import java.util.function.Consumer;
 
 public class UserCache {
 
+    /**
+     * Default expiration duration after write (12 hours).
+     */
     private static final Duration EXPIRE_AFTER_WRITE = Duration.ofHours(12);
+
+    /**
+     * Default expiration duration after access (2 hours).
+     */
     private static final Duration EXPIRE_AFTER_ACCESS = Duration.ofHours(2);
 
     private final Cache<UUID, User> cacheByUuid;
     private final Cache<String, User> cacheByName;
 
     /**
-     * Constructs a new {@code UserCache} instance with default expiration policies.
+     * Constructs a new {@code UserCache} instance with specified expiration policies.
+     *
+     * @param expireAfterAccess duration after which entries expire if not accessed
+     * @param expireAfterWrite  duration after which entries expire after write
      */
-    public UserCache() {
+    public UserCache(@NotNull Duration expireAfterAccess, @NotNull Duration expireAfterWrite) {
         this.cacheByUuid = Caffeine.newBuilder()
-                .expireAfterWrite(EXPIRE_AFTER_WRITE)
-                .expireAfterAccess(EXPIRE_AFTER_ACCESS)
+                .expireAfterWrite(expireAfterWrite)
+                .expireAfterAccess(expireAfterAccess)
                 .build();
 
         this.cacheByName = Caffeine.newBuilder()
-                .expireAfterWrite(EXPIRE_AFTER_WRITE)
-                .expireAfterAccess(EXPIRE_AFTER_ACCESS)
+                .expireAfterWrite(expireAfterWrite)
+                .expireAfterAccess(expireAfterAccess)
                 .build();
     }
 
     /**
+     * Constructs a new {@code UserCache} instance with default expiration policies.
+     */
+    public UserCache() {
+        this(EXPIRE_AFTER_ACCESS, EXPIRE_AFTER_WRITE);
+    }
+
+    /**
      * Adds or updates a user in the cache.
-     * The user is indexed by both UUID and name.
+     * Removes old username mapping if it exists, to keep name cache consistent.
      *
      * @param user the user to add or update; must not be null
      * @throws NullPointerException if user or any of its key properties are null
      */
     public void cacheUser(@NotNull User user) {
         Objects.requireNonNull(user, "user cannot be null");
+
+        // Remove old name mapping(s) for this UUID to avoid stale cache entries
+        this.cacheByName.asMap().entrySet().removeIf(entry ->
+                entry.getValue().getUuid().equals(user.getUuid())
+        );
 
         this.cacheByUuid.put(user.getUuid(), user);
         this.cacheByName.put(user.getName(), user);
@@ -55,7 +77,7 @@ public class UserCache {
      * @param user the user to remove; must not be null
      * @throws NullPointerException if user or any of its key properties are null
      */
-    public void evictUser(@NotNull User user) {
+    public void invalidateUser(@NotNull User user) {
         Objects.requireNonNull(user, "user cannot be null");
 
         this.cacheByUuid.invalidate(user.getUuid());
