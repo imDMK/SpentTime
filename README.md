@@ -7,6 +7,7 @@
 [![Bukkit](https://img.shields.io/badge/Bukkit-blue.svg)](https://dev.bukkit.org/projects/spenttime)
 [![PaperMC](https://img.shields.io/badge/Paper-004ee9.svg)](https://hangar.papermc.io/imDMK/SpentTime)
 [![Modrinth](https://img.shields.io/badge/Modrinth-1bd96a.svg)](https://modrinth.com/plugin/spenttime)
+[![Polymart](https://img.shields.io/badge/Polymart-green.svg)](https://polymart.org/product/7888/spenttime-1-17-1-21-5)
 [![bStats](https://img.shields.io/badge/bStats-00695c)](https://bstats.org/plugin/bukkit/SpentTime/19362)
 
 > **Track it. Visualize it. Control it.**
