@@ -118,8 +118,8 @@ public class GuiConfiguration extends ConfigSection {
         })
         public ClickType headItemClickRefresh = ClickType.DOUBLE_CLICK;
 
-        @Comment("# Permission required to reset a player's spent time via GUI")
-        public String headItemPermissionReset = "spenttime.reset.gui";
+        @Comment("# Permission required to reset and refresh a player's spent time via GUI")
+        public String headItemManage = "spenttime.manage.gui";
     }
 
     @Comment("# Configuration for confirmation GUI dialogs")

@@ -118,7 +118,7 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
                 .placeholder("{CLICK_RESET}", this.getConfig().headItemClickReset.name());
     }
 
-    private @NotNull GuiItem createHeadItem(
+    private GuiItem createHeadItem(
             @NotNull Player viewer,
             @NotNull User user,
             @NotNull Formatter formatter,
@@ -126,7 +126,7 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
     ) {
         ConfigGuiItem headItem = ConfigGuiItem.builder()
                 .from(this.getConfig().headItem)
-                .loreComponent(this.hasResetPermission(viewer) ? this.getConfig().headItemAdminLore : this.getConfig().headItem.lore())
+                .loreComponent(this.hasPermissionToManage(viewer) ? this.getConfig().headItemAdminLore : this.getConfig().headItem.lore())
                 .build();
 
         return ItemBuilder.skull()
@@ -138,7 +138,7 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
                 .asGuiItem(event -> {
                     ClickType clickType = event.getClick();
 
-                    if (!this.hasResetPermission(viewer)) {
+                    if (!this.hasPermissionToManage(viewer)) {
                         return;
                     }
 
@@ -192,8 +192,8 @@ public class SpentTimeTopGui extends AbstractGui implements ParameterizedGui<Lis
         );
     }
 
-    private boolean hasResetPermission(@NotNull Player player) {
-        return player.hasPermission(this.getConfig().headItemPermissionReset);
+    private boolean hasPermissionToManage(@NotNull Player player) {
+        return player.hasPermission(this.getConfig().headItemManage);
     }
 
     @Override

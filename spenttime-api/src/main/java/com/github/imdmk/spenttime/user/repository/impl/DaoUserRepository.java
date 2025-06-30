@@ -30,7 +30,7 @@ public class DaoUserRepository implements UserRepository {
 
     private final UserCache userCache;
 
-    public DaoUserRepository(ConnectionSource connectionSource, UserCache userCache) throws SQLException {
+    public DaoUserRepository(@NotNull ConnectionSource connectionSource, @NotNull UserCache userCache) throws SQLException {
         Objects.requireNonNull(connectionSource, "connectionSource cannot be null");
         Objects.requireNonNull(userCache, "userCache cannot be null");
 
