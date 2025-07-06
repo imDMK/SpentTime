@@ -62,6 +62,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,6 +100,7 @@ class SpentTime implements SpentTimeApi {
      * @param plugin the main Bukkit plugin instance
      */
     SpentTime(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin, "plugin cannot be null");
         SpentTimeApiProvider.register(this);
 
         Stopwatch stopwatch = Stopwatch.createStarted();
