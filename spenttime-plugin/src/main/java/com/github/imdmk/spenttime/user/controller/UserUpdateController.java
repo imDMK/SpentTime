@@ -22,7 +22,7 @@ public class UserUpdateController implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    void onPlayerJoin(final PlayerJoinEvent event) {
+    void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         this.userCache.getUserByUuid(player.getUniqueId())

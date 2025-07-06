@@ -27,12 +27,12 @@ public class UserCreateController implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    void onPlayerJoin(final PlayerJoinEvent event) {
+    void onPlayerJoin(PlayerJoinEvent event) {
         this.findOrCreate(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onServerReload(final ServerLoadEvent event) {
+    public void onServerReload(ServerLoadEvent event) {
         if (event.getType() != ServerLoadEvent.LoadType.RELOAD) {
             return;
         }

@@ -21,7 +21,7 @@ public class UserSaveController implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onPlayerQuit(final PlayerQuitEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         this.userCache.getUserByUuid(event.getPlayer().getUniqueId()).ifPresent(this.userService::saveUser);
     }
 }
