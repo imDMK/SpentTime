@@ -3,6 +3,7 @@ package com.github.imdmk.spenttime.infrastructure.command.configurator;
 import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.meta.Meta;
+import dev.rollczi.litecommands.permission.PermissionSet;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +42,7 @@ public class CommandConfigurator implements Editor<CommandSender> {
         return context
                 .name(command.name())
                 .aliases(command.aliases())
-                .applyMeta(meta -> meta.list(Meta.PERMISSIONS, permissions -> permissions.addAll(command.permissions())))
+                .applyMeta(meta -> meta.list(Meta.PERMISSIONS, permissions -> permissions.addAll(new PermissionSet(command.permissions()))))
                 .enabled(command.isEnabled());
     }
 
@@ -53,7 +54,7 @@ public class CommandConfigurator implements Editor<CommandSender> {
             context = context.editChild(id, child -> child
                     .name(sub.name())
                     .aliases(sub.aliases())
-                    .applyMeta(meta -> meta.list(Meta.PERMISSIONS, permissions -> permissions.addAll(sub.permissions())))
+                    .applyMeta(meta -> meta.list(Meta.PERMISSIONS, permissions -> permissions.addAll(new PermissionSet(sub.permissions()))))
                     .enabled(sub.isEnabled()));
         }
 
