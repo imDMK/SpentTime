@@ -26,7 +26,7 @@ allprojects {
         implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:5.0.9")
         implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.5")
 
-        testImplementation(platform("org.junit:junit-bom:5.13.2"))
+        testImplementation(platform("org.junit:junit-bom:5.13.3"))
         testImplementation("org.junit.jupiter:junit-jupiter")
 
         testImplementation("com.google.guava:guava-testlib:33.4.5-jre")
