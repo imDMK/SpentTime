@@ -33,10 +33,6 @@ public class UserCreateController implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onServerReload(ServerLoadEvent event) {
-        if (event.getType() != ServerLoadEvent.LoadType.RELOAD) {
-            return;
-        }
-
         this.server.getOnlinePlayers().forEach(this::findOrCreate);
     }
 
